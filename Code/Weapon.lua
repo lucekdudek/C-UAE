@@ -1,18 +1,22 @@
 local function generateAmmo(weaponCaliber, adjustedUnitLevel)
 	Debug(">>-- getting suitable ammo for AdjustedLvl:", adjustedUnitLevel)
 
-	local allAmmos = GetAmmosWithCaliber(weaponCaliber, "sort")
+	local allAmmos = GetAmmosWithCaliber(weaponCaliber)
+	table.sort(allAmmos, function(a, b) return (a.Cost or 0) < (b.Cost or 0) end)
 
-	local costRangeFrom, costRangeTo = CalculateCostRange(adjustedUnitLevel)
+	local costRangeFrom, costRangeTo = CalculateCostRange(adjustedUnitLevel, 5, 9)
 
 	local minIdx = Max(1, DivRound(#allAmmos * costRangeFrom, 100))
 	local maxIdx = Min(#allAmmos, DivRound(#allAmmos * costRangeTo, 100))
-	local suitableAmmos = Slice(allAmmos, minIdx, maxIdx)
 
-	-- Debug(">>-->> from", suitableAmmos[1].id, suitableAmmos[1].Cost, "to", suitableAmmos[#suitableAmmos].id, suitableAmmos[#suitableAmmos].Cost)
-	for _, a in ipairs(suitableAmmos) do
-		Debug(">>>>", a.id, a.Cost)
-	end
+	local suitableAmmos = table.ifilter(allAmmos, function(i, a)
+		return (a.Cost or 0) >= (allAmmos[minIdx].Cost or 0) and (a.Cost or 0) <= (allAmmos[maxIdx].Cost or 0)
+	end)
+
+	Debug(">>-->> from", suitableAmmos[1].id, suitableAmmos[1].Cost, "to", suitableAmmos[#suitableAmmos].id, suitableAmmos[#suitableAmmos].Cost)
+	-- for _, a in ipairs(suitableAmmos) do
+	-- 	Debug(">>>>", a.id, a.Cost)
+	-- end
 
 	local ammo = suitableAmmos[InteractionRandRange(1, #suitableAmmos, "LDCUAE")]
 	Debug(">>>> picked", weaponCaliber, ammo.id, ammo.Cost)

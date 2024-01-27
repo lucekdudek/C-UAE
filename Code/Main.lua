@@ -48,7 +48,7 @@ function OnMsg.ModsReloaded()
 			end
 		end
 		-- sort by Cost
-		table.sort(suitableWeapons, function(self, other) return (self.Cost or 0) < (other.Cost or 0) end)
+		table.sort(suitableWeapons, function(a, b) return (a.Cost or 0) < (b.Cost or 0) end)
 
 		AllWeapons[_type] = suitableWeapons
 	end

@@ -18,9 +18,9 @@ function Slice(t, from, to)
 	return sliced
 end
 
-function CalculateCostRange(level)
-	local lowEnd = Max(0, (level - 1) * 5)
-	local highEnd = Min(100, level * 15)
+function CalculateCostRange(level, minFactor, maxFactor)
+	local lowEnd = Max(0, (level - 1) * minFactor)
+	local highEnd = Min(100, level * maxFactor)
 	return lowEnd, highEnd
 end
 
@@ -38,12 +38,17 @@ function GetSuitableArnaments(level, _type, orginalCost)
 	local normalizedOrginalCost = orginalCost or DefaultCost[_type]
 
 	local orginalCostIdx = GetCostIdx(normalizedOrginalCost, AllWeapons[_type])
-	local costRangeFrom, costRangeTo = CalculateCostRange(level)
+	local costRangeFrom, costRangeTo = CalculateCostRange(level, 5, 15)
 
 	local minIdx = Min(orginalCostIdx, Max(1, DivRound(#AllWeapons[_type] * costRangeFrom, 100)))
 	local maxIdx = Max(orginalCostIdx, Min(#AllWeapons[_type], DivRound(#AllWeapons[_type] * costRangeTo, 100)))
 
-	local suitableArnament = Slice(AllWeapons[_type], minIdx, maxIdx)
+	-- local suitableArnament = Slice(AllWeapons[_type], minIdx, maxIdx)
+
+	local suitableArnament = table.ifilter(AllWeapons[_type], function(i, a)
+		return (a.Cost or 0) >= (AllWeapons[_type][minIdx].Cost or 0) and (a.Cost or 0) <= (AllWeapons[_type][maxIdx].Cost or 0)
+	end)
+
 	Debug(">>>> from", suitableArnament[1].id, suitableArnament[1].Cost, "to", suitableArnament[#suitableArnament].id, suitableArnament[#suitableArnament].Cost)
 	-- for _, a in ipairs(suitableArnament) do
 	-- 	Debug(">>>>", a.id, a.Cost)
