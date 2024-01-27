@@ -1,15 +1,6 @@
-local function changeArnament(unit, orginalHandheldsA, orginalHandheldsB, orginalHead, orginalTorso, orginalLegs)
-	RemoveWeaponsAndAmmo(unit)
-	GenerateNewWeapons(unit, orginalHandheldsA, orginalHandheldsB)
-	GeneratNewArmor(unit, orginalHead, orginalTorso, orginalLegs)
-	unit:UpdateOutfit()
-end
-
--- main entrypoint
-
 -- build tables
 function OnMsg.ModsReloaded()
-	-- print("C-UAE Building tables...")
+	Debug("C-UAE Building tables...")
 	for _type, _ in pairs(AllWeapons) do
 		local suitableWeapons = {}
 		if _type == "Grenade" then
@@ -61,30 +52,39 @@ function OnMsg.ModsReloaded()
 
 		AllWeapons[_type] = suitableWeapons
 	end
-	-- debug -- print
-	-- for _type, _tab in pairs(AllWeapons) do
-	-- 	for _, w in pairs(_tab) do
-	-- 		-- print(_type, w.id, "Cost:", w.Cost, "Tier:", w.Tier)
-	-- 	end
-	-- end
-	-- print("C-UAE Building tables DONE")
+
+	for _type, _tab in pairs(AllWeapons) do
+		Debug(_type)
+		for _, w in pairs(_tab) do
+			Debug(">>", w.id, "Cost:", w.Cost)
+		end
+	end
+	Debug("C-UAE Building tables DONE")
 end
 
 -- alter armory
+local function changeArnament(unit, orginalHandheldsA, orginalHandheldsB, orginalHead, orginalTorso, orginalLegs)
+	RemoveWeaponsAndAmmo(unit)
+	GenerateNewWeapons(unit, orginalHandheldsA, orginalHandheldsB)
+	GeneratNewArmor(unit, orginalHead, orginalTorso, orginalLegs)
+	unit:UpdateOutfit()
+end
+
+-- main entrypoint
 function OnMsg.UnitCreated(unit)
 	-- if unit.Affiliation == "AIM" then
 	if unit.species == "Human" and (AffiliationWeight[unit.Affiliation]) and not (unit.militia or unit:IsCivilian()) and unit:GetActiveWeapons() and not unit:IsDead() then
-		-- print("C-UAE Chaning Arnament...")
+		Debug("C-UAE Chaning Arnament...")
 		if not unit:HasStatusEffect("CUAE") then
 			unit:AddStatusEffect("CUAE")
 
 			local orginalHandheldsA, orginalHandheldsB, orginalHead, orginalTorso, orginalLegs = GetOrginalEq(unit)
 			if CheckItemsForQuestItems(orginalHandheldsA) or CheckItemsForQuestItems(orginalHandheldsB) or CheckItemsForQuestItems({ orginalHead, orginalTorso, orginalLegs }) then
-				-- print("SKIP ENEMY due to a unique item", unit.session_id)
+				Debug(">> C-UAE Chaning Arnament SKIP")
 				return
 			end
 			changeArnament(unit, orginalHandheldsA, orginalHandheldsB, orginalHead, orginalTorso, orginalLegs)
 		end
-		-- print("C-UAE Chaning Arnament DONE")
+		Debug("C-UAE Chaning Arnament DONE")
 	end
 end

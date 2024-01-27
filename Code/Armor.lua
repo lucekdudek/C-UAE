@@ -15,10 +15,11 @@ local function GeneratArmorInSlot(unit, slot, orginalCost)
 	newArmor.drop_chance = newArmor.base_drop_chance
 
 	unit:AddItem(slot, newArmor)
-	-- print("ADD ARMOR", unit.Affiliation, "LVL:", unitLevel, slot, "Cost", suitableArmors[1].Cost, "-", suitableArmors[#suitableArmors].Cost, armorPreset.id, armorPreset.Cost)
+	Debug(">> picked", slot, armorPreset.id, armorPreset.Cost)
 end
 
 function GeneratNewArmor(unit, orginalHead, orginalTorso, orginalLegs)
+	Debug("C-UAE Adding new armor items", unit.Affiliation)
 	GeneratArmorInSlot(unit, "Head", orginalHead and orginalHead.Cost or 0)
 	GeneratArmorInSlot(unit, "Torso", orginalTorso and orginalTorso.Cost or 0)
 	GeneratArmorInSlot(unit, "Legs", orginalLegs and orginalLegs.Cost or 0)

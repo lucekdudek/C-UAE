@@ -108,4 +108,9 @@ return {
 		'Help', "When enabled, gives enemies chance of upgrading Handguns to SMGs and SMGs to ARs",
 		'DefaultValue', true,
 	}),
+	PlaceObj('ModItemOptionToggle', {
+		'name', "Debug",
+		'DisplayName', "Enable debug messages",
+		'Help', "When enabled, prints debug logs in the game log file",
+	}),
 }

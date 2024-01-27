@@ -1,3 +1,9 @@
+function Debug(...)
+	if LoadedModOptions.Debug then
+		print(...)
+	end
+end
+
 function CalculateAdjustedUnitLevel(level, affiliation)
 	return Min(20, Max(1, level + AffiliationWeight[affiliation] + LoadedModOptions.ArmoryStrengthFactor))
 end
@@ -28,6 +34,7 @@ function GetCostIdx(cost, weapons)
 end
 
 function GetSuitableArnaments(level, _type, orginalCost)
+	Debug(">> getting suitable arnaments for AdjustedLvl:", level, _type, "Orginal Cost", orginalCost)
 	local normalizedOrginalCost = orginalCost or DefaultCost[_type]
 
 	local orginalCostIdx = GetCostIdx(normalizedOrginalCost, AllWeapons[_type])
@@ -36,12 +43,18 @@ function GetSuitableArnaments(level, _type, orginalCost)
 	local minIdx = Min(orginalCostIdx, Max(1, DivRound(#AllWeapons[_type] * costRangeFrom, 100)))
 	local maxIdx = Max(orginalCostIdx, Min(#AllWeapons[_type], DivRound(#AllWeapons[_type] * costRangeTo, 100)))
 
-	return Slice(AllWeapons[_type], minIdx, maxIdx)
+	local suitableArnament = Slice(AllWeapons[_type], minIdx, maxIdx)
+	Debug(">>>> from", suitableArnament[1].id, suitableArnament[1].Cost, "to", suitableArnament[#suitableArnament].id, suitableArnament[#suitableArnament].Cost)
+	-- for _, a in ipairs(suitableArnament) do
+	-- 	Debug(">>>>", a.id, a.Cost)
+	-- end
+	return suitableArnament
 end
 
 function CheckItemsForQuestItems(items)
 	for _, h in ipairs(items) do
 		if QuestItemsIcons[h.Icon] then
+			Debug(">> Found quest itme", h.Icon)
 			return true
 		end
 	end
@@ -49,13 +62,14 @@ function CheckItemsForQuestItems(items)
 end
 
 function RemoveWeaponsAndAmmo(unit)
+	Debug("C-UAE Removing orginal items from", unit.Affiliation)
 	unit:ForEachItem(function(item, slot_name)
 		-- Ordnance is Ammo for heavy weapons
 		if slot_name == "Inventory" and (IsKindOf(item, "Ammo") or IsKindOf(item, "Ordnance")) then
 			unit:RemoveItem(slot_name, item)
 			DoneObject(item)
 		elseif slot_name ~= "Inventory" then
-			-- print("REMOVE", unit.Affiliation, slot_name, item.ItemType or item.WeaponType or "", "Tier", item.Tier, "Cost", item.Cost)
+			Debug(">>", slot_name, item.ItemType or item.WeaponType or "", "Cost:", item.Cost)
 			unit:RemoveItem(slot_name, item)
 			DoneObject(item)
 		end

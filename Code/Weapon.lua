@@ -1,3 +1,25 @@
+local function generateAmmo(weaponCaliber, adjustedUnitLevel)
+	Debug(">>-- getting suitable ammo for AdjustedLvl:", adjustedUnitLevel)
+
+	local allAmmos = GetAmmosWithCaliber(weaponCaliber, "sort")
+
+	local costRangeFrom, costRangeTo = CalculateCostRange(adjustedUnitLevel)
+
+	local minIdx = Max(1, DivRound(#allAmmos * costRangeFrom, 100))
+	local maxIdx = Min(#allAmmos, DivRound(#allAmmos * costRangeTo, 100))
+	local suitableAmmos = Slice(allAmmos, minIdx, maxIdx)
+
+	-- Debug(">>-->> from", suitableAmmos[1].id, suitableAmmos[1].Cost, "to", suitableAmmos[#suitableAmmos].id, suitableAmmos[#suitableAmmos].Cost)
+	for _, a in ipairs(suitableAmmos) do
+		Debug(">>>>", a.id, a.Cost)
+	end
+
+	local ammo = suitableAmmos[InteractionRandRange(1, #suitableAmmos, "LDCUAE")]
+	Debug(">>>> picked", weaponCaliber, ammo.id, ammo.Cost)
+	return ammo
+end
+
+
 local function generateWeapon(unit, slot, _type, orginalCost, grenadeQuantity)
 	local unitLevel = Min(10, unit:GetLevel())
 	local adjustedUnitLevel = CalculateAdjustedUnitLevel(unitLevel, unit.Affiliation)
@@ -8,16 +30,11 @@ local function generateWeapon(unit, slot, _type, orginalCost, grenadeQuantity)
 
 	local suitableWeapons = GetSuitableArnaments(adjustedUnitLevel, _type, orginalCost)
 
-	-- -- print(">>suitableWeapons")
-	-- for i, w in ipairs(suitableWeapons) do
-	-- 	-- print(">>>>", w.id, w.Cost)
-	-- end
-
 	-- get and init final weapon from preset
 	local weaponPreset = suitableWeapons[InteractionRandRange(1, #suitableWeapons, "LDCUAE")]
 	local newWeapon = PlaceInventoryItem(weaponPreset.id)
 	newWeapon.drop_chance = IsKindOf(newWeapon, "Grenade") and 5 or newWeapon.base_drop_chance
-	-- print("ADD WEAPON", unit.Affiliation, "LVL:", unitLevel, _type, "Cost", suitableWeapons[1].Cost, "-", suitableWeapons[#suitableWeapons].Cost, weaponPreset.id, weaponPreset.Cost)
+	Debug(">> picked", _type, weaponPreset.id, weaponPreset.Cost)
 
 	if IsKindOf(newWeapon, "MeleeWeapon") then
 		unit:AddItem(slot, newWeapon)
@@ -27,21 +44,7 @@ local function generateWeapon(unit, slot, _type, orginalCost, grenadeQuantity)
 	elseif IsKindOf(newWeapon, "BaseWeapon") then
 		AddRandomComponents(newWeapon, adjustedUnitLevel)
 
-		-- create ammo
-		local ammos = GetAmmosWithCaliber(newWeapon.Caliber, "sort")
-		local unitLevelTier = UnitLevelToLvlTier[unitLevel]
-		local newAmmoTier = RollNewTier(Max(1, unitLevelTier - 1), unitLevelTier)
-		-- exclude
-		local suitableAmmos = table.ifilter(ammos, function(i, a)
-			return (a.Tier or 1) == newAmmoTier and not table.find(ExcludeAmmos, a.id)
-		end)
-		-- Use all Tiers if no matches were found
-		if #suitableAmmos == 0 then
-			suitableAmmos = table.ifilter(ammos, function(i, a)
-				return not table.find(ExcludeAmmos, a.id)
-			end)
-		end
-		local ammo = suitableAmmos[InteractionRandRange(1, #suitableAmmos, "LDCUAE")]
+		local ammo = generateAmmo(newWeapon.Caliber, adjustedUnitLevel)
 
 		-- load weapon
 		unit:TryEquip({ newWeapon }, slot, "BaseWeapon")
@@ -56,7 +59,6 @@ local function generateWeapon(unit, slot, _type, orginalCost, grenadeQuantity)
 			newAmmo.Amount = Min(InteractionRandRange(50, 100, "LDCUAE"), newAmmo.MaxStacks)
 		end
 		unit:AddItem("Inventory", newAmmo)
-		-- print("--ADD AMMO", unit.Affiliation, "LVL:", unitLevel, newWeapon.Caliber, "Tier", newAmmoTier, ammo.id)
 	end
 end
 
@@ -86,11 +88,12 @@ local function getItemType(weapon)
 end
 
 function GenerateNewWeapons(unit, orginalHandheldsA, orginalHandheldsB)
+	Debug("C-UAE Adding new weapons", unit.Affiliation)
+
 	local _type1A, _type2A, _type1B, _type2B = nil, nil, nil, nil
 	-- Handheld A
 	if #orginalHandheldsA == 1 then
 		_type1A = getItemType(orginalHandheldsA[1])
-
 		generateWeapon(unit, "Handheld A", AllowAlternativeWeaponType(_type1A), orginalHandheldsA[1].Cost)
 	elseif #orginalHandheldsA == 2 then
 		_type1A = getItemType(orginalHandheldsA[1])

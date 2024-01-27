@@ -4,6 +4,7 @@ LoadedModOptions = {
 	ExtraGrenadesChance = 50,
 	AllowAlternativeWeaponType = true,
 	ArmoryStrengthFactor = 0,
+	Debug = false,
 }
 
 AffiliationWeight = {
@@ -32,8 +33,7 @@ DefaultCost = {
 	Legs = 0,
 }
 
--- Position in table coresponds with a unit level 1...10
-UnitLevelToLvlTier = { 1, 1, 1, 1, 2, 2, 2, 3, 3, 3 }
+-- Position in table coresponds with a adjusted unit level 1...20
 UnitLevelToComponentChance = { 1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 96, 97, 98, 99, 100, 100, 100, 100, 100 }
 
 QuestItemsIcons = {
@@ -43,7 +43,7 @@ QuestItemsIcons = {
 	["UI/Icons/Weapons/LionRoar"] = true,
 	["UI/Icons/Weapons/MacheteChainsword"] = true,
 	["UI/Icons/Weapons/TheThing"] = true,
-	["UI/Icons/Weapons/Winchester"] = true,
+	-- ["UI/Icons/Weapons/Winchester"] = true, Confidante(Winchester_Quest) icon
 	["UI/Icons/Weapons/TexRevolver"] = true,
 	["UI/Icons/Weapons/pierre_machete"] = true,
 	["UI/Icons/Weapons/EndlessKnives"] = true,
