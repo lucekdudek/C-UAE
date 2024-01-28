@@ -6,8 +6,8 @@ local function generateAmmo(weaponCaliber, adjustedUnitLevel)
 
 	local costRangeFrom, costRangeTo = CalculateCostRange(adjustedUnitLevel, 5, 9)
 
-	local minIdx = Max(1, DivRound(#allAmmos * costRangeFrom, 100))
-	local maxIdx = Min(#allAmmos, DivRound(#allAmmos * costRangeTo, 100))
+	local minIdx = Min(#allAmmos,  Max(1, DivRound(#allAmmos * costRangeFrom, 100)))
+	local maxIdx = Min(#allAmmos,  Max(1, DivRound(#allAmmos * costRangeTo, 100)))
 
 	local suitableAmmos = table.ifilter(allAmmos, function(i, a)
 		return (a.Cost or 0) >= (allAmmos[minIdx].Cost or 0) and (a.Cost or 0) <= (allAmmos[maxIdx].Cost or 0)
