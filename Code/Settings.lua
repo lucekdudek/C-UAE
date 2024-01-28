@@ -4,7 +4,7 @@ function OnMsg.ApplyModOptions(id)
 		LoadedModOptions.ExtraGrenadesCount = tonumber(CurrentModOptions['ExtraGrenadesCount'])
 		LoadedModOptions.ExtraGrenadesChance = tonumber(CurrentModOptions['ExtraGrenadesChance'])
 		LoadedModOptions.AllowAlternativeWeaponType = CurrentModOptions['AllowAlternativeWeaponType']
-		LoadedModOptions.ArmoryStrengthFactor = tonumber(CurrentModOptions['ArmoryStrengthFactor'])
+		LoadedModOptions.ArmamentStrengthFactor = tonumber(CurrentModOptions['ArmamentStrengthFactor'])
 		LoadedModOptions.Debug = CurrentModOptions['Debug']
 	end
 end

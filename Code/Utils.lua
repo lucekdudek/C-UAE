@@ -5,7 +5,7 @@ function Debug(...)
 end
 
 function CalculateAdjustedUnitLevel(level, affiliation)
-	return Min(20, Max(1, level + AffiliationWeight[affiliation] + LoadedModOptions.ArmoryStrengthFactor))
+	return Min(20, Max(1, level + AffiliationWeight[affiliation] + LoadedModOptions.ArmamentStrengthFactor))
 end
 
 function Slice(t, from, to)

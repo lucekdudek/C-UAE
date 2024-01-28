@@ -74,9 +74,9 @@ return {
 		},
 	}),
 	PlaceObj('ModItemOptionChoice', {
-		'name', "ArmoryStrengthFactor",
-		'DisplayName', "Armory Strength Factor",
-		'Help', "Alters strength of distributed Armory",
+		'name', "ArmamentStrengthFactor",
+		'DisplayName', "Armament Strength Factor",
+		'Help', "Alters strength of distributed Armament",
 		'DefaultValue', "0",
 		'ChoiceList', {
 			"-10",

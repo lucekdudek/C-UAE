@@ -17,31 +17,32 @@ function OnMsg.ModsReloaded()
 			end
 		elseif _type == "MeleeWeapon" then
 			local allMelee = table.ifilter(GetWeaponsByType(_type), function(i, w)
-				return not table.find(ExcludeWeapons, w.id)
+				return not table.find(ExcludeWeapons, w.id) and g_Classes[w.id].CanAppearInShop
 			end)
 			for _, w in pairs(allMelee) do
 				if w.id == "Tomahawk_1" then
-					w.Cost = 20
+					w.Cost = 150
 				end
 				table.insert(suitableWeapons, w)
 			end
 		elseif _type == "Head" or _type == "Torso" or _type == "Legs" then
 			local allArmors = table.ifilter(GetWeaponsByType("Armor"), function(i, a)
-				return _type == (a.Slot or 'Torso') and not table.find(ExcludeArmors, a.id)
+				return _type == (a.Slot or 'Torso') and not table.find(ExcludeArmors, a.id) and
+				g_Classes[a.id].CanAppearInShop
 			end)
 			for _, w in pairs(allArmors) do
-				if w.id == "PostApoHelmet" then
-					w.Cost = 1500
+				if w.id == "LightHelmet" then
+					w.Cost = 1000
+				elseif w.id == "PostApoHelmet" then
+					w.Cost = 1900
 				elseif w.id == "Gasmaskenhelm" then
-					w.Cost = 4500
-				elseif w.Cost == nil then
-					w.Cost = 1
+					w.Cost = 10000
 				end
 				table.insert(suitableWeapons, w)
 			end
 		else
 			local allWeapons = table.ifilter(GetWeaponsByType(_type), function(i, w)
-				return not table.find(ExcludeWeapons, w.id) and w.CanAppearInShop
+				return not table.find(ExcludeWeapons, w.id) and g_Classes[w.id].CanAppearInShop
 			end)
 			for _, w in pairs(allWeapons) do
 				table.insert(suitableWeapons, w)
@@ -62,7 +63,7 @@ function OnMsg.ModsReloaded()
 	Debug("C-UAE Building tables DONE")
 end
 
--- alter armory
+-- alter armament
 local function changeArnament(unit, orginalHandheldsA, orginalHandheldsB, orginalHead, orginalTorso, orginalLegs)
 	RemoveWeaponsAndAmmo(unit)
 	GenerateNewWeapons(unit, orginalHandheldsA, orginalHandheldsB)

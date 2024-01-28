@@ -41,3 +41,5 @@ luac.out
 
 # VS code
 *.code-workspace
+
+temp*
