@@ -36,7 +36,7 @@ DefaultCost = {
 }
 
 -- Position in table coresponds with a adjusted unit level 1...20
-UnitLevelToComponentChance = { 3, 11, 19, 27, 35, 43, 51, 59, 67, 75, 80, 85, 90, 92, 94, 95, 96, 97, 98, 99 }
+UnitLevelToComponentChance = { 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 92, 94, 95, 96, 97, 98, 99 }
 
 -- Required to deduct if unit is one that should not be changed (e.g. Pierre)
 QuestItemsIcons = {
@@ -57,23 +57,7 @@ QuestItemsIcons = {
 }
 
 ExcludeWeapons = {
-	--Quest and personal
-	'TheThing',
-	'PierreMachete',
-	'EndlessKnives',
-	'GutHookKnife',
-	'Galil_FlagHill',
-	'LionRoar',
-	'Auto5_quest',
-	'TexRevolver',
-	'GoldenGun',
-	'Winchester_Quest',
-	'Machete_Crafted',
-	--Other
-	'DebugAuto',
 	--ToG duplicates and broken
-	'M134_1',
-	'M70D_1',
 	'Condor_1',
 	'M1Garand_2',
 	'M1Garand_3',
@@ -85,31 +69,8 @@ ExcludeWeapons = {
 	'Type56D_1',
 	'Sturmgewehr44_Special',
 	'G3A3Green_1',
-	--ToG SuperRare
-	-- 'B93R_1',
-	-- 'MAC11_1',
-	-- 'Spas12_1',
-	-- 'G3_1',
-	-- 'AN94_1',
-	-- 'VSS_1',
-	-- 'FG42_1',
-	-- 'APS_1',
-	-- 'RK95_1',
-	-- 'SSG69_1',
-	-- 'AWP_1',
-	-- 'G11_1',
-	-- 'WA2000_1',
-	-- 'CAWS_1',
-	-- 'PPSh41_1',
-	-- 'RK62_1',
 	--MeleeWeapon
 	'Katana_1',
-	'SKS_Bay_M_2',
-	'SKS_Bay_M_3',
-	'CrocodileJaws',
-	'HyenaJaws',
-	'Unarmed_Infected',
-	'Unarmed',
 	--Grenade
 	'ConcussiveGrenade_Mine',
 	'ShapedCharge',
@@ -121,17 +82,6 @@ ExcludeWeapons = {
 	'ProximityPETN',
 	'ProximityTNT',
 }
-ExcludeArmors = {
-	'FlakVest_Test',
-	'ShamanLeggings',
-	'ShamanHelmet',
-	'ShamanTorso',
-	'CrocodileHide',
-	'NailsLeatherVest',
-	'IvanUshanka',
-	'Infected_HardenedSkin'
-}
-ExcludeAmmos = {}
 
 RailMounts = {
 	'ToG_Rail_Block',
@@ -154,7 +104,7 @@ AllWeapons = {
 	MachineGun = {},
 	FlareGun = {},
 	MeleeWeapon = {},
-	HeavyWeapon = {},
+	-- HeavyWeapon = {}, disabled due as this category is to broad
 	MissileLauncher = {},
 	Grenade = {},
 	Head = {},

@@ -12,6 +12,7 @@ function BuildWeaponTables()
 				if w.id == "ToxicGasGrenade" then
 					w.Cost = 800
 				elseif not LoadedModOptions.AllowGlowAndFlareSticks and (w.id == "GlowStick" or w.id == "FlareStick") then
+					-- TODO if GameState.Night or GameState.Underground then
 					goto continue
 				end
 				table.insert(suitableWeapons, w)
@@ -29,7 +30,7 @@ function BuildWeaponTables()
 			end
 		elseif _type == "Head" or _type == "Torso" or _type == "Legs" then
 			local allArmors = table.ifilter(GetWeaponsByType("Armor"), function(i, a)
-				return _type == (a.Slot or 'Torso') and not table.find(ExcludeArmors, a.id) and
+				return _type == (a.Slot or 'Torso') and
 					(a.id == "PostApoHelmet" or a.id == "Gasmaskenhelm" or g_Classes[a.id].CanAppearInShop)
 			end)
 			for _, w in pairs(allArmors) do
@@ -64,7 +65,8 @@ function OnMsg.ModsReloaded()
 	-- for _type, _tab in pairs(AllWeapons) do
 	-- 	Debug(_type)
 	-- 	for _, w in pairs(_tab) do
-	-- 		Debug(">>", w.id, "Cost:", w.Cost)
+	-- 		-- Debug(w.id)
+	-- 		Debug(">>", w.id, "Cost:", w.Cost, "/", g_Classes[w.id].Cost, "CanAppearInShop:", g_Classes[w.id].CanAppearInShop)
 	-- 		for _, slot in pairs(g_Classes[w.id].ComponentSlots) do
 	-- 			Debug(">>-", slot.SlotType)
 	-- 			for _, component in pairs(slot.AvailableComponents) do
