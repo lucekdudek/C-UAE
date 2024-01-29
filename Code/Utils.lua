@@ -43,10 +43,30 @@ function GetSuitableArnaments(level, _type, orginalCost)
 	return suitableArnament
 end
 
+function GetWeaponType(weapon)
+	local _type = weapon.ItemType or weapon.WeaponType
+	if _type == "GrenadeGas" or _type == "GrenadeFire" or _type == "Throwables" then
+		return "Grenade"
+	else
+		return _type
+	end
+end
+
 function CheckItemsForQuestItems(items)
 	for _, h in ipairs(items) do
 		if QuestItemsIcons[h.Icon] then
 			Debug("- Found quest item", h.Icon)
+			return true
+		end
+	end
+	return false
+end
+
+function CheckForUnsupportedTypes(items)
+	for _, i in ipairs(items) do
+		local _type = GetWeaponType(i)
+		if not AllWeapons[_type] then
+			Debug("- Found unsupported weapon type", _type)
 			return true
 		end
 	end

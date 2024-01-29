@@ -28,7 +28,7 @@ function OnMsg.ModsReloaded()
 		elseif _type == "Head" or _type == "Torso" or _type == "Legs" then
 			local allArmors = table.ifilter(GetWeaponsByType("Armor"), function(i, a)
 				return _type == (a.Slot or 'Torso') and not table.find(ExcludeArmors, a.id) and
-				g_Classes[a.id].CanAppearInShop
+					g_Classes[a.id].CanAppearInShop
 			end)
 			for _, w in pairs(allArmors) do
 				if w.id == "LightHelmet" then
@@ -80,7 +80,7 @@ function OnMsg.UnitCreated(unit)
 			unit:AddStatusEffect("CUAE")
 
 			local orginalHandheldsA, orginalHandheldsB, orginalHead, orginalTorso, orginalLegs = GetOrginalEq(unit)
-			if CheckItemsForQuestItems(orginalHandheldsA) or CheckItemsForQuestItems(orginalHandheldsB) or CheckItemsForQuestItems({ orginalHead, orginalTorso, orginalLegs }) then
+			if CheckItemsForQuestItems(orginalHandheldsA) or CheckItemsForQuestItems(orginalHandheldsB) or CheckItemsForQuestItems({ orginalHead, orginalTorso, orginalLegs }) or CheckForUnsupportedTypes(orginalHandheldsA) or CheckForUnsupportedTypes(orginalHandheldsB) then
 				Debug("C-UAE Chaning Arnament SKIP")
 				return
 			end

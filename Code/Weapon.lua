@@ -67,9 +67,10 @@ local function generateWeapon(unit, slot, _type, orginalCost, orginalCondition, 
 		local newAmmo = PlaceInventoryItem(ammo.id)
 		newAmmo.drop_chance = newAmmo.base_drop_chance // 3
 		if IsKindOf(newAmmo, "Ordnance") then
-			newAmmo.Amount = Min(InteractionRandRange(1, 10, "LDCUAE"), newAmmo.MaxStacks)
+			newAmmo.Amount = Min(InteractionRandRange(1, 6, "LDCUAE"), newAmmo.MaxStacks)
 		else
-			newAmmo.Amount = Min(InteractionRandRange(50, 100, "LDCUAE"), newAmmo.MaxStacks)
+			-- TODO do this based on weapon type
+			newAmmo.Amount = Min(InteractionRandRange(30, 60, "LDCUAE"), newAmmo.MaxStacks)
 		end
 		unit:AddItem("Inventory", newAmmo)
 	end
@@ -91,38 +92,29 @@ local function AllowAlternativeWeaponType(_type)
 	end
 end
 
-local function getItemType(weapon)
-	local _type = weapon.ItemType or weapon.WeaponType
-	if _type == "GrenadeGas" or _type == "GrenadeFire" or _type == "Throwables" then
-		return "Grenade"
-	else
-		return _type
-	end
-end
-
 function GenerateNewWeapons(unit, orginalHandheldsA, orginalHandheldsB)
 	Debug("C-UAE Adding new weapons", unit.Affiliation)
 
 	local _type1A, _type2A, _type1B, _type2B = nil, nil, nil, nil
 	-- Handheld A
 	if #orginalHandheldsA == 1 then
-		_type1A = getItemType(orginalHandheldsA[1])
+		_type1A = GetWeaponType(orginalHandheldsA[1])
 		generateWeapon(unit, "Handheld A", AllowAlternativeWeaponType(_type1A), orginalHandheldsA[1].Cost,
 			orginalHandheldsA[1].Condition)
 	elseif #orginalHandheldsA == 2 then
-		_type1A = getItemType(orginalHandheldsA[1])
-		_type2A = getItemType(orginalHandheldsA[2])
+		_type1A = GetWeaponType(orginalHandheldsA[1])
+		_type2A = GetWeaponType(orginalHandheldsA[2])
 		generateWeapon(unit, "Handheld A", _type1A, orginalHandheldsA[1].Cost, orginalHandheldsA[1].Condition)
 		generateWeapon(unit, "Handheld A", _type2A, orginalHandheldsA[2].Cost, orginalHandheldsA[2].Condition)
 	end
 	-- Handheld B
 	if #orginalHandheldsB == 1 then
-		_type1B = getItemType(orginalHandheldsB[1])
+		_type1B = GetWeaponType(orginalHandheldsB[1])
 		generateWeapon(unit, "Handheld B", AllowAlternativeWeaponType(_type1B), orginalHandheldsB[1].Cost,
 			orginalHandheldsB[1].Condition)
 	elseif #orginalHandheldsB == 2 then
-		_type1B = getItemType(orginalHandheldsB[1])
-		_type2B = getItemType(orginalHandheldsB[2])
+		_type1B = GetWeaponType(orginalHandheldsB[1])
+		_type2B = GetWeaponType(orginalHandheldsB[2])
 		generateWeapon(unit, "Handheld B", _type1B, orginalHandheldsB[1].Cost, orginalHandheldsB[1].Condition)
 		generateWeapon(unit, "Handheld B", _type2B, orginalHandheldsB[2].Cost, orginalHandheldsB[2].Condition)
 	elseif LoadedModOptions.ExtraHandgun and LoadedModOptions.ExtraGrenadesCount ~= 0 and _type1A ~= 'Handgun' and _type2A ~= 'Handgun' and _type1A ~= 'Grenade' and _type2A ~= 'Grenade' then
