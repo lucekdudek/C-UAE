@@ -35,7 +35,7 @@ local function generateWeapon(unit, slot, _type, orginalCost, orginalCondition, 
 	local unitLevel = Min(10, unit:GetLevel())
 	local adjustedUnitLevel = CalculateAdjustedUnitLevel(unitLevel, unit.Affiliation)
 
-	if _type == "Grenade" and orginalCost == 0 and InteractionRand(100, "LDCUAE") > LoadedModOptions.ExtraGrenadesChance then
+	if _type == "Grenade" and grenadeQuantity ~= nil and InteractionRand(100, "LDCUAE") > LoadedModOptions.ExtraGrenadesChance then
 		return
 	end
 
