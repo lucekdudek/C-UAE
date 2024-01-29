@@ -30,13 +30,13 @@ function BuildWeaponTables()
 		elseif _type == "Head" or _type == "Torso" or _type == "Legs" then
 			local allArmors = table.ifilter(GetWeaponsByType("Armor"), function(i, a)
 				return _type == (a.Slot or 'Torso') and not table.find(ExcludeArmors, a.id) and
-					g_Classes[a.id].CanAppearInShop
+					(a.id == "PostApoHelmet" or a.id == "Gasmaskenhelm" or g_Classes[a.id].CanAppearInShop)
 			end)
 			for _, w in pairs(allArmors) do
 				if w.id == "LightHelmet" then
 					w.Cost = 1000
 				elseif w.id == "PostApoHelmet" then
-					w.Cost = 1900
+					w.Cost = 5000
 				elseif w.id == "Gasmaskenhelm" then
 					w.Cost = 10000
 				end

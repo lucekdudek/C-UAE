@@ -70,7 +70,7 @@ local function generateWeapon(unit, slot, _type, orginalCost, orginalCondition, 
 		if IsKindOf(newAmmo, "Ordnance") then
 			newAmmo.Amount = Min(InteractionRandRange(2, 5, "LDCUAE"), newAmmo.MaxStacks)
 		else
-			newAmmo.Amount = Min(InteractionRandRange(newWeapon.MagazineSize, newWeapon.MagazineSize * 2, "LDCUAE"), newAmmo.MaxStacks)
+			newAmmo.Amount = Min(InteractionRandRange(Max(8, newWeapon.MagazineSize), Max(12, newWeapon.MagazineSize * 2), "LDCUAE"), newAmmo.MaxStacks)
 		end
 		unit:AddItem("Inventory", newAmmo)
 	end

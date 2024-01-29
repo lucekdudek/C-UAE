@@ -45,7 +45,6 @@ local function isNotBlocked(_type, components)
 end
 
 local function handleSlot(slotType, weapon, slots)
-	print()
 	local availableComponents = table.find_value(slots, "SlotType", slotType).AvailableComponents
 	if availableComponents then
 		local randComponent = table.rand(availableComponents)
@@ -59,7 +58,7 @@ end
 
 function AddRandomComponents(weapon, unitLevel)
 	local chance = UnitLevelToComponentChance[unitLevel]
-	Debug("-- adding components AdjustedLvl:", unitLevel, "Chance:", chance)
+	Debug("-- adding components AdjustedLvl:", unitLevel, "Chance:", chance, "%")
 
 	-- Get all available ComponentsSlot
 	local availableComponentsSlots = weapon.ComponentSlots
