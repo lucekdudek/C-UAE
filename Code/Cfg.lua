@@ -37,6 +37,7 @@ DefaultCost = {
 -- Position in table coresponds with a adjusted unit level 1...20
 UnitLevelToComponentChance = { 1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 96, 97, 98, 99, 100, 100, 100, 100, 100 }
 
+-- Required to deduct if unit is one that should not be changed (e.g. Pierre)
 QuestItemsIcons = {
 	["UI/Icons/Weapons/Auto5Quest"] = true,
 	["UI/Icons/Weapons/Galil_Flaghill"] = true,

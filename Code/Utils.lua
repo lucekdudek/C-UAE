@@ -173,7 +173,3 @@ function AddRandomComponents(weapon, unitLevel)
 		::continue::
 	end
 end
-
-function RollNewTier(orginalTier, unitLevelTier)
-	return InteractionRandRange(orginalTier, Max(orginalTier, unitLevelTier), "LDCUAE")
-end

@@ -30,12 +30,13 @@ local function generateAmmo(weaponCaliber, adjustedUnitLevel)
 end
 
 
-local function generateWeapon(unit, slot, _type, orginalCost, orginalCondition, grenadeQuantity)
+local function generateWeapon(unit, slot, _type, orginalCost, orginalCondition, extraGrenadeQuantity)
 	local newCondition = orginalCondition or InteractionRandRange(45, 95, "LDCUAE")
 	local unitLevel = Min(10, unit:GetLevel())
 	local adjustedUnitLevel = CalculateAdjustedUnitLevel(unitLevel, unit.Affiliation)
 
-	if _type == "Grenade" and grenadeQuantity ~= nil and InteractionRand(100, "LDCUAE") > LoadedModOptions.ExtraGrenadesChance then
+	-- extraGrenadeQuantity(Options.ExtraGrenadesCount) is affected by Options.ExtraGrenadesChance
+	if _type == "Grenade" and extraGrenadeQuantity ~= nil and InteractionRand(100, "LDCUAE") > LoadedModOptions.ExtraGrenadesChance then
 		return
 	end
 
@@ -51,7 +52,7 @@ local function generateWeapon(unit, slot, _type, orginalCost, orginalCondition, 
 		newWeapon.Condition = newCondition
 		unit:AddItem(slot, newWeapon)
 	elseif IsKindOf(newWeapon, "Grenade") then
-		newWeapon.Amount = Min(grenadeQuantity or InteractionRandRange(1, 4, "LDCUAE"), newWeapon.MaxStacks)
+		newWeapon.Amount = Min(extraGrenadeQuantity or InteractionRandRange(1, 4, "LDCUAE"), newWeapon.MaxStacks)
 		unit:AddItem(slot, newWeapon)
 	elseif IsKindOf(newWeapon, "BaseWeapon") then
 		newWeapon.Condition = newCondition
@@ -65,12 +66,11 @@ local function generateWeapon(unit, slot, _type, orginalCost, orginalCondition, 
 
 		-- add ammo
 		local newAmmo = PlaceInventoryItem(ammo.id)
-		newAmmo.drop_chance = newAmmo.base_drop_chance // 3
+		newAmmo.drop_chance = newAmmo.base_drop_chance // 2
 		if IsKindOf(newAmmo, "Ordnance") then
-			newAmmo.Amount = Min(InteractionRandRange(1, 6, "LDCUAE"), newAmmo.MaxStacks)
+			newAmmo.Amount = Min(InteractionRandRange(newWeapon.MagazineSize, newWeapon.MagazineSize * 4, "LDCUAE"), newAmmo.MaxStacks)
 		else
-			-- TODO do this based on weapon type
-			newAmmo.Amount = Min(InteractionRandRange(30, 60, "LDCUAE"), newAmmo.MaxStacks)
+			newAmmo.Amount = Min(InteractionRandRange(newWeapon.MagazineSize, newWeapon.MagazineSize * 2, "LDCUAE"), newAmmo.MaxStacks)
 		end
 		unit:AddItem("Inventory", newAmmo)
 	end
