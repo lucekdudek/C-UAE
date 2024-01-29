@@ -3,6 +3,7 @@ LoadedModOptions = {
 	ExtraGrenadesCount = 2,
 	ExtraGrenadesChance = 50,
 	AllowAlternativeWeaponType = true,
+	AllowGlowAndFlareSticks = true,
 	ArmamentStrengthFactor = 0,
 	Debug = false,
 }

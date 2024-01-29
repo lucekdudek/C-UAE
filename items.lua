@@ -29,6 +29,10 @@ return {
 		'name', "Weapon",
 		'CodeFileName', "Code/Weapon.lua",
 	}),
+	PlaceObj('ModItemCode', {
+		'name', "WeaponComponents",
+		'CodeFileName', "Code/WeaponComponents.lua",
+	}),
 	PlaceObj('ModItemOptionToggle', {
 		'name', "ExtraHandgun",
 		'DisplayName', "Extra Handgun",
@@ -106,6 +110,12 @@ return {
 		'name', "AllowAlternativeWeaponType",
 		'DisplayName', "Allow Alternative Weapon Type",
 		'Help', "When enabled, gives enemies chance of upgrading Handguns to SMGs and SMGs to ARs",
+		'DefaultValue', true,
+	}),
+	PlaceObj('ModItemOptionToggle', {
+		'name', "AllowGlowAndFlareSticks",
+		'DisplayName', "Allow Glow And Flare Sticks",
+		'Help', "When enabled, grenades type include Glow and Flare Stricks",
 		'DefaultValue', true,
 	}),
 	PlaceObj('ModItemOptionToggle', {

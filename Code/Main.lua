@@ -12,8 +12,11 @@ function OnMsg.ModsReloaded()
 			for _, w in pairs(allGrenades) do
 				if w.id == "ToxicGasGrenade" then
 					w.Cost = 800
+				elseif not LoadedModOptions.AllowGlowAndFlareSticks and (w.id == "GlowStick" or w.id == "FlareStick") then
+					goto continue
 				end
 				table.insert(suitableWeapons, w)
+				::continue::
 			end
 		elseif _type == "MeleeWeapon" then
 			local allMelee = table.ifilter(GetWeaponsByType(_type), function(i, w)
