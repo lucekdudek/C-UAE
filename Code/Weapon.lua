@@ -1,30 +1,37 @@
 local function generateAmmo(weaponCaliber, adjustedUnitLevel)
-	Debug(">>-- getting suitable ammo for AdjustedLvl:", adjustedUnitLevel)
+	Debug("-- getting suitable ammo for AdjustedLvl:", adjustedUnitLevel)
 
-	local allAmmos = GetAmmosWithCaliber(weaponCaliber)
-	table.sort(allAmmos, function(a, b) return (a.Cost or 0) < (b.Cost or 0) end)
+	if not AllAmmunition[weaponCaliber] then
+		Debug("C-UAE Building", weaponCaliber, "ammunition table...")
+		AllAmmunition[weaponCaliber] = GetAmmosWithCaliber(weaponCaliber)
+		table.sort(AllAmmunition[weaponCaliber], function(a, b) return (a.Cost or 0) < (b.Cost or 0) end)
+		for _, a in pairs(AllAmmunition[weaponCaliber]) do
+			Debug(">>", a.id, "Cost:", a.Cost)
+		end
+		Debug("C-UAE Building", weaponCaliber, "ammunition table DONE")
+	end
 
 	local costRangeFrom, costRangeTo = CalculateCostRange(adjustedUnitLevel, 5, 9)
 
-	local minIdx = Min(#allAmmos,  Max(1, DivRound(#allAmmos * costRangeFrom, 100)))
-	local maxIdx = Min(#allAmmos,  Max(1, DivRound(#allAmmos * costRangeTo, 100)))
+	local minIdx = Min(#AllAmmunition[weaponCaliber], Max(1, DivRound(#AllAmmunition[weaponCaliber] * costRangeFrom, 100)))
+	local maxIdx = Min(#AllAmmunition[weaponCaliber], Max(1, DivRound(#AllAmmunition[weaponCaliber] * costRangeTo, 100)))
 
-	local suitableAmmos = table.ifilter(allAmmos, function(i, a)
-		return (a.Cost or 0) >= (allAmmos[minIdx].Cost or 0) and (a.Cost or 0) <= (allAmmos[maxIdx].Cost or 0)
+	local minCost = AllAmmunition[weaponCaliber][minIdx].Cost or 0
+	local maxCost = AllAmmunition[weaponCaliber][maxIdx].Cost or 0
+	local suitableAmmos = table.ifilter(AllAmmunition[weaponCaliber], function(i, a)
+		return (a.Cost or 0) >= minCost and (a.Cost or 0) <= maxCost
 	end)
 
-	Debug(">>-->> from", suitableAmmos[1].id, suitableAmmos[1].Cost, "to", suitableAmmos[#suitableAmmos].id, suitableAmmos[#suitableAmmos].Cost)
-	-- for _, a in ipairs(suitableAmmos) do
-	-- 	Debug(">>>>", a.id, a.Cost)
-	-- end
+	Debug("--> min:", suitableAmmos[1].id, suitableAmmos[1].Cost, "max:", suitableAmmos[#suitableAmmos].id, suitableAmmos[#suitableAmmos].Cost)
 
 	local ammo = suitableAmmos[InteractionRandRange(1, #suitableAmmos, "LDCUAE")]
-	Debug(">>>> picked", weaponCaliber, ammo.id, ammo.Cost)
+	Debug("-- picked:", weaponCaliber, ammo.id, ammo.Cost)
 	return ammo
 end
 
 
-local function generateWeapon(unit, slot, _type, orginalCost, grenadeQuantity)
+local function generateWeapon(unit, slot, _type, orginalCost, orginalCondition, grenadeQuantity)
+	local newCondition = orginalCondition or InteractionRandRange(45, 95, "LDCUAE")
 	local unitLevel = Min(10, unit:GetLevel())
 	local adjustedUnitLevel = CalculateAdjustedUnitLevel(unitLevel, unit.Affiliation)
 
@@ -38,14 +45,16 @@ local function generateWeapon(unit, slot, _type, orginalCost, grenadeQuantity)
 	local weaponPreset = suitableWeapons[InteractionRandRange(1, #suitableWeapons, "LDCUAE")]
 	local newWeapon = PlaceInventoryItem(weaponPreset.id)
 	newWeapon.drop_chance = IsKindOf(newWeapon, "Grenade") and 5 or newWeapon.base_drop_chance
-	Debug(">> picked", _type, weaponPreset.id, weaponPreset.Cost)
+	Debug("- picked:", _type, weaponPreset.id, weaponPreset.Cost, "Condition:", newCondition)
 
 	if IsKindOf(newWeapon, "MeleeWeapon") then
+		newWeapon.Condition = newCondition
 		unit:AddItem(slot, newWeapon)
 	elseif IsKindOf(newWeapon, "Grenade") then
 		newWeapon.Amount = Min(grenadeQuantity or InteractionRandRange(1, 4, "LDCUAE"), newWeapon.MaxStacks)
 		unit:AddItem(slot, newWeapon)
 	elseif IsKindOf(newWeapon, "BaseWeapon") then
+		newWeapon.Condition = newCondition
 		AddRandomComponents(newWeapon, adjustedUnitLevel)
 
 		local ammo = generateAmmo(newWeapon.Caliber, adjustedUnitLevel)
@@ -98,28 +107,30 @@ function GenerateNewWeapons(unit, orginalHandheldsA, orginalHandheldsB)
 	-- Handheld A
 	if #orginalHandheldsA == 1 then
 		_type1A = getItemType(orginalHandheldsA[1])
-		generateWeapon(unit, "Handheld A", AllowAlternativeWeaponType(_type1A), orginalHandheldsA[1].Cost)
+		generateWeapon(unit, "Handheld A", AllowAlternativeWeaponType(_type1A), orginalHandheldsA[1].Cost,
+			orginalHandheldsA[1].Condition)
 	elseif #orginalHandheldsA == 2 then
 		_type1A = getItemType(orginalHandheldsA[1])
 		_type2A = getItemType(orginalHandheldsA[2])
-		generateWeapon(unit, "Handheld A", _type1A, orginalHandheldsA[1].Cost)
-		generateWeapon(unit, "Handheld A", _type2A, orginalHandheldsA[2].Cost)
+		generateWeapon(unit, "Handheld A", _type1A, orginalHandheldsA[1].Cost, orginalHandheldsA[1].Condition)
+		generateWeapon(unit, "Handheld A", _type2A, orginalHandheldsA[2].Cost, orginalHandheldsA[2].Condition)
 	end
 	-- Handheld B
 	if #orginalHandheldsB == 1 then
 		_type1B = getItemType(orginalHandheldsB[1])
-		generateWeapon(unit, "Handheld B", AllowAlternativeWeaponType(_type1B), orginalHandheldsB[1].Cost)
+		generateWeapon(unit, "Handheld B", AllowAlternativeWeaponType(_type1B), orginalHandheldsB[1].Cost,
+			orginalHandheldsB[1].Condition)
 	elseif #orginalHandheldsB == 2 then
 		_type1B = getItemType(orginalHandheldsB[1])
 		_type2B = getItemType(orginalHandheldsB[2])
-		generateWeapon(unit, "Handheld B", _type1B, orginalHandheldsB[1].Cost)
-		generateWeapon(unit, "Handheld B", _type2B, orginalHandheldsB[2].Cost)
+		generateWeapon(unit, "Handheld B", _type1B, orginalHandheldsB[1].Cost, orginalHandheldsB[1].Condition)
+		generateWeapon(unit, "Handheld B", _type2B, orginalHandheldsB[2].Cost, orginalHandheldsB[2].Condition)
 	elseif LoadedModOptions.ExtraHandgun and LoadedModOptions.ExtraGrenadesCount ~= 0 and _type1A ~= 'Handgun' and _type2A ~= 'Handgun' and _type1A ~= 'Grenade' and _type2A ~= 'Grenade' then
 		generateWeapon(unit, "Handheld B", 'Handgun')
-		generateWeapon(unit, "Handheld B", 'Grenade', nil, LoadedModOptions.ExtraGrenadesCount)
+		generateWeapon(unit, "Handheld B", 'Grenade', nil, nil, LoadedModOptions.ExtraGrenadesCount)
 	elseif LoadedModOptions.ExtraHandgun and _type1A ~= 'Handgun' and _type2A ~= 'Handgun' then
 		generateWeapon(unit, "Handheld B", 'Handgun')
 	elseif LoadedModOptions.ExtraGrenadesCount ~= 0 and _type1A ~= 'Grenade' and _type2A ~= 'Grenade' then
-		generateWeapon(unit, "Handheld B", 'Grenade', nil, LoadedModOptions.ExtraGrenadesCount)
+		generateWeapon(unit, "Handheld B", 'Grenade', nil, nil, LoadedModOptions.ExtraGrenadesCount)
 	end
 end

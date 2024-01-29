@@ -146,3 +146,6 @@ AllWeapons = {
 	Torso = {},
 	Legs = {},
 }
+
+-- Build when selecting ammunition of a caliber for a first time
+AllAmmunition = {}

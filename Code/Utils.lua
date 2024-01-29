@@ -8,16 +8,6 @@ function CalculateAdjustedUnitLevel(level, affiliation)
 	return Min(20, Max(1, level + AffiliationWeight[affiliation] + LoadedModOptions.ArmamentStrengthFactor))
 end
 
-function Slice(t, from, to)
-	local sliced = {}
-
-	for i = from or 1, to or #t, 1 do
-		sliced[#sliced + 1] = t[i]
-	end
-
-	return sliced
-end
-
 function CalculateCostRange(level, minFactor, maxFactor)
 	local lowEnd = Max(0, (level - 1) * minFactor)
 	local highEnd = Min(100, level * maxFactor)
@@ -34,7 +24,7 @@ function GetCostIdx(cost, weapons)
 end
 
 function GetSuitableArnaments(level, _type, orginalCost)
-	Debug(">> getting suitable arnaments for AdjustedLvl:", level, _type, "Orginal Cost", orginalCost)
+	Debug("- getting suitable arnaments for AdjustedLvl:", level, _type, "Orginal Cost", orginalCost)
 	local normalizedOrginalCost = orginalCost or DefaultCost[_type]
 
 	local orginalCostIdx = GetCostIdx(normalizedOrginalCost, AllWeapons[_type])
@@ -43,23 +33,20 @@ function GetSuitableArnaments(level, _type, orginalCost)
 	local minIdx = Min(orginalCostIdx, Max(1, DivRound(#AllWeapons[_type] * costRangeFrom, 100)))
 	local maxIdx = Max(orginalCostIdx, Min(#AllWeapons[_type], DivRound(#AllWeapons[_type] * costRangeTo, 100)))
 
-	-- local suitableArnament = Slice(AllWeapons[_type], minIdx, maxIdx)
-
+	local minCost = AllWeapons[_type][minIdx].Cost or 0
+	local maxCost = AllWeapons[_type][maxIdx].Cost or 0
 	local suitableArnament = table.ifilter(AllWeapons[_type], function(i, a)
-		return (a.Cost or 0) >= (AllWeapons[_type][minIdx].Cost or 0) and (a.Cost or 0) <= (AllWeapons[_type][maxIdx].Cost or 0)
+		return (a.Cost or 0) >= minCost and (a.Cost or 0) <= maxCost
 	end)
 
-	Debug(">>>> from", suitableArnament[1].id, suitableArnament[1].Cost, "to", suitableArnament[#suitableArnament].id, suitableArnament[#suitableArnament].Cost)
-	-- for _, a in ipairs(suitableArnament) do
-	-- 	Debug(">>>>", a.id, a.Cost)
-	-- end
+	Debug("-> min:", suitableArnament[1].id, suitableArnament[1].Cost, "max:", suitableArnament[#suitableArnament].id, suitableArnament[#suitableArnament].Cost)
 	return suitableArnament
 end
 
 function CheckItemsForQuestItems(items)
 	for _, h in ipairs(items) do
 		if QuestItemsIcons[h.Icon] then
-			Debug(">> Found quest itme", h.Icon)
+			Debug("- Found quest item", h.Icon)
 			return true
 		end
 	end
@@ -74,7 +61,7 @@ function RemoveWeaponsAndAmmo(unit)
 			unit:RemoveItem(slot_name, item)
 			DoneObject(item)
 		elseif slot_name ~= "Inventory" then
-			Debug(">>", slot_name, item.ItemType or item.WeaponType or "", "Cost:", item.Cost)
+			Debug("-", slot_name, item.ItemType or item.WeaponType or "", "Cost:", item.Cost, "Condition:", item.Condition)
 			unit:RemoveItem(slot_name, item)
 			DoneObject(item)
 		end

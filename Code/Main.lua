@@ -81,7 +81,7 @@ function OnMsg.UnitCreated(unit)
 
 			local orginalHandheldsA, orginalHandheldsB, orginalHead, orginalTorso, orginalLegs = GetOrginalEq(unit)
 			if CheckItemsForQuestItems(orginalHandheldsA) or CheckItemsForQuestItems(orginalHandheldsB) or CheckItemsForQuestItems({ orginalHead, orginalTorso, orginalLegs }) then
-				Debug(">> C-UAE Chaning Arnament SKIP")
+				Debug("C-UAE Chaning Arnament SKIP")
 				return
 			end
 			changeArnament(unit, orginalHandheldsA, orginalHandheldsB, orginalHead, orginalTorso, orginalLegs)
