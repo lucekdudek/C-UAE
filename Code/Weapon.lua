@@ -68,7 +68,7 @@ local function generateWeapon(unit, slot, _type, orginalCost, orginalCondition, 
 		local newAmmo = PlaceInventoryItem(ammo.id)
 		newAmmo.drop_chance = newAmmo.base_drop_chance // 2
 		if IsKindOf(newAmmo, "Ordnance") then
-			newAmmo.Amount = Min(InteractionRandRange(newWeapon.MagazineSize, newWeapon.MagazineSize * 4, "LDCUAE"), newAmmo.MaxStacks)
+			newAmmo.Amount = Min(InteractionRandRange(2, 5, "LDCUAE"), newAmmo.MaxStacks)
 		else
 			newAmmo.Amount = Min(InteractionRandRange(newWeapon.MagazineSize, newWeapon.MagazineSize * 2, "LDCUAE"), newAmmo.MaxStacks)
 		end

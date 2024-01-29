@@ -8,84 +8,80 @@ local function checkForRailMount(slots)
 end
 
 local function isRailMount(scope)
-	return scope == "AWP_rail_1" or scope == "G11_Rail_1" or scope == "ToG_Rail_1" or scope == "Picatinny_Rail_1"
+	return table.find(RailMounts, scope)
 end
 
+local function handleRailMountScope(weapon, slots)
+	local availableScopes = table.find_value(slots, "SlotType", "Scope").AvailableComponents
+	if #availableScopes > 0 then
+		local randomScope = table.rand(availableScopes)
+		weapon:SetWeaponComponent("Scope", randomScope)
+		Debug("--> Added Scope", randomScope)
+	end
+
+	-- check if the added Scope is a RailMount and add a scope a top of it
+	if isRailMount(weapon.components.Scope) then
+		local availableRailScopes = table.find_value(slots, "SlotType", "Rail_Mount").AvailableComponents
+		local randomRailScope = table.rand(availableRailScopes)
+		weapon:SetWeaponComponent("Rail_Mount", randomRailScope)
+		Debug("--> Added Rail Scope", randomRailScope)
+	end
+end
+
+local function isNotBlocked(_type, components)
+	--check if slot is blocked by any curently attached comp.
+	for _, rawComponent in pairs(components) do
+		if rawComponent ~= "" then
+			local component = WeaponComponents[rawComponent]
+			if component and component.BlockSlots and next(component.BlockSlots) then
+				if table.find(component.BlockSlots, _type) then
+					Debug("-->", _type, "is blocked by", rawComponent)
+					return false
+				end
+			end
+		end
+	end
+	return true
+end
+
+local function handleSlot(slotType, weapon, slots)
+	print()
+	local availableComponents = table.find_value(slots, "SlotType", slotType).AvailableComponents
+	if availableComponents then
+		local randComponent = table.rand(availableComponents)
+		local blocksAny, _ = GetComponentBlocksAnyOfAttachedSlots(weapon, WeaponComponents[randComponent])
+		if not blocksAny then
+			weapon:SetWeaponComponent(slotType, randComponent)
+			Debug("--> Added", slotType, randComponent)
+		end
+	end
+end
 
 function AddRandomComponents(weapon, unitLevel)
 	local chance = UnitLevelToComponentChance[unitLevel]
 	Debug("-- adding components AdjustedLvl:", unitLevel, "Chance:", chance)
 
-	-- Get all available ComponentsSlot and the options
-	local availableComponentsSlot = weapon.ComponentSlots
+	-- Get all available ComponentsSlot
+	local availableComponentsSlots = weapon.ComponentSlots
+	-- Shuffle for various isNotBlocked results
+	table.shuffle(availableComponentsSlots, InteractionRand(nil, "LDCUAE"))
 
-	-- Scope before Railmount -> as Railmount are potential scopes.
-	--- Check if there's a Rail_Mount
-	local hasRailMount = checkForRailMount(availableComponentsSlot)
+	-- Scope before RailMount -> as RailMount are potential scopes.
+	local hasRailMount = checkForRailMount(availableComponentsSlots)
 	Debug("--> has Rail Mount:", hasRailMount)
 
-	--- Found Rail Mount, let's get a random component for the scope slot e.g. a Picatinny_Rail_1 and if it's a rail, also attach a scope.
-	if hasRailMount then
-		if InteractionRand(100, "LDCUAE") <= chance then
-			local availableScopes = table.find_value(availableComponentsSlot, "SlotType", "Scope").AvailableComponents
-			if #availableScopes > 0 then
-				local randomScope = table.rand(availableScopes)
-				weapon:SetWeaponComponent("Scope", randomScope)
-			end
-			local attachedScope = weapon.components.Scope
-
-			-- check if the added Scope is a RailMount and add a scope a top of it
-			if isRailMount(attachedScope) then
-				local availableRailScopes = table.find_value(availableComponentsSlot, "SlotType", "Rail_Mount")
-				.AvailableComponents
-				local randomRailScope = table.rand(availableRailScopes)
-				weapon:SetWeaponComponent("Rail_Mount", randomRailScope)
-			end
-		end
+	--- if does not have Rail Mount then we will add a scope the normal way
+	if hasRailMount and InteractionRand(100, "LDCUAE") <= chance then
+		handleRailMountScope(weapon, availableComponentsSlots)
 	end
 
-	-- now go through all slots and randomize
-	for i, slot in pairs(availableComponentsSlot) do
-		local _type = slot.SlotType -- getting the slot, as we use it over and over.
+	-- now go through all slots
+	for _, slot in pairs(availableComponentsSlots) do
+		local _type = slot.SlotType
 
-		--check if we're looking at an already handled scope/RailMount
-		if hasRailMount and (_type == "Rail_Mount" or _type == "Scope") then
-			goto continue
+		--skip Scope if it was already handled above in hasRailMount section
+		if not (hasRailMount and (_type == "Rail_Mount" or _type == "Scope")) and isNotBlocked(_type, weapon.components) and InteractionRand(100, "LDCUAE") <= chance then
+			handleSlot(_type, weapon, availableComponentsSlots)
 		end
-
-		-- Let's roll and be lucky!
-		if InteractionRand(100, "LDCUAE") <= chance then
-			--check if slot is blocked by any curently attached comp.
-			for _, attach in pairs(weapon.components) do
-				if attach ~= "" then
-					local def = WeaponComponents[attach]
-					local blocked = false
-					if def and def.BlockSlots and next(def.BlockSlots) then
-						if table.find(def.BlockSlots, _type) then
-							blocked = _type
-							break
-						end
-					end
-					if blocked then
-						goto continue
-					end
-				end
-			end
-
-			-- roll for random then check if we'd block something
-			local avComponents = table.find_value(availableComponentsSlot, "SlotType", _type).AvailableComponents
-			--if table.find_value(avComps, "SlotType", slot).AvailableComponents then
-			if avComponents then
-				--local avComponents = table.find_value(avComps, "SlotType", slot).AvailableComponents
-				local randComponent = table.rand(avComponents)
-				local randDef = WeaponComponents[randComponent]
-				local blocksAny, blockedId = GetComponentBlocksAnyOfAttachedSlots(weapon, randDef)
-				if blocksAny then
-					goto continue
-				end
-				weapon:SetWeaponComponent(_type.SlotType, randComponent)
-			end
-		end
-		::continue::
 	end
 end

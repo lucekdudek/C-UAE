@@ -1,5 +1,4 @@
--- build tables
-function OnMsg.ModsReloaded()
+function BuildWeaponTables()
 	Debug("C-UAE Building tables...")
 	for _type, _ in pairs(AllWeapons) do
 		local suitableWeapons = {}
@@ -56,14 +55,24 @@ function OnMsg.ModsReloaded()
 
 		AllWeapons[_type] = suitableWeapons
 	end
-
-	for _type, _tab in pairs(AllWeapons) do
-		Debug(_type)
-		for _, w in pairs(_tab) do
-			Debug(">>", w.id, "Cost:", w.Cost)
-		end
-	end
 	Debug("C-UAE Building tables DONE")
+end
+
+-- build tables
+function OnMsg.ModsReloaded()
+	BuildWeaponTables()
+	-- for _type, _tab in pairs(AllWeapons) do
+	-- 	Debug(_type)
+	-- 	for _, w in pairs(_tab) do
+	-- 		Debug(">>", w.id, "Cost:", w.Cost)
+	-- 		for _, slot in pairs(g_Classes[w.id].ComponentSlots) do
+	-- 			Debug(">>-", slot.SlotType)
+	-- 			for _, component in pairs(slot.AvailableComponents) do
+	-- 				Debug(">>->", component)
+	-- 			end
+	-- 		end
+	-- 	end
+	-- end
 end
 
 -- alter armament

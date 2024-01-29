@@ -36,7 +36,7 @@ DefaultCost = {
 }
 
 -- Position in table coresponds with a adjusted unit level 1...20
-UnitLevelToComponentChance = { 1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 96, 97, 98, 99, 100, 100, 100, 100, 100 }
+UnitLevelToComponentChance = { 3, 11, 19, 27, 35, 43, 51, 59, 67, 75, 80, 85, 90, 92, 94, 95, 96, 97, 98, 99 }
 
 -- Required to deduct if unit is one that should not be changed (e.g. Pierre)
 QuestItemsIcons = {
@@ -132,6 +132,17 @@ ExcludeArmors = {
 	'Infected_HardenedSkin'
 }
 ExcludeAmmos = {}
+
+RailMounts = {
+	'ToG_Rail_Block',
+	'ToG_Rail_1',
+	'AWP_rail_1',
+	'L85A1_toprail_1',
+	'FN2000_Toprail_1',
+	'hk33_top_rail_1',
+	'EM2_rail_1',
+	'G11_Rail_1',
+}
 
 -- Build on OnMsg.ModsReloaded
 AllWeapons = {

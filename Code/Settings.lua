@@ -7,5 +7,7 @@ function OnMsg.ApplyModOptions(id)
 		LoadedModOptions.AllowGlowAndFlareSticks = CurrentModOptions['AllowGlowAndFlareSticks']
 		LoadedModOptions.ArmamentStrengthFactor = tonumber(CurrentModOptions['ArmamentStrengthFactor'])
 		LoadedModOptions.Debug = CurrentModOptions['Debug']
+		Debug("C-UAE Refreshing tables on ApplyModOptions")
+		BuildWeaponTables()
 	end
 end
