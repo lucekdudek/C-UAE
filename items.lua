@@ -113,12 +113,6 @@ return {
 		'DefaultValue', true,
 	}),
 	PlaceObj('ModItemOptionToggle', {
-		'name', "AllowGlowAndFlareSticks",
-		'DisplayName', "Allow Glow And Flare Sticks",
-		'Help', "When enabled, grenades type include Glow and Flare Stricks",
-		'DefaultValue', true,
-	}),
-	PlaceObj('ModItemOptionToggle', {
 		'name', "Debug",
 		'DisplayName', "Enable debug messages",
 		'Help', "When enabled, prints debug logs in the game log file",

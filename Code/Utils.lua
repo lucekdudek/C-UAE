@@ -43,10 +43,25 @@ function GetSuitableArnaments(level, _type, orginalCost)
 	return suitableArnament
 end
 
+function GetGrenadeCurrentType()
+	if GameState.Night or GameState.Underground then
+		return "GrenadeNight"
+	else
+		return "GrenadeDay"
+	end
+end
+
 function GetWeaponType(weapon)
 	local _type = weapon.ItemType or weapon.WeaponType
-	if _type == "GrenadeGas" or _type == "GrenadeFire" or _type == "Throwables" then
-		return "Grenade"
+	if _type == "Grenade" or _type == "GrenadeGas" or _type == "GrenadeFire" or _type == "Throwables" then
+		return GetGrenadeCurrentType()
+	elseif _type == "HeavyWeapon" then
+		for heavyWeaponType, heavyWeaponCaliber in pairs(HeavyWeaponTypeToCaliber) do
+			print()
+			if weapon.Caliber == heavyWeaponCaliber then
+				return heavyWeaponType
+			end
+		end
 	else
 		return _type
 	end

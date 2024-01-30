@@ -3,7 +3,6 @@ LoadedModOptions = {
 	ExtraGrenadesCount = 2,
 	ExtraGrenadesChance = 50,
 	AllowAlternativeWeaponType = true,
-	AllowGlowAndFlareSticks = true,
 	ArmamentStrengthFactor = 0,
 	Debug = false,
 }
@@ -27,9 +26,12 @@ DefaultCost = {
 	MachineGun = 2000,
 	FlareGun = 500,
 	MeleeWeapon = 100,
-	HeavyWeapon = 1200,
+	HeavyWeapon40mmGrenade = 1,
+	HeavyWeaponWarhead = 1,
+	HeavyWeaponMortarShell = 1,
 	MissileLauncher = 1,
-	Grenade = 150,
+	GrenadeDay = 150,
+	GrenadeNight = 150,
 	Head = 0,
 	Torso = 0,
 	Legs = 0,
@@ -69,8 +71,6 @@ ExcludeWeapons = {
 	'Type56D_1',
 	'Sturmgewehr44_Special',
 	'G3A3Green_1',
-	--MeleeWeapon
-	'Katana_1',
 	--Grenade
 	'ConcussiveGrenade_Mine',
 	'ShapedCharge',
@@ -104,12 +104,21 @@ AllWeapons = {
 	MachineGun = {},
 	FlareGun = {},
 	MeleeWeapon = {},
-	-- HeavyWeapon = {}, disabled due as this category is to broad
+	HeavyWeapon40mmGrenade = {},
+	HeavyWeaponWarhead = {},
+	HeavyWeaponMortarShell = {},
 	MissileLauncher = {},
-	Grenade = {},
+	GrenadeDay = {},
+	GrenadeNight = {},
 	Head = {},
 	Torso = {},
 	Legs = {},
+}
+
+HeavyWeaponTypeToCaliber = {
+	HeavyWeapon40mmGrenade = "40mmGrenade",
+	HeavyWeaponWarhead = "Warhead",
+	HeavyWeaponMortarShell = "MortarShell",
 }
 
 -- Build when selecting ammunition of a caliber for a first time

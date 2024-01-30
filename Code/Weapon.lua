@@ -36,7 +36,7 @@ local function generateWeapon(unit, slot, _type, orginalCost, orginalCondition, 
 	local adjustedUnitLevel = CalculateAdjustedUnitLevel(unitLevel, unit.Affiliation)
 
 	-- extraGrenadeQuantity(Options.ExtraGrenadesCount) is affected by Options.ExtraGrenadesChance
-	if _type == "Grenade" and extraGrenadeQuantity ~= nil and InteractionRand(100, "LDCUAE") > LoadedModOptions.ExtraGrenadesChance then
+	if extraGrenadeQuantity ~= nil and InteractionRand(100, "LDCUAE") > LoadedModOptions.ExtraGrenadesChance then
 		return
 	end
 
@@ -94,7 +94,8 @@ end
 
 function GenerateNewWeapons(unit, orginalHandheldsA, orginalHandheldsB)
 	Debug("C-UAE Adding new weapons", unit.Affiliation)
-
+	-- Night/Day cycle affects grenades
+	local currentGrenadeType = GetGrenadeCurrentType()
 	local _type1A, _type2A, _type1B, _type2B = nil, nil, nil, nil
 	-- Handheld A
 	if #orginalHandheldsA == 1 then
@@ -117,12 +118,12 @@ function GenerateNewWeapons(unit, orginalHandheldsA, orginalHandheldsB)
 		_type2B = GetWeaponType(orginalHandheldsB[2])
 		generateWeapon(unit, "Handheld B", _type1B, orginalHandheldsB[1].Cost, orginalHandheldsB[1].Condition)
 		generateWeapon(unit, "Handheld B", _type2B, orginalHandheldsB[2].Cost, orginalHandheldsB[2].Condition)
-	elseif LoadedModOptions.ExtraHandgun and LoadedModOptions.ExtraGrenadesCount ~= 0 and _type1A ~= 'Handgun' and _type2A ~= 'Handgun' and _type1A ~= 'Grenade' and _type2A ~= 'Grenade' then
+	elseif LoadedModOptions.ExtraHandgun and LoadedModOptions.ExtraGrenadesCount ~= 0 and _type1A ~= 'Handgun' and _type2A ~= 'Handgun' and _type1A ~= currentGrenadeType and _type2A ~= currentGrenadeType then
 		generateWeapon(unit, "Handheld B", 'Handgun')
-		generateWeapon(unit, "Handheld B", 'Grenade', nil, nil, LoadedModOptions.ExtraGrenadesCount)
+		generateWeapon(unit, "Handheld B", currentGrenadeType, nil, nil, LoadedModOptions.ExtraGrenadesCount)
 	elseif LoadedModOptions.ExtraHandgun and _type1A ~= 'Handgun' and _type2A ~= 'Handgun' then
 		generateWeapon(unit, "Handheld B", 'Handgun')
-	elseif LoadedModOptions.ExtraGrenadesCount ~= 0 and _type1A ~= 'Grenade' and _type2A ~= 'Grenade' then
-		generateWeapon(unit, "Handheld B", 'Grenade', nil, nil, LoadedModOptions.ExtraGrenadesCount)
+	elseif LoadedModOptions.ExtraGrenadesCount ~= 0 and _type1A ~= currentGrenadeType and _type2A ~= currentGrenadeType then
+		generateWeapon(unit, "Handheld B", currentGrenadeType, nil, nil, LoadedModOptions.ExtraGrenadesCount)
 	end
 end

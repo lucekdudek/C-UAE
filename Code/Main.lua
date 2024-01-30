@@ -2,21 +2,16 @@ function BuildWeaponTables()
 	Debug("C-UAE Building tables...")
 	for _type, _ in pairs(AllWeapons) do
 		local suitableWeapons = {}
-		if _type == "Grenade" then
-			local allGrenades = table.ifilter(GetWeaponsByType(_type), function(i, g)
-				--Filter out cars, flares, gas tanks and other trash
-				return (g.ItemType == 'Grenade' or g.ItemType == "Throwables" or g.ItemType == "GrenadeGas" or g.ItemType == "GrenadeFire") and
+		if _type == "GrenadeDay" or _type == "GrenadeNight" then
+			local allGrenades = table.ifilter(GetWeaponsByType("Grenade"), function(i, g)
+				return (g.ItemType == 'Grenade' or (_type == "GrenadeNight" and g.ItemType == "Throwables") or g.ItemType == "GrenadeGas" or g.ItemType == "GrenadeFire") and
 					not table.find(ExcludeWeapons, g.id)
 			end)
 			for _, w in pairs(allGrenades) do
 				if w.id == "ToxicGasGrenade" then
 					w.Cost = 800
-				elseif not LoadedModOptions.AllowGlowAndFlareSticks and (w.id == "GlowStick" or w.id == "FlareStick") then
-					-- TODO if GameState.Night or GameState.Underground then
-					goto continue
 				end
 				table.insert(suitableWeapons, w)
-				::continue::
 			end
 		elseif _type == "MeleeWeapon" then
 			local allMelee = table.ifilter(GetWeaponsByType(_type), function(i, w)
@@ -26,6 +21,14 @@ function BuildWeaponTables()
 				if w.id == "Tomahawk_1" then
 					w.Cost = 150
 				end
+				table.insert(suitableWeapons, w)
+			end
+		elseif _type == "HeavyWeapon40mmGrenade" or _type == "HeavyWeaponWarhead" or _type == "HeavyWeaponMortarShell" then
+			local allWeapons = table.ifilter(GetWeaponsByType("HeavyWeapon"), function(i, w)
+				return (HeavyWeaponTypeToCaliber[_type] or "Unsuppoerted") == g_Classes[w.id].Caliber and
+					not table.find(ExcludeWeapons, w.id) and g_Classes[w.id].CanAppearInShop
+			end)
+			for _, w in pairs(allWeapons) do
 				table.insert(suitableWeapons, w)
 			end
 		elseif _type == "Head" or _type == "Torso" or _type == "Legs" then
@@ -39,7 +42,7 @@ function BuildWeaponTables()
 				elseif w.id == "PostApoHelmet" then
 					w.Cost = 5000
 				elseif w.id == "Gasmaskenhelm" then
-					w.Cost = 10000
+					w.Cost = 12000
 				end
 				table.insert(suitableWeapons, w)
 			end
@@ -66,13 +69,14 @@ function OnMsg.ModsReloaded()
 	-- 	Debug(_type)
 	-- 	for _, w in pairs(_tab) do
 	-- 		-- Debug(w.id)
-	-- 		Debug(">>", w.id, "Cost:", w.Cost, "/", g_Classes[w.id].Cost, "CanAppearInShop:", g_Classes[w.id].CanAppearInShop)
-	-- 		for _, slot in pairs(g_Classes[w.id].ComponentSlots) do
-	-- 			Debug(">>-", slot.SlotType)
-	-- 			for _, component in pairs(slot.AvailableComponents) do
-	-- 				Debug(">>->", component)
-	-- 			end
-	-- 		end
+	-- 		Debug(">>", w.id, "Cost:", w.Cost, "/", g_Classes[w.id].Cost, "CanAppearInShop:",
+	-- 			g_Classes[w.id].CanAppearInShop, "Caliber:", g_Classes[w.id].Caliber)
+	-- 		-- for _, slot in pairs(g_Classes[w.id].ComponentSlots) do
+	-- 		-- 	Debug(">>-", slot.SlotType)
+	-- 		-- 	for _, component in pairs(slot.AvailableComponents) do
+	-- 		-- 		Debug(">>->", component)
+	-- 		-- 	end
+	-- 		-- end
 	-- 	end
 	-- end
 end
