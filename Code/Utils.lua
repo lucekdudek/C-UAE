@@ -28,7 +28,7 @@ function GetSuitableArnaments(level, _type, orginalCost)
 	local normalizedOrginalCost = orginalCost or DefaultCost[_type]
 
 	local orginalCostIdx = GetCostIdx(normalizedOrginalCost, AllWeapons[_type])
-	local costRangeFrom, costRangeTo = CalculateCostRange(level, 5, 15)
+	local costRangeFrom, costRangeTo = CalculateCostRange(level, 5, 11)
 
 	local minIdx = Min(orginalCostIdx, Max(1, DivRound(#AllWeapons[_type] * costRangeFrom, 100)))
 	local maxIdx = Max(orginalCostIdx, Min(#AllWeapons[_type], DivRound(#AllWeapons[_type] * costRangeTo, 100)))

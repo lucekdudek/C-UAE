@@ -14,6 +14,7 @@ function BuildWeaponTables()
 				table.insert(suitableWeapons, w)
 			end
 		elseif _type == "MeleeWeapon" then
+			-- TODO handle item.CanThrow
 			local allMelee = table.ifilter(GetWeaponsByType(_type), function(i, w)
 				return not table.find(ExcludeWeapons, w.id) and g_Classes[w.id].CanAppearInShop
 			end)
@@ -69,8 +70,7 @@ function OnMsg.ModsReloaded()
 	-- 	Debug(_type)
 	-- 	for _, w in pairs(_tab) do
 	-- 		-- Debug(w.id)
-	-- 		Debug(">>", w.id, "Cost:", w.Cost, "/", g_Classes[w.id].Cost, "CanAppearInShop:",
-	-- 			g_Classes[w.id].CanAppearInShop, "Caliber:", g_Classes[w.id].Caliber)
+	-- 		Debug(">>", w.id, "Cost:", w.Cost, "/", g_Classes[w.id].Cost, "CanAppearInShop:", g_Classes[w.id].CanAppearInShop)
 	-- 		-- for _, slot in pairs(g_Classes[w.id].ComponentSlots) do
 	-- 		-- 	Debug(">>-", slot.SlotType)
 	-- 		-- 	for _, component in pairs(slot.AvailableComponents) do
@@ -91,8 +91,11 @@ end
 
 -- main entrypoint
 function OnMsg.UnitCreated(unit)
-	-- if unit.Affiliation == "AIM" then
 	if unit.species == "Human" and (AffiliationWeight[unit.Affiliation]) and not (unit.militia or unit:IsCivilian()) and unit:GetActiveWeapons() and not unit:IsDead() then
+		if GetMapName() == "I-1 - Flag Hill" and GameState.ConflictScripted then
+			Debug("C-UAE Chaning Arnament SKIP du to I-1 - Flag Hill double map loading issue")
+			return
+		end
 		Debug("C-UAE Chaning Arnament...")
 		if not unit:HasStatusEffect("CUAE") then
 			unit:AddStatusEffect("CUAE")

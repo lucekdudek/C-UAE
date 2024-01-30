@@ -12,10 +12,12 @@ The goal of this modification is to be [b]compatible[/b] with other modification
 [h2]Featuers:[/h2]
 [list]
     [*][b]Enemies get new weapon and armor of similar strength[/b]
-    [*][b]Weapons and Armor from other modifications are automatically added to poll of avaiable wepons[/b](e.g. Tons of Guns or Masters of War)
+    [*][b]Weapons and Armor from other modifications are automatically added to pool of avaiable wepons[/b](e.g. Tons of Guns or Masters of War)
     [*][b]Works with old saves, can be disabled at anypoint[/b]
     [*][b][Configuration option] Strength of new armaments can be adjusted[/b]
     [*][b]Weapons are granted attachements matching adjusted streangth[/b]
+    [*][b]Armaments condition (how much they are damaged) matches the condition of orginal loadout[/b]
+    [*][b]Mod uses drop chnace logic from base game[/b](Most mods that modife drop chnace are compatible)
     [*][b][Configuration option] Enemies get extra Handgun[/b](Usefull for integration with mods that change Handgun logic e.g. Rato's Overhaul)
     [*][b][Configuration option] Enemies get extra Grenades[/b]
     [*][b]Night granades(flares etc) are only distributed during a night and in underground sectors[/b]
@@ -69,7 +71,7 @@ Note: Enemies can't get unique weapons like Golden Gun.
     [*]Can be enabled and disabled at any point
     [*]Works with all saves. Will not change enemies in the middle of a fight.
     [*]No compatible with Random Enemy Weapons as it duplicates its features
-    [*]Sourc code will be available here https://github.com/lucekdudek/C-UAE
+    [*]Source code is available at [url=https://github.com/lucekdudek/C-UAE]GitHub[/url]
 [/list]
 
 ---------------
@@ -77,6 +79,6 @@ Note: Enemies can't get unique weapons like Golden Gun.
 [h2]Bugs and limitations[/h2]
 [list]
     [*]Due to a lack of a better solution, Unique weapons are recognized by their UI image path so mods that reuse those can prevent this mod from buffin an enemy holding that weapon
-    [*] The drop chance of grenades is hardcoded to match the original drop chance of 5% therefore drop chance mods won't affect how often grenades are being dropped
-    [*]Enemies in the first sector of the game are being loaded twice causing the mod to roll for new loadout them twice. I am looking for a solution as a flag that is saved on units does not persist in this edge case
+    [*]The drop chance of grenades is hardcoded to match the original drop chance of 5% therefore drop chance mods won't affect how often grenades are being dropped
+    [*]Dose not work with [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3027443738]New weapons of combinations of the original model[/url] as it was not updated to work with Bobby Ray's update
 [/list]
