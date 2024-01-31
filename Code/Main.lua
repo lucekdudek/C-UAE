@@ -111,7 +111,7 @@ function OnMsg.UnitCreated(unit)
 			Cuae_Debug("C-UAE Chaning Arnament SKIP du to I-1 - Flag Hill double map loading issue")
 			return
 		end
-		Cuae_Debug("C-UAE Chaning Arnament... unit.CUAE", unit.CUAE)
+		Cuae_Debug("C-UAE Chaning Arnament... unit.CUAE", unit.CUAE, unit.session_id)
 		if not unit.CUAE then
 			unit.CUAE = true
 			changeArnament(unit)
