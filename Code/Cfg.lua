@@ -1,4 +1,4 @@
-LoadedModOptions = {
+Cuae_LoadedModOptions = {
 	ExtraHandgun = true,
 	ExtraGrenadesCount = 2,
 	ExtraGrenadesChance = 50,
@@ -7,9 +7,9 @@ LoadedModOptions = {
 	Debug = false,
 }
 
-AffiliationExclusionTable = {}
+Cuae_AffiliationExclusionTable = {}
 
-ImmunityTable = {
+Cuae_ImmunityTable = {
 	--Quest and personal
 	TheThing = true,
 	PierreMachete = true,
@@ -34,7 +34,7 @@ ImmunityTable = {
 	Gasmaskenhelm = true,
 }
 
-AffiliationWeight = {
+Cuae_AffiliationWeight = {
 	Rebel = -1,
 	Legion = -1,
 	Thugs = -1,
@@ -44,7 +44,7 @@ AffiliationWeight = {
 	SiegfriedSuperSoldiers = 3,
 }
 
-DefaultCost = {
+Cuae_DefaultCost = {
 	Handgun = 500,
 	SMG = 900,
 	AssaultRifle = 1500,
@@ -65,9 +65,9 @@ DefaultCost = {
 }
 
 -- Position in table coresponds with a adjusted unit level 1...20
-UnitLevelToComponentChance = { 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 92, 94, 95, 96, 97, 98, 99 }
+Cuae_UnitLevelToComponentChance = { 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 92, 94, 95, 96, 97, 98, 99 }
 
-ExcludeWeapons = {
+Cuae_ExcludeWeapons = {
 	--ToG duplicates and broken
 	'Condor_1',
 	'M1Garand_2',
@@ -92,7 +92,7 @@ ExcludeWeapons = {
 	'ProximityTNT',
 }
 
-RailMounts = {
+Cuae_RailMounts = {
 	'ToG_Rail_Block',
 	'ToG_Rail_1',
 	'AWP_rail_1',
@@ -104,7 +104,7 @@ RailMounts = {
 }
 
 -- Build on OnMsg.ModsReloaded
-AllWeapons = {
+Cuae_AllWeapons = {
 	Handgun = {},
 	SMG = {},
 	AssaultRifle = {},
@@ -124,11 +124,11 @@ AllWeapons = {
 	Legs = {},
 }
 
-HeavyWeaponTypeToCaliber = {
+Cuae_HeavyWeaponTypeToCaliber = {
 	HeavyWeapon40mmGrenade = "40mmGrenade",
 	HeavyWeaponWarhead = "Warhead",
 	HeavyWeaponMortarShell = "MortarShell",
 }
 
 -- Build when selecting ammunition of a caliber for a first time
-AllAmmunition = {}
+Cuae_AllAmmunition = {}

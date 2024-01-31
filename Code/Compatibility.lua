@@ -6,8 +6,8 @@
 function CUAEAddExclusionTable(exclusionTable)
 	for affiliation, armamentIds in pairs(exclusionTable) do
 		for _, armamentId in ipairs(armamentIds) do
-			AffiliationExclusionTable[affiliation] = AffiliationExclusionTable[affiliation] or {}
-			AffiliationExclusionTable[affiliation][armamentId] = true
+			Cuae_AffiliationExclusionTable[affiliation] = Cuae_AffiliationExclusionTable[affiliation] or {}
+			Cuae_AffiliationExclusionTable[affiliation][armamentId] = true
 		end
 	end
 end
@@ -16,6 +16,6 @@ end
 -- CUAEAddImmunityTable(immunityTable)
 function CUAEAddImmunityTable(immunityTable)
 	for _, armamentId in ipairs(immunityTable) do
-		ImmunityTable[armamentId] = true
+		Cuae_ImmunityTable[armamentId] = true
 	end
 end

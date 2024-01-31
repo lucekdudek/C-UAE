@@ -1,25 +1,25 @@
 local function keepOrginalArmor(orginalArmor, slot)
-	Debug("- keeping(immunity):", slot, orginalArmor.class, orginalArmor.Cost, "Condition:", orginalArmor.Condition)
+	Cuae_Debug("- keeping(immunity):", slot, orginalArmor.class, orginalArmor.Cost, "Condition:", orginalArmor.Condition)
 end
 
 local function replaceArmorPiece(unit, orginalArmor, slot)
-	if orginalArmor and ImmunityTable[orginalArmor.class] then
+	if orginalArmor and Cuae_ImmunityTable[orginalArmor.class] then
 		keepOrginalArmor(orginalArmor, slot)
 		return
 	end
 
 	local unitLevel = Min(10, unit:GetLevel())
-	local adjustedUnitLevel = CalculateAdjustedUnitLevel(unitLevel, unit.Affiliation)
+	local adjustedUnitLevel = Cuae_CalculateAdjustedUnitLevel(unitLevel, unit.Affiliation)
 	local orginalCost = orginalArmor and orginalArmor.Cost or 0
 
-	if orginalCost == 0 and InteractionRand(100, "LDCUAE") >= UnitLevelToComponentChance[adjustedUnitLevel] then
+	if orginalCost == 0 and InteractionRand(100, "LDCUAE") >= Cuae_UnitLevelToComponentChance[adjustedUnitLevel] then
 		return
 	end
 
-	local suitableArmors = GetSuitableArnaments(unit.Affiliation, adjustedUnitLevel, slot, orginalCost)
+	local suitableArmors = Cuae_GetSuitableArnaments(unit.Affiliation, adjustedUnitLevel, slot, orginalCost)
 
 	if #suitableArmors == 0 then
-		Debug("- skipping as no siutable armors were found", slot, "for", unit.Affiliation)
+		Cuae_Debug("- skipping as no siutable armors were found", slot, "for", unit.Affiliation)
 		if orginalArmor then
 			keepOrginalArmor(orginalArmor, slot)
 		end
@@ -28,7 +28,7 @@ local function replaceArmorPiece(unit, orginalArmor, slot)
 
 	-- remove orginal armor
 	if orginalArmor then
-		Removeitem(unit, slot, orginalArmor)
+		Cuae_Removeitem(unit, slot, orginalArmor)
 	end
 
 	local newCondition = orginalArmor and orginalArmor.Condition or InteractionRandRange(45, 95, "LDCUAE")
@@ -41,11 +41,11 @@ local function replaceArmorPiece(unit, orginalArmor, slot)
 	newArmor.Condition = newCondition
 
 	unit:AddItem(slot, newArmor)
-	Debug("- picked:", slot, armorPreset.id, armorPreset.Cost, "Condition:", newArmor.Condition)
+	Cuae_Debug("- picked:", slot, armorPreset.id, armorPreset.Cost, "Condition:", newArmor.Condition)
 end
 
-function GeneratNewArmor(unit, orginalHead, orginalTorso, orginalLegs)
-	Debug("C-UAE Adding new armor items", unit.Affiliation)
+function Cuae_GeneratNewArmor(unit, orginalHead, orginalTorso, orginalLegs)
+	Cuae_Debug("C-UAE Adding new armor items", unit.Affiliation)
 	replaceArmorPiece(unit, orginalHead, "Head")
 	replaceArmorPiece(unit, orginalTorso, "Torso")
 	replaceArmorPiece(unit, orginalLegs, "Legs")

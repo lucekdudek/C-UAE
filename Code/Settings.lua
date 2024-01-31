@@ -1,10 +1,10 @@
 function OnMsg.ApplyModOptions(id)
 	if id == "LDCUAE" then
-		LoadedModOptions.ExtraHandgun = CurrentModOptions['ExtraHandgun']
-		LoadedModOptions.ExtraGrenadesCount = tonumber(CurrentModOptions['ExtraGrenadesCount'])
-		LoadedModOptions.ExtraGrenadesChance = tonumber(CurrentModOptions['ExtraGrenadesChance'])
-		LoadedModOptions.AllowAlternativeWeaponType = CurrentModOptions['AllowAlternativeWeaponType']
-		LoadedModOptions.ArmamentStrengthFactor = tonumber(CurrentModOptions['ArmamentStrengthFactor'])
-		LoadedModOptions.Debug = CurrentModOptions['Debug']
+		Cuae_LoadedModOptions.ExtraHandgun = CurrentModOptions.ExtraHandgun
+		Cuae_LoadedModOptions.ExtraGrenadesCount = tonumber(CurrentModOptions.ExtraGrenadesCount)
+		Cuae_LoadedModOptions.ExtraGrenadesChance = tonumber(CurrentModOptions.ExtraGrenadesChance)
+		Cuae_LoadedModOptions.AllowAlternativeWeaponType = CurrentModOptions.AllowAlternativeWeaponType
+		Cuae_LoadedModOptions.ArmamentStrengthFactor = tonumber(CurrentModOptions.ArmamentStrengthFactor)
+		Cuae_LoadedModOptions.Debug = CurrentModOptions.Debug
 	end
 end

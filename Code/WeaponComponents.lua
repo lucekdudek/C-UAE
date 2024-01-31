@@ -8,7 +8,7 @@ local function checkForSlotType(slots, _type)
 end
 
 local function isRailMount(scope)
-	return table.find(RailMounts, scope)
+	return table.find(Cuae_RailMounts, scope)
 end
 
 local function handleRailMountScope(weapon, slots)
@@ -16,7 +16,7 @@ local function handleRailMountScope(weapon, slots)
 	if #availableScopes > 0 then
 		local randomScope = table.rand(availableScopes)
 		weapon:SetWeaponComponent("Scope", randomScope)
-		Debug("--> Added Scope", randomScope)
+		Cuae_Debug("--> Added Scope", randomScope)
 	end
 
 	-- check if the added Scope is a RailMount and add a scope a top of it
@@ -24,7 +24,7 @@ local function handleRailMountScope(weapon, slots)
 		local availableRailScopes = table.find_value(slots, "SlotType", "Rail_Mount").AvailableComponents
 		local randomRailScope = table.rand(availableRailScopes)
 		weapon:SetWeaponComponent("Rail_Mount", randomRailScope)
-		Debug("--> Added Rail Scope", randomRailScope)
+		Cuae_Debug("--> Added Rail Scope", randomRailScope)
 	end
 end
 
@@ -35,7 +35,7 @@ local function isNotBlocked(_type, components)
 			local component = WeaponComponents[rawComponent]
 			if component and component.BlockSlots and next(component.BlockSlots) then
 				if table.find(component.BlockSlots, _type) then
-					Debug("-->", _type, "is blocked by", rawComponent)
+					Cuae_Debug("-->", _type, "is blocked by", rawComponent)
 					return false
 				end
 			end
@@ -52,15 +52,15 @@ local function handleSlot(chance, slotType, weapon, slots)
 			local blocksAny, _ = GetComponentBlocksAnyOfAttachedSlots(weapon, WeaponComponents[randComponent])
 			if not blocksAny then
 				weapon:SetWeaponComponent(slotType, randComponent)
-				Debug("--> Added", slotType, randComponent)
+				Cuae_Debug("--> Added", slotType, randComponent)
 			end
 		end
 	end
 end
 
-function AddRandomComponents(weapon, unitLevel)
-	local chance = UnitLevelToComponentChance[unitLevel]
-	Debug("-- adding components AdjustedLvl:", unitLevel, "Chance:", chance, "%")
+function Cuae_AddRandomComponents(weapon, unitLevel)
+	local chance = Cuae_UnitLevelToComponentChance[unitLevel]
+	Cuae_Debug("-- adding components AdjustedLvl:", unitLevel, "Chance:", chance, "%")
 
 	-- Get all available ComponentsSlot
 	local availableComponentsSlots = weapon.ComponentSlots
