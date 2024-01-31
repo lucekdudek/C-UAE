@@ -11,27 +11,27 @@ AffiliationExclusionTable = {}
 
 ImmunityTable = {
 	--Quest and personal
-	'TheThing',
-	'PierreMachete',
-	'EndlessKnives',
-	'GutHookKnife',
-	'Galil_FlagHill',
-	'LionRoar',
-	'Auto5_quest',
-	'TexRevolver',
-	'GoldenGun',
-	'Winchester_Quest',
-	'ShamanLeggings',
-	'ShamanHelmet',
-	'ShamanTorso',
-	'NailsLeatherVest',
-	'IvanUshanka',
-	'Machete_Crafted',
-	'ShapedCharge',
+	TheThing = true,
+	PierreMachete = true,
+	EndlessKnives = true,
+	GutHookKnife = true,
+	Galil_FlagHill = true,
+	LionRoar = true,
+	Auto5_quest = true,
+	TexRevolver = true,
+	GoldenGun = true,
+	Winchester_Quest = true,
+	ShamanLeggings = true,
+	ShamanHelmet = true,
+	ShamanTorso = true,
+	NailsLeatherVest = true,
+	IvanUshanka = true,
+	Machete_Crafted = true,
+	ShapedCharge = true,
 	-- Specific vanilla helmet
-	'PostApoHelmet',
+	PostApoHelmet = true,
 	-- U-Bahn DLC
-	'Gasmaskenhelm',
+	Gasmaskenhelm = true,
 }
 
 AffiliationWeight = {
