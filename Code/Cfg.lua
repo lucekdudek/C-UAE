@@ -7,6 +7,33 @@ LoadedModOptions = {
 	Debug = false,
 }
 
+AffiliationExclusionTable = {}
+
+ImmunityTable = {
+	--Quest and personal
+	'TheThing',
+	'PierreMachete',
+	'EndlessKnives',
+	'GutHookKnife',
+	'Galil_FlagHill',
+	'LionRoar',
+	'Auto5_quest',
+	'TexRevolver',
+	'GoldenGun',
+	'Winchester_Quest',
+	'ShamanLeggings',
+	'ShamanHelmet',
+	'ShamanTorso',
+	'NailsLeatherVest',
+	'IvanUshanka',
+	'Machete_Crafted',
+	'ShapedCharge',
+	-- Specific vanilla helmet
+	'PostApoHelmet',
+	-- U-Bahn DLC
+	'Gasmaskenhelm',
+}
+
 AffiliationWeight = {
 	Rebel = -1,
 	Legion = -1,
@@ -39,24 +66,6 @@ DefaultCost = {
 
 -- Position in table coresponds with a adjusted unit level 1...20
 UnitLevelToComponentChance = { 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 92, 94, 95, 96, 97, 98, 99 }
-
--- Required to deduct if unit is one that should not be changed (e.g. Pierre)
-QuestItemsIcons = {
-	["UI/Icons/Weapons/Auto5Quest"] = true,
-	["UI/Icons/Weapons/Galil_Flaghill"] = true,
-	["UI/Icons/Weapons/GoldenGun"] = true,
-	["UI/Icons/Weapons/LionRoar"] = true,
-	["UI/Icons/Weapons/MacheteChainsword"] = true,
-	["UI/Icons/Weapons/TheThing"] = true,
-	-- ["UI/Icons/Weapons/Winchester"] = true, Confidante(Winchester_Quest) icon
-	["UI/Icons/Weapons/TexRevolver"] = true,
-	["UI/Icons/Weapons/pierre_machete"] = true,
-	["UI/Icons/Weapons/EndlessKnives"] = true,
-	["UI/Icons/Weapons/GutHookKnife"] = true,
-	["UI/Icons/Items/ivan_ushanka"] = true,
-	["UI/Icons/Items/leather_jacket"] = true,
-	["UI/Icons/Weapons/ShapedCharge"] = true,
-}
 
 ExcludeWeapons = {
 	--ToG duplicates and broken

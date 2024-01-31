@@ -38,6 +38,11 @@ The goal of this modification is to be [b]compatible[/b] with other modification
 [h2]How does it do[/h2]
 Whenever players enter a sector all enemies are scanned and a profile of their [b]level[/b], [b]affiliation[/b], and [b]loadout[/b] is created. This profile then is used to generate new weapons and armor. Mod uses [b]Cost[/b] property of items to access the items of similar strength.
 
+[h3]Avaiable Armaments Logic[/h3]
+C-UAE is build based on in game system of Cost and Bobby Ray's CanAppearInShop property. So only armaments that can appear in the shop are distributed to enemies.
+
+This way mod automatically filters out all left over, unfinised or quest items. Unfinised and test items can be found in both the Vanilla game as well as in some popular weapon mods.
+
 [h3]Weapons[/h3]
 New weapons are generated of the same type. Based on the enemy level, affiliation, and the cost of the original weapon, the mod finds the proper weapon cost range and gives a random weapon from that range.
 
@@ -48,7 +53,8 @@ Additionally, if the original loadout has free spots left and there was no Handg
 [h3]Armor[/h3]
 Armor follows a similar logic to weapons. Based on the enemy level, affiliation, and original armor new armor is spawned.
 
-Note: Enemies can't get unique weapons like Golden Gun.
+[h3]Uniques[/h3]
+Enemies can't get unique weapons like Golden Gun. But also enemies who wield unique weapons or armor will keep them. For exmaple enemeis with "Shiny and Chrome Helmet" will keep it but thier weapon and other armor pieces will get replace acording to the mod logic.
 
 ---------------
 
@@ -63,11 +69,16 @@ Note: Enemies can't get unique weapons like Golden Gun.
 
 ---------------
 
+[h2]Special compatibility options for modders[/h2]
+
+After discussing with fellow modders I decied to add to C-UAE two entrypoints desingned to support special compatibility cases. Read more in the [b]Discussions[/b] section.
+
+---------------
+
 [h2]Notes[/h2]
 [list]
-    [*][b]Compatible[/b] with all weapon mods and new enemies mods(as long as they have one of the enemy Affiliation)
+    [*][b]Compatible[/b] with all weapon mods and new enemies mods as loong as they support Bobby Ray's
     [*]Mod uses enemy level as a base therefore it is affected by difficulty and can be more adjusted by using my other mod [b]Adjust Difficulty Settings[/b]
-    [*]Does not change enemies with Unique weapons like Pierre
     [*]Can be enabled and disabled at any point
     [*]Works with all saves. Will not change enemies in the middle of a fight.
     [*]No compatible with Random Enemy Weapons as it duplicates its features
@@ -78,7 +89,6 @@ Note: Enemies can't get unique weapons like Golden Gun.
 
 [h2]Bugs and limitations[/h2]
 [list]
-    [*]Due to a lack of a better solution, Unique weapons are recognized by their UI image path so mods that reuse those can prevent this mod from buffin an enemy holding that weapon
     [*]The drop chance of grenades is hardcoded to match the original drop chance of 5% therefore drop chance mods won't affect how often grenades are being dropped
     [*]Dose not work with [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3027443738]New weapons of combinations of the original model[/url] as it was not updated to work with Bobby Ray's update
 [/list]

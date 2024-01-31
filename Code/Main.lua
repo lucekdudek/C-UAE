@@ -1,3 +1,15 @@
+local function addCuaePorperty()
+	UnitProperties.properties[#UnitProperties.properties + 1] = {
+		id = "CUAE",
+		editor = "bool",
+		default = false,
+		no_edit = true,
+	}
+end
+
+-- register property when loading mod
+addCuaePorperty()
+
 function BuildWeaponTables()
 	Debug("C-UAE Building tables...")
 	for _type, _ in pairs(AllWeapons) do
@@ -34,16 +46,11 @@ function BuildWeaponTables()
 			end
 		elseif _type == "Head" or _type == "Torso" or _type == "Legs" then
 			local allArmors = table.ifilter(GetWeaponsByType("Armor"), function(i, a)
-				return _type == (a.Slot or 'Torso') and
-					(a.id == "PostApoHelmet" or a.id == "Gasmaskenhelm" or g_Classes[a.id].CanAppearInShop)
+				return _type == (a.Slot or 'Torso') and g_Classes[a.id].CanAppearInShop
 			end)
 			for _, w in pairs(allArmors) do
 				if w.id == "LightHelmet" then
 					w.Cost = 1000
-				elseif w.id == "PostApoHelmet" then
-					w.Cost = 5000
-				elseif w.id == "Gasmaskenhelm" then
-					w.Cost = 12000
 				end
 				table.insert(suitableWeapons, w)
 			end
@@ -66,6 +73,13 @@ end
 -- build tables
 function OnMsg.ModsReloaded()
 	BuildWeaponTables()
+
+	-- CUAEAddImmunityTable({
+	-- 	'FlakLeggings',
+	-- 	'AK47',
+	-- })
+	-- CUAEAddExclusionTable({ Legion = { 'AK47' } })
+
 	-- for _type, _tab in pairs(AllWeapons) do
 	-- 	Debug(_type)
 	-- 	for _, w in pairs(_tab) do
@@ -82,8 +96,9 @@ function OnMsg.ModsReloaded()
 end
 
 -- alter armament
-local function changeArnament(unit, orginalHandheldsA, orginalHandheldsB, orginalHead, orginalTorso, orginalLegs)
-	RemoveWeaponsAndAmmo(unit)
+local function changeArnament(unit)
+	local orginalHandheldsA, orginalHandheldsB, orginalHead, orginalTorso, orginalLegs = GetOrginalEq(unit)
+	RemoveAmmo(unit)
 	GenerateNewWeapons(unit, orginalHandheldsA, orginalHandheldsB)
 	GeneratNewArmor(unit, orginalHead, orginalTorso, orginalLegs)
 	unit:UpdateOutfit()
@@ -96,16 +111,10 @@ function OnMsg.UnitCreated(unit)
 			Debug("C-UAE Chaning Arnament SKIP du to I-1 - Flag Hill double map loading issue")
 			return
 		end
-		Debug("C-UAE Chaning Arnament...")
-		if not unit:HasStatusEffect("CUAE") then
-			unit:AddStatusEffect("CUAE")
-
-			local orginalHandheldsA, orginalHandheldsB, orginalHead, orginalTorso, orginalLegs = GetOrginalEq(unit)
-			if CheckItemsForQuestItems(orginalHandheldsA) or CheckItemsForQuestItems(orginalHandheldsB) or CheckItemsForQuestItems({ orginalHead, orginalTorso, orginalLegs }) or CheckForUnsupportedTypes(orginalHandheldsA) or CheckForUnsupportedTypes(orginalHandheldsB) then
-				Debug("C-UAE Chaning Arnament SKIP")
-				return
-			end
-			changeArnament(unit, orginalHandheldsA, orginalHandheldsB, orginalHead, orginalTorso, orginalLegs)
+		Debug("C-UAE Chaning Arnament... unit.CUAE", unit.CUAE)
+		if not unit.CUAE then
+			unit.CUAE = true
+			changeArnament(unit)
 		end
 		Debug("C-UAE Chaning Arnament DONE")
 	end

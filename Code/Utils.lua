@@ -1,3 +1,12 @@
+function GetAllWeaponsOfType(_type, affiliation)
+	local allWeapons = AllWeapons[_type] or {}
+	local exclusionTable = AffiliationExclusionTable[affiliation]
+	local weapons = exclusionTable and
+		table.ifilter(allWeapons, function(_, w) return not exclusionTable[w.id] end) or
+		allWeapons
+	return weapons
+end
+
 function Debug(...)
 	if LoadedModOptions.Debug then
 		print(...)
@@ -23,23 +32,27 @@ function GetCostIdx(cost, weapons)
 	return #weapons
 end
 
-function GetSuitableArnaments(level, _type, orginalCost)
+function GetSuitableArnaments(affiliation, level, _type, orginalCost)
 	Debug("- getting suitable arnaments for AdjustedLvl:", level, _type, "Orginal Cost", orginalCost)
-	local normalizedOrginalCost = orginalCost or DefaultCost[_type]
+	local allWeaponsOfTyp = GetAllWeaponsOfType(_type, affiliation)
+	if #allWeaponsOfTyp <= 1 then
+		return allWeaponsOfTyp
+	end
 
-	local orginalCostIdx = GetCostIdx(normalizedOrginalCost, AllWeapons[_type])
+	local orginalCostIdx = GetCostIdx(orginalCost, allWeaponsOfTyp)
 	local costRangeFrom, costRangeTo = CalculateCostRange(level, 5, 11)
 
-	local minIdx = Min(orginalCostIdx, Max(1, DivRound(#AllWeapons[_type] * costRangeFrom, 100)))
-	local maxIdx = Max(orginalCostIdx, Min(#AllWeapons[_type], DivRound(#AllWeapons[_type] * costRangeTo, 100)))
+	local minIdx = Min(orginalCostIdx, Max(1, DivRound(#allWeaponsOfTyp * costRangeFrom, 100)))
+	local maxIdx = Max(orginalCostIdx, Min(#allWeaponsOfTyp, DivRound(#allWeaponsOfTyp * costRangeTo, 100)))
 
-	local minCost = AllWeapons[_type][minIdx].Cost or 0
-	local maxCost = AllWeapons[_type][maxIdx].Cost or 0
-	local suitableArnament = table.ifilter(AllWeapons[_type], function(i, a)
+	local minCost = allWeaponsOfTyp[minIdx].Cost or 0
+	local maxCost = allWeaponsOfTyp[maxIdx].Cost or 0
+	local suitableArnament = table.ifilter(allWeaponsOfTyp, function(i, a)
 		return (a.Cost or 0) >= minCost and (a.Cost or 0) <= maxCost
 	end)
 
-	Debug("-> min:", suitableArnament[1].id, suitableArnament[1].Cost, "max:", suitableArnament[#suitableArnament].id, suitableArnament[#suitableArnament].Cost)
+	Debug("-> min:", suitableArnament[1].id, suitableArnament[1].Cost, "max:", suitableArnament[#suitableArnament].id,
+		suitableArnament[#suitableArnament].Cost)
 	return suitableArnament
 end
 
@@ -67,40 +80,22 @@ function GetWeaponType(weapon)
 	end
 end
 
-function CheckItemsForQuestItems(items)
-	for _, h in ipairs(items) do
-		if QuestItemsIcons[h.Icon] then
-			Debug("- Found quest item", h.Icon)
-			return true
-		end
-	end
-	return false
-end
-
-function CheckForUnsupportedTypes(items)
-	for _, i in ipairs(items) do
-		local _type = GetWeaponType(i)
-		if not AllWeapons[_type] then
-			Debug("- Found unsupported weapon type", _type)
-			return true
-		end
-	end
-	return false
-end
-
-function RemoveWeaponsAndAmmo(unit)
-	Debug("C-UAE Removing orginal items from", unit.Affiliation)
+function RemoveAmmo(unit)
+	Debug("C-UAE Removing orginal ammo from", unit.Affiliation)
 	unit:ForEachItem(function(item, slot_name)
 		-- Ordnance is Ammo for heavy weapons
 		if slot_name == "Inventory" and (IsKindOf(item, "Ammo") or IsKindOf(item, "Ordnance")) then
-			unit:RemoveItem(slot_name, item)
-			DoneObject(item)
-		elseif slot_name ~= "Inventory" then
-			Debug("-", slot_name, item.ItemType or item.WeaponType or "", "Cost:", item.Cost, "Condition:", item.Condition)
+			Debug("-", "Caliber:", item.Caliber, item.class, "Cost:", item.Cost, "Amount", item.Amount)
 			unit:RemoveItem(slot_name, item)
 			DoneObject(item)
 		end
 	end)
+end
+
+function Removeitem(unit, slot, item)
+	Debug("- Removing orginal item", "Type:", item.ItemType or item.WeaponType or "", item.class, "Cost:", item.Cost)
+	unit:RemoveItem(slot, item)
+	DoneObject(item)
 end
 
 function GetOrginalEq(unit)

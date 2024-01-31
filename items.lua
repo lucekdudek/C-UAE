@@ -1,13 +1,11 @@
 return {
-	PlaceObj('ModItemCharacterEffectCompositeDef', {
-		'Id', "CUAE",
-		'object_class', "StatusEffect",
-		'DisplayName', T(442647548138, --[[ModItemCharacterEffectCompositeDef CUAE DisplayName]] "CUAE"),
-		'type', "Buff",
-	}),
 	PlaceObj('ModItemCode', {
 		'name', "Armor",
 		'CodeFileName', "Code/Armor.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "Compatibility",
+		'CodeFileName', "Code/Compatibility.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "Cfg",
