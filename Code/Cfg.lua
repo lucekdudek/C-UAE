@@ -68,8 +68,12 @@ Cuae_DefaultCost = {
 Cuae_UnitLevelToComponentChance = { 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 92, 94, 95, 96, 97, 98, 99 }
 
 Cuae_ExcludeWeapons = {
-	--ToG duplicates and broken
-	'Condor_1',
+	--ToG outdated/broken
+	'MK23_1',
+	'Fn2000_1',
+	'B93R_1',
+	'G3_1',
+	--ToG duplicates
 	'M1Garand_2',
 	'M1Garand_3',
 	'M1Garand_4',
@@ -78,8 +82,6 @@ Cuae_ExcludeWeapons = {
 	'Type56B_1',
 	'Type56C_1',
 	'Type56D_1',
-	'Sturmgewehr44_Special',
-	'G3A3Green_1',
 	--Grenade
 	'ConcussiveGrenade_Mine',
 	'ShapedCharge',
@@ -90,17 +92,6 @@ Cuae_ExcludeWeapons = {
 	'ProximityC4',
 	'ProximityPETN',
 	'ProximityTNT',
-}
-
-Cuae_RailMounts = {
-	'ToG_Rail_Block',
-	'ToG_Rail_1',
-	'AWP_rail_1',
-	'L85A1_toprail_1',
-	'FN2000_Toprail_1',
-	'hk33_top_rail_1',
-	'EM2_rail_1',
-	'G11_Rail_1',
 }
 
 -- Build on OnMsg.ModsReloaded

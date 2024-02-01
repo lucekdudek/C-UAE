@@ -1,95 +1,82 @@
-local function checkForSlotType(slots, _type)
-	for _, slot in pairs(slots) do
-		if slot.SlotType == _type then
-			return true
-		end
-	end
-	return false
-end
-
-local function isRailMount(scope)
-	return table.find(Cuae_RailMounts, scope)
-end
-
-local function handleRailMountScope(weapon, slots)
-	local availableScopes = table.find_value(slots, "SlotType", "Scope").AvailableComponents
-	if #availableScopes > 0 then
-		local randomScope = table.rand(availableScopes)
-		weapon:SetWeaponComponent("Scope", randomScope)
-		Cuae_Debug("--> Added Scope", randomScope)
-	end
-
-	-- check if the added Scope is a RailMount and add a scope a top of it
-	if isRailMount(weapon.components.Scope) then
-		local availableRailScopes = table.find_value(slots, "SlotType", "Rail_Mount").AvailableComponents
-		local randomRailScope = table.rand(availableRailScopes)
-		weapon:SetWeaponComponent("Rail_Mount", randomRailScope)
-		Cuae_Debug("--> Added Rail Scope", randomRailScope)
-	end
-end
-
-local function isNotBlocked(_type, components)
+local function isBlocked(slotType, components)
 	--check if slot is blocked by any curently attached comp.
 	for _, rawComponent in pairs(components) do
 		if rawComponent ~= "" then
 			local component = WeaponComponents[rawComponent]
 			if component and component.BlockSlots and next(component.BlockSlots) then
-				if table.find(component.BlockSlots, _type) then
-					Cuae_Debug("-->", _type, "is blocked by", rawComponent)
-					return false
+				if table.find(component.BlockSlots, slotType) then
+					Cuae_Debug("--> Skipping", slotType, "is blocked by", rawComponent)
+					return true
 				end
 			end
 		end
 	end
-	return true
+	return false
 end
 
-local function handleSlot(chance, slotType, weapon, slots)
-	if InteractionRand(100, "LDCUAE") <= chance then
-		local availableComponents = table.find_value(slots, "SlotType", slotType).AvailableComponents
-		if availableComponents then
-			local randComponent = table.rand(availableComponents)
-			local blocksAny, _ = GetComponentBlocksAnyOfAttachedSlots(weapon, WeaponComponents[randComponent])
-			if not blocksAny then
-				weapon:SetWeaponComponent(slotType, randComponent)
-				Cuae_Debug("--> Added", slotType, randComponent)
-			end
+local function addComponentInSlot(slotType, weapon, slots)
+	local availableComponents = table.find_value(slots, "SlotType", slotType).AvailableComponents
+	table.shuffle(availableComponents, InteractionRand(nil, "LDCUAE"))
+	local randComponent = table.rand(availableComponents, InteractionRand(nil, "LDCUAE"))
+	local blocksAny, blocked = GetComponentBlocksAnyOfAttachedSlots(weapon, WeaponComponents[randComponent])
+	if blocksAny then
+		Cuae_Debug("--> Skipping", randComponent, "from", slotType, "it would block", blocked)
+		return false
+	else
+		weapon:SetWeaponComponent(slotType, randComponent)
+		Cuae_Debug("--> Added", slotType, randComponent)
+		return true
+	end
+end
+
+local function addComponentsInSlots(weapon, weaponComponentSlots, remaningComponentsCount, startIdx, endIdx)
+	local handledSlots = {}
+	local unhandledSlots = {}
+	for pointerIdx = startIdx, endIdx do
+		local slotType = weaponComponentSlots[pointerIdx].SlotType
+		if not isBlocked(slotType, weapon.components) and addComponentInSlot(slotType, weapon, weaponComponentSlots) then
+			remaningComponentsCount = remaningComponentsCount - 1
+			handledSlots[slotType] = true
+		else
+			table.insert(unhandledSlots, slotType)
 		end
 	end
+	for _, slotType in ipairs(unhandledSlots) do
+		if not isBlocked(slotType, weapon.components) and addComponentInSlot(slotType, weapon, weaponComponentSlots) then
+			remaningComponentsCount = remaningComponentsCount - 1
+			handledSlots[slotType] = true
+		end
+	end
+	return handledSlots, remaningComponentsCount
 end
 
 function Cuae_AddRandomComponents(weapon, unitLevel)
 	local chance = Cuae_UnitLevelToComponentChance[unitLevel]
-	Cuae_Debug("-- adding components AdjustedLvl:", unitLevel, "Chance:", chance, "%")
 
 	-- Get all available ComponentsSlot
 	local availableComponentsSlots = weapon.ComponentSlots
-	-- Shuffle for various isNotBlocked results
+	-- Shuffle to decided which slot is the most lucky
 	table.shuffle(availableComponentsSlots, InteractionRand(nil, "LDCUAE"))
 
-	-- Scope before RailMount -> as RailMount are potential scopes.
-	local hasRailMount = checkForSlotType(availableComponentsSlots, "Rail_Mount")
+	local remaningComponentsCount = Min(#availableComponentsSlots,
+		Max(1, DivRound(#availableComponentsSlots * chance, 100)))
+	Cuae_Debug("-- adding components", remaningComponentsCount, "/", #availableComponentsSlots, "AdjustedLvl:", unitLevel)
 
-	-- if does not have Rail Mount then we will add a scope the normal way
-	if hasRailMount and InteractionRand(100, "LDCUAE") <= chance then
-		handleRailMountScope(weapon, availableComponentsSlots)
-	end
-
-	-- handle Mount and Barrel first as it enables other items in Master of War
-	if checkForSlotType(availableComponentsSlots, "Mount") and isNotBlocked("Mount", weapon.components) then
-		handleSlot(chance, "Mount", weapon, availableComponentsSlots)
-	end
-	if checkForSlotType(availableComponentsSlots, "Barrel") and isNotBlocked("Barrel", weapon.components) then
-		handleSlot(chance, "Barrel", weapon, availableComponentsSlots)
-	end
-
-	-- now go through all remaning slots
-	for _, slot in pairs(availableComponentsSlots) do
-		local _type = slot.SlotType
-
-		--skip Scope if it was already handled above in hasRailMount section
-		if not (_type == "Mount" or _type == "Barrel") and not (hasRailMount and (_type == "Rail_Mount" or _type == "Scope")) and isNotBlocked(_type, weapon.components) then
-			handleSlot(chance, _type, weapon, availableComponentsSlots)
+	local handledSlots = {}
+	for _ = 1, 2 do
+		local startIdx, endIdx, temp = 0, 0, 0
+		while remaningComponentsCount > 0 and endIdx < #availableComponentsSlots do
+			startIdx = endIdx + 1
+			endIdx = Min(endIdx + remaningComponentsCount, #availableComponentsSlots)
+			-- add component to slots
+			handledSlots, remaningComponentsCount = addComponentsInSlots(weapon, availableComponentsSlots,
+				remaningComponentsCount, startIdx, endIdx)
+			-- remove used slots from list and adjust endIdx to new length
+			temp = #availableComponentsSlots
+			availableComponentsSlots = table.ifilter(availableComponentsSlots, function(_, component)
+				return not handledSlots[component.SlotType]
+			end)
+			endIdx = endIdx - (temp - #availableComponentsSlots)
 		end
 	end
 end

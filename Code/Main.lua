@@ -78,9 +78,13 @@ function OnMsg.ModsReloaded()
 	-- 	'FlakLeggings',
 	-- 	'AK47',
 	-- })
-	-- CUAEAddExclusionTable({ Legion = { 'AK47' } })
+	-- CUAEAddExclusionTable({
+	-- 	Legion = {
+	-- 		'AK74',
+	-- 	}
+	-- })
 
-	-- for _type, _tab in pairs(AllWeapons) do
+	-- for _type, _tab in pairs(Cuae_AllWeapons) do
 	-- 	Cuae_Debug(_type)
 	-- 	for _, w in pairs(_tab) do
 	-- 		-- Cuae_Debug(w.id)
