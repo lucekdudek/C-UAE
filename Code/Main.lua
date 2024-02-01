@@ -89,12 +89,15 @@ function OnMsg.ModsReloaded()
 	-- 	for _, w in pairs(_tab) do
 	-- 		-- Cuae_Debug(w.id)
 	-- 		Cuae_Debug(">>", w.id, "Cost:", w.Cost, "/", g_Classes[w.id].Cost, "CanAppearInShop:", g_Classes[w.id].CanAppearInShop)
-	-- 		-- for _, slot in pairs(g_Classes[w.id].ComponentSlots) do
-	-- 		-- 	Cuae_Debug(">>-", slot.SlotType)
-	-- 		-- 	for _, component in pairs(slot.AvailableComponents) do
-	-- 		-- 		Cuae_Debug(">>->", component)
-	-- 		-- 	end
-	-- 		-- end
+	-- 		for _, slot in pairs(g_Classes[w.id].ComponentSlots) do
+	-- 			Cuae_Debug(">>-", slot.SlotType, "DefaultComponent", slot.DefaultComponent)
+	-- 			for _, component in pairs(slot.AvailableComponents) do
+	-- 				local compCls = WeaponComponents[component]
+	-- 				if compCls then
+	-- 					Cuae_Debug(component, "ModificationDifficulty", compCls.ModificationDifficulty, "Cost", compCls.Cost, "compCls.AdditionalCosts", compCls.AdditionalCosts)
+	-- 				end
+	-- 			end
+	-- 		end
 	-- 	end
 	-- end
 end

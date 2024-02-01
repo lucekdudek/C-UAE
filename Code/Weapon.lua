@@ -88,6 +88,7 @@ local function replaceWeapon(unit, orginalWeapon, slot, _type, extraGrenadeQuant
 	-- get and init final weapon from preset
 	local weaponPreset = suitableWeapons[InteractionRandRange(1, #suitableWeapons, "LDCUAE")]
 	local newWeapon = PlaceInventoryItem(weaponPreset.id)
+	-- TODO handle Grenade drop_chance
 	newWeapon.drop_chance = IsKindOf(newWeapon, "Grenade") and 5 or newWeapon.base_drop_chance
 	Cuae_Debug("- picked:", _type, weaponPreset.id, weaponPreset.Cost, "Condition:", newCondition)
 

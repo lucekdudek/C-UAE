@@ -51,7 +51,8 @@ function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost)
 		return (a.Cost or 0) >= minCost and (a.Cost or 0) <= maxCost
 	end)
 
-	Cuae_Debug("-> min:", suitableArnament[1].id, suitableArnament[1].Cost, "max:", suitableArnament[#suitableArnament].id, suitableArnament[#suitableArnament].Cost)
+	Cuae_Debug("-> min:", suitableArnament[1].id, suitableArnament[1].Cost, "max:",
+		suitableArnament[#suitableArnament].id, suitableArnament[#suitableArnament].Cost)
 	return suitableArnament
 end
 
@@ -76,7 +77,8 @@ function Cuae_RemoveAmmo(unit)
 end
 
 function Cuae_Removeitem(unit, slot, item)
-	Cuae_Debug("- Removing orginal item", "Type:", item.ItemType or item.WeaponType or "", item.class, "Cost:", item.Cost)
+	Cuae_Debug("- Removing orginal item", "Type:", item.ItemType or item.WeaponType or "", item.class, "Cost:", item
+		.Cost)
 	unit:RemoveItem(slot, item)
 	DoneObject(item)
 end
@@ -88,4 +90,12 @@ function Cuae_GetOrginalEq(unit)
 	local orginalTorso = unit:GetItemAtPos("Torso", 1, 1)
 	local orginalLegs = unit:GetItemAtPos("Legs", 1, 1)
 	return orginalHandheldsA, orginalHandheldsB, orginalHead, orginalTorso, orginalLegs
+end
+
+function Cuae_TableSlice(tbl, first, last)
+	local sliced = {}
+	for i = first, last do
+		sliced[#sliced + 1] = tbl[i]
+	end
+	return sliced
 end

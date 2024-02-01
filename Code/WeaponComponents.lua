@@ -14,10 +14,24 @@ local function isBlocked(slotType, components)
 	return false
 end
 
-local function addComponentInSlot(slotType, weapon, slots)
+local function addComponentInSlot(adjustedUnitLevel, slotType, slotDefault, weapon, slots)
 	local availableComponents = table.find_value(slots, "SlotType", slotType).AvailableComponents
-	table.shuffle(availableComponents, InteractionRand(nil, "LDCUAE"))
-	local randComponent = table.rand(availableComponents, InteractionRand(nil, "LDCUAE"))
+	availableComponents = table.ifilter(availableComponents, function(_, c) return c ~= slotDefault end)
+	if #availableComponents == 0 then
+		Cuae_Debug("--> Skipping", slotDefault, "from", slotType, "as it is the only one(default)")
+		return false
+	end
+	table.sort(availableComponents, function(a, b)
+		local componentA, componentB = WeaponComponents[a], WeaponComponents[b]
+		return componentA.Cost + componentA.ModificationDifficulty < componentB.Cost + componentB.ModificationDifficulty
+	end)
+
+	local rangeFrom, rangeTo = Cuae_CalculateCostRange(adjustedUnitLevel, 6, 11)
+	local minIdx = Min(#availableComponents, Max(1, DivRound(#availableComponents * rangeFrom, 100)))
+	local maxIdx = Min(#availableComponents, Max(1, DivRound(#availableComponents * rangeTo, 100)))
+	local suitableComponents = Cuae_TableSlice(availableComponents, minIdx, maxIdx)
+	local randComponent = suitableComponents[InteractionRandRange(1, #suitableComponents, "LDCUAE")]
+
 	local blocksAny, blocked = GetComponentBlocksAnyOfAttachedSlots(weapon, WeaponComponents[randComponent])
 	if blocksAny then
 		Cuae_Debug("--> Skipping", randComponent, "from", slotType, "it would block", blocked)
@@ -29,20 +43,24 @@ local function addComponentInSlot(slotType, weapon, slots)
 	end
 end
 
-local function addComponentsInSlots(weapon, weaponComponentSlots, remaningComponentsCount, startIdx, endIdx)
+local function addComponentsInSlots(level, weapon, weaponComponentSlots, remaningComponentsCount, startIdx, endIdx)
 	local handledSlots = {}
 	local unhandledSlots = {}
+	local slotTypeToSlotDefault = {}
 	for pointerIdx = startIdx, endIdx do
-		local slotType = weaponComponentSlots[pointerIdx].SlotType
-		if not isBlocked(slotType, weapon.components) and addComponentInSlot(slotType, weapon, weaponComponentSlots) then
+		local slot = weaponComponentSlots[pointerIdx]
+		local slotType = slot.SlotType
+		local slotDefault = slot.DefaultComponent
+		if not isBlocked(slotType, weapon.components) and addComponentInSlot(level, slotType, slotDefault, weapon, weaponComponentSlots) then
 			remaningComponentsCount = remaningComponentsCount - 1
 			handledSlots[slotType] = true
 		else
 			table.insert(unhandledSlots, slotType)
+			slotTypeToSlotDefault[slotType] = slotDefault
 		end
 	end
 	for _, slotType in ipairs(unhandledSlots) do
-		if not isBlocked(slotType, weapon.components) and addComponentInSlot(slotType, weapon, weaponComponentSlots) then
+		if not isBlocked(slotType, weapon.components) and addComponentInSlot(level, slotType, slotTypeToSlotDefault[slotType], weapon, weaponComponentSlots) then
 			remaningComponentsCount = remaningComponentsCount - 1
 			handledSlots[slotType] = true
 		end
@@ -50,8 +68,8 @@ local function addComponentsInSlots(weapon, weaponComponentSlots, remaningCompon
 	return handledSlots, remaningComponentsCount
 end
 
-function Cuae_AddRandomComponents(weapon, unitLevel)
-	local chance = Cuae_UnitLevelToComponentChance[unitLevel]
+function Cuae_AddRandomComponents(weapon, adjustedUnitLevel)
+	local chance = Cuae_UnitLevelToComponentChance[adjustedUnitLevel]
 
 	-- Get all available ComponentsSlot
 	local availableComponentsSlots = weapon.ComponentSlots
@@ -60,7 +78,8 @@ function Cuae_AddRandomComponents(weapon, unitLevel)
 
 	local remaningComponentsCount = Min(#availableComponentsSlots,
 		Max(1, DivRound(#availableComponentsSlots * chance, 100)))
-	Cuae_Debug("-- adding components", remaningComponentsCount, "/", #availableComponentsSlots, "AdjustedLvl:", unitLevel)
+	Cuae_Debug("-- adding components", remaningComponentsCount, "/", #availableComponentsSlots, "AdjustedLvl:",
+		adjustedUnitLevel)
 
 	local handledSlots = {}
 	for _ = 1, 2 do
@@ -69,7 +88,8 @@ function Cuae_AddRandomComponents(weapon, unitLevel)
 			startIdx = endIdx + 1
 			endIdx = Min(endIdx + remaningComponentsCount, #availableComponentsSlots)
 			-- add component to slots
-			handledSlots, remaningComponentsCount = addComponentsInSlots(weapon, availableComponentsSlots,
+			handledSlots, remaningComponentsCount = addComponentsInSlots(adjustedUnitLevel, weapon,
+				availableComponentsSlots,
 				remaningComponentsCount, startIdx, endIdx)
 			-- remove used slots from list and adjust endIdx to new length
 			temp = #availableComponentsSlots
