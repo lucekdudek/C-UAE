@@ -26,7 +26,6 @@ local function buildWeaponTables()
 				table.insert(suitableWeapons, w)
 			end
 		elseif _type == "MeleeWeapon" then
-			-- TODO handle item.CanThrow
 			local allMelee = table.ifilter(GetWeaponsByType(_type), function(i, w)
 				return not table.find(Cuae_ExcludeWeapons, w.id) and g_Classes[w.id].CanAppearInShop
 			end)
@@ -113,6 +112,7 @@ end
 
 -- main entrypoint
 function OnMsg.UnitCreated(unit)
+	-- TODO add support for auto resolve satelite combat - mod options - disable for REW
 	if unit.species == "Human" and (Cuae_AffiliationWeight[unit.Affiliation]) and not (unit.militia or unit:IsCivilian()) and unit:GetActiveWeapons() and not unit:IsDead() then
 		if GetMapName() == "I-1 - Flag Hill" and GameState.ConflictScripted then
 			Cuae_Debug("C-UAE Chaning Arnament SKIP du to I-1 - Flag Hill double map loading issue")
