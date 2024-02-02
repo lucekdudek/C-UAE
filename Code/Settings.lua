@@ -1,5 +1,7 @@
 function OnMsg.ApplyModOptions(id)
 	if id == "LDCUAE" then
+		Cuae_LoadedModOptions.ReplaceWeapons = CurrentModOptions.ReplaceWeapons
+		Cuae_LoadedModOptions.ReplaceArmor = CurrentModOptions.ReplaceArmor
 		Cuae_LoadedModOptions.ExtraHandgun = CurrentModOptions.ExtraHandgun
 		Cuae_LoadedModOptions.ExtraGrenadesCount = tonumber(CurrentModOptions.ExtraGrenadesCount)
 		Cuae_LoadedModOptions.ExtraGrenadesChance = tonumber(CurrentModOptions.ExtraGrenadesChance)

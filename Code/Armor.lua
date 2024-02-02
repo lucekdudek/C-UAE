@@ -1,9 +1,11 @@
 local function keepOrginalArmor(orginalArmor, slot)
-	Cuae_Debug("- keeping(immunity):", slot, orginalArmor.class, orginalArmor.Cost, "Condition:", orginalArmor.Condition)
+	if orginalArmor then
+		Cuae_Debug("- keeping(immunity):", slot, orginalArmor.class, orginalArmor.Cost, "Condition:", orginalArmor.Condition)
+	end
 end
 
 local function replaceArmorPiece(unit, orginalArmor, slot)
-	if orginalArmor and Cuae_ImmunityTable[orginalArmor.class] then
+	if not Cuae_LoadedModOptions.ReplaceArmor or orginalArmor and Cuae_ImmunityTable[orginalArmor.class] then
 		keepOrginalArmor(orginalArmor, slot)
 		return
 	end

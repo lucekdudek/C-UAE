@@ -32,6 +32,18 @@ return {
 		'CodeFileName', "Code/WeaponComponents.lua",
 	}),
 	PlaceObj('ModItemOptionToggle', {
+		'name', "ReplaceWeapons",
+		'DisplayName', "Replace Weapons",
+		'Help', "When enabled, replaces orginal enemy weapons with new ones",
+		'DefaultValue', true,
+	}),
+	PlaceObj('ModItemOptionToggle', {
+		'name', "ReplaceArmor",
+		'DisplayName', "Replace Armor",
+		'Help', "When enabled, replaces orginal enemy armor with new ones",
+		'DefaultValue', true,
+	}),
+	PlaceObj('ModItemOptionToggle', {
 		'name', "ExtraHandgun",
 		'DisplayName', "Extra Handgun",
 		'Help', "When enabled, gives enemies a handgun in an empty weapon slot",

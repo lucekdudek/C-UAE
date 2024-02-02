@@ -1,4 +1,6 @@
 Cuae_LoadedModOptions = {
+	ReplaceWeapons = true,
+	ReplaceArmor = true,
 	ExtraHandgun = true,
 	ExtraGrenadesCount = 2,
 	ExtraGrenadesChance = 50,

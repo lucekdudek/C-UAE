@@ -57,7 +57,7 @@ local function replaceWeapon(unit, orginalWeapon, slot, _type, extraGrenadeQuant
 	local unitLevel = Min(10, unit:GetLevel())
 	local adjustedUnitLevel = Cuae_CalculateAdjustedUnitLevel(unitLevel, unit.Affiliation)
 
-	if orginalWeapon and Cuae_ImmunityTable[orginalWeapon.class] then
+	if orginalWeapon and (Cuae_ImmunityTable[orginalWeapon.class] or not Cuae_LoadedModOptions.ReplaceWeapons) then
 		keepOrginalWeapon(unit, orginalWeapon, _type, adjustedUnitLevel)
 		return
 	end
