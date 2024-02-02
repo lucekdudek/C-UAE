@@ -97,6 +97,10 @@ Cuae_ExcludeWeapons = {
 	'ProximityTNT',
 }
 
+Cuae_ExcludeComponents = {
+	ImprovisedSuppressor = true,
+}
+
 -- Build on OnMsg.ModsReloaded
 Cuae_AllWeapons = {
 	Handgun = {},

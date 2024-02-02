@@ -16,7 +16,7 @@ end
 
 local function addComponentInSlot(adjustedUnitLevel, slotType, slotDefault, weapon, slots)
 	local availableComponents = table.find_value(slots, "SlotType", slotType).AvailableComponents
-	availableComponents = table.ifilter(availableComponents, function(_, c) return c ~= slotDefault end)
+	availableComponents = table.ifilter(availableComponents, function(_, c) return c ~= slotDefault and not Cuae_ExcludeComponents[c] end)
 	if #availableComponents == 0 then
 		Cuae_Debug("--> Skipping", slotDefault, "from", slotType, "as it is the only one(default)")
 		return false
