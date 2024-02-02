@@ -13,24 +13,24 @@ The goal of this modification is to be [b]compatible[/b] with other modification
 [h2]Featuers:[/h2]
 [list]
     [*][b]Enemies get new weapon and armor of similar strength[/b]
-    [*][b]Weapons and Armor from other modifications are automatically added to pool of avaiable wepons[/b](e.g. Tons of Guns or Masters of War)
-    [*][b]Robust attachements system. Weapons are granted attachements matching adjusted enemy level. At higher level enemeis will have more and more powerful attachements[/b]
+    [*][b]Weapons and Armor from other modifications are automatically added to the pool of available weapons[/b](e.g. Tons of Guns or Masters of War)
+    [*][b]Robust attachements system. Weapons are granted attachments matching adjusted enemy level. At higher level, enemies will have more and more powerful attachments [/b]
     [*][b]Works with old saves, can be disabled at anypoint[/b]
     [*][b][Configuration option] Strength of new armaments can be adjusted[/b]
-    [*][b]Armaments condition (how much they are damaged) matches the condition of orginal loadout[/b]
-    [*][b]Mod uses drop chnace logic from base game[/b](Most mods that modife drop chnace are compatible)
+    [*][b]Armaments condition (how much they are damaged) matches the condition of the original loadout[/b]
+    [*][b]Mod uses drop chance logic from base game[/b](Most mods that modify drop chance are compatible)
     [*][b][Configuration option] Enemies get extra Handgun[/b](Usefull for integration with mods that change Handgun logic e.g. Rato's Overhaul)
     [*][b][Configuration option] Enemies get extra Grenades[/b]
-    [*][b]Night granades(flares etc) are only distributed during a night and in underground sectors[/b]
+    [*][b]Night grenades(flares etc) are only distributed during a night and in underground sectors[/b]
     [*][b]Heavy Weapons are distributed based on ammunition type[/b](RocketMan still shoots rockets, Montar Enemy still use Montar-like weapons)
-    [*][b]Mod does not affect unique armaments[/b](e.g.[spoiler] Pieree won't lose his unique machete [/spoiler])
+    [*][b]Mod does not affect unique armaments[/b](e.g.[spoiler] Pierre won't lose his unique machete [/spoiler])
 [/list]
 
 [h2]C-UAE vs Random Enemy Weapons[/h2]
 
-[b]C-UAE[/b] distributes all avaiable weapons among all enemy fractions while [b]REW[/b] provides more structer distribution where all weapons were picked by hand to be distributed for specific fractions only. This difrence leads to multiple consequeces. E.g. in REW weapons from mods which don't support REW won't be distributed at all but in C-UAE Weapons that are not configured to be avaiable in Bobby Ray's won't be distributed
+[b]C-UAE[/b] distributes all available weapons among all enemy fractions while [b]REW[/b] provides a more structured distribution where all weapons are picked by hand to be distributed for specific fractions only. This difference leads to multiple consequences. E.g. in REW weapons from mods that don't support REW won't be distributed at all but in C-UAE Weapons that are not configured to be available in Bobby Ray's won't be distributed
 
-[b]Configuration options[/b] allows to disable wepaon replacement enabling players to use logic for weapons for [b]REW[/b] and the rest of the featuers of C-UAE
+[b]Configuration options[/b] allow to disable weapon replacement enabling players to use logic for weapons for [b]REW[/b] and the rest of the features of C-UAE
 
 [h2]Recommended mods to use with C-UAE[/h2]
 
@@ -41,7 +41,7 @@ The goal of this modification is to be [b]compatible[/b] with other modification
     [*][b][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3023672178] Tons of Guns [/url][/b] Note: new weapons(a lot of them)
 [/list]
 
-[b]Alternative balance (alongsite with more arnamanets)[/b]
+[b]Alternative balance (alongside with more armaments)[/b]
 
 [list]
     [*][b][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3021320057] Rato's Gameplay Balance and Overhaul 3 [/url][/b] Note: new weapons logic
@@ -52,17 +52,17 @@ The goal of this modification is to be [b]compatible[/b] with other modification
 
 Note: [b]BCE[/b] and [b]Timmeh's[/b] Weapon are changing prices of vanilla weapons and are not balanced for vanilla prices so they will not work with ToG and/or MoW
 
-Don't use all mods from above lists together. For information which mods can be used with which related to the particualr mod's description
+Don't use all mods from the above lists together. For information on which mods can be used with which related to the particular mod's description
 
-For vanilla gameplay expirence use ToG and/or MoW
+For a vanilla gameplay experience use ToG and/or MoW
 
 [h2]How does it do[/h2]
 Whenever players enter a sector all enemies are scanned and a profile of their [b]level[/b], [b]affiliation[/b], and [b]loadout[/b] is created. This profile then is used to generate new weapons and armor. Mod uses [b]Cost[/b] property of items to access the items of similar strength.
 
 [h3]Avaiable Armaments Logic[/h3]
-C-UAE is build based on in game system of Cost and Bobby Ray's CanAppearInShop property. So only armaments that can appear in the shop are distributed to enemies.
+C-UAE is built based on in game system of Cost and Bobby Ray's CanAppearInShop property. So only armaments that can appear in the shop are distributed to enemies.
 
-This way mod automatically filters out all left over, unfinised or quest items. Unfinised and test items can be found in both the Vanilla game as well as in some popular weapon mods.
+This way mod automatically filters out all leftover, unfinished, or quest items. Unfinished and test items can be found in both the Vanilla game as well as in some popular weapon mods.
 
 [h3]Weapons[/h3]
 New weapons are generated of the same type. Based on the enemy level, affiliation, and the cost of the original weapon, the mod finds the proper weapon cost range and gives a random weapon from that range.
@@ -75,23 +75,23 @@ Additionally, if the original loadout has free spots left and there was no Handg
 Armor follows a similar logic to weapons. Based on the enemy level, affiliation, and original armor new armor is spawned.
 
 [h3]Uniques[/h3]
-Enemies can't get unique weapons like Golden Gun. But also enemies who wield unique weapons or armor will keep them. For exmaple enemeis with "Shiny and Chrome Helmet" will keep it but thier weapon and other armor pieces will get replace acording to the mod logic.
+Enemies can't get unique weapons like Golden Gun. But also enemies who wield unique weapons or armor will keep them. For example, enemies with "Shiny and Chrome Helmet" will keep it but their weapon and other armor pieces will get replaced according to the mod logic.
 
 [h2]Configuration options[/h2]
 [list]
-    [*][b]Replace Weapons[/b] When enabled, replaces orginal enemy weapons with new ones. Allows to use C-UAE along site Random Enemy Weapons mod which provides difrent way of distributing weapons in Grand Chien.
-    [*][b]Replace Armor[/b] When enabled, replaces orginal enemy armor with new ones.
+    [*][b]Replace Weapons[/b] When enabled, replace original enemy weapons with new ones. Allows to use C-UAE along site Random Enemy Weapons mod which provides different way of distributing weapons in Grand Chien.
+    [*][b]Replace Armor[/b] When enabled, replace the original enemy armor with new ones.
     [*][b]Extra Handgun[/b] If the original loadout has free spots left and there is no Handgun the enemy will get an extra Handgun.
     [*][b]Extra Grenades Count[/b] If the original loadout has free spots left and there is no Grenade the enemy will get an extra Grenade of this count. Setting it to 0 causes no extra grenades.
     [*][b]Extra Grenades Chance[/b] modifies the chance an enemy will get extra granades.
-    [*][b]Armament Strength Factor[/b] dificulty adjustement. Negative values cause the cost range to be closer to the cheapest armaments. Positive values make the cost range to be closer to expensive armaments. Note: orginal loadout is always within the cost range.
+    [*][b]Armament Strength Factor[/b] dificulty adjustement. Negative values cause the cost range to be closer to the cheapest armaments. Positive values make the cost range to be closer to expensive armaments. Note: The original loadout is always within the cost range.
     [*][b]Allow Alternative Weapon Type[/b] alternative version of weapon generation. Handguns can randomly be upgraded to SMGs, SMGs to ARs, and ARs to LMG or Sniper Rifles. 
-    [*][b]Grenades Drop Chance[/b] Percentage drop chance of grenades gnerated by C-UAE. Base game is 5 percentage, set to match your other drop mod configuration. All other items other then grenades have proper drop chance that will inharate from base game or your mod of choice.
+    [*][b]Grenades Drop Chance[/b] Percentage drop chance of grenades gnerated by C-UAE. The base game is 5 percent, set to match your other drop mod configuration. All other items other than grenades have a proper drop chance that will be inherited from the base game or your mod of choice.
 [/list]
 
 [h2]Special compatibility options for modders[/h2]
 
-After discussing with fellow modders I decied to add to C-UAE two entrypoints desingned to support special compatibility cases. Read more in the [b]Discussions[/b] section.
+After discussing with fellow modders I decided to add to C-UAE two entrypoints designed to support special compatibility cases. Read more in the [b]Discussions[/b] section.
 
 [h2]Notes[/h2]
 [list]
@@ -100,5 +100,5 @@ After discussing with fellow modders I decied to add to C-UAE two entrypoints de
     [*]Works with all saves. Will not change enemies in the middle of a fight.
     [*]Source code is available at [url=https://github.com/lucekdudek/C-UAE]GitHub[/url]
     [*]Does not affect weapons used in auto-resolve battles therefore, it does not affect drop from said battles
-    [*]Dose not work with [b]New weapons of combinations of the original model[/b] as it was not updated to work with Bobby Ray's update
+    [*]Does not work with [b]New weapons of combinations of the original model[/b] as it was not updated to work with Bobby Ray's update
 [/list]
