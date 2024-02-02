@@ -4,7 +4,7 @@ function Cuae_Debug(...)
 	end
 end
 
-local function getAllWeaponsOfType(_type, affiliation)
+function Cuae_GetAllWeaponsOfType(_type, affiliation)
 	local allWeapons = Cuae_AllWeapons[_type] or {}
 	local exclusionTable = Cuae_AffiliationExclusionTable[affiliation]
 	local weapons = exclusionTable and
@@ -34,7 +34,7 @@ end
 
 function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost)
 	Cuae_Debug("- getting suitable arnaments for AdjustedLvl:", level, _type, "Orginal Cost", orginalCost)
-	local allWeaponsOfTyp = getAllWeaponsOfType(_type, affiliation)
+	local allWeaponsOfTyp = Cuae_GetAllWeaponsOfType(_type, affiliation)
 	if #allWeaponsOfTyp <= 1 then
 		return allWeaponsOfTyp
 	end
