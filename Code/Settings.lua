@@ -7,7 +7,6 @@ function OnMsg.ApplyModOptions(id)
 		Cuae_LoadedModOptions.ExtraGrenadesChance = tonumber(CurrentModOptions.ExtraGrenadesChance)
 		Cuae_LoadedModOptions.AllowAlternativeWeaponType = CurrentModOptions.AllowAlternativeWeaponType
 		Cuae_LoadedModOptions.ArmamentStrengthFactor = tonumber(CurrentModOptions.ArmamentStrengthFactor)
-		Cuae_LoadedModOptions.GrenadesDropChance = tonumber(CurrentModOptions.GrenadesDropChance)
 		Cuae_LoadedModOptions.Debug = CurrentModOptions.Debug
 	end
 end

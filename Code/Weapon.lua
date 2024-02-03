@@ -34,7 +34,7 @@ end
 
 local function addAmmo(unit, ammo, magazineSize)
 	local newAmmo = PlaceInventoryItem(ammo.id)
-	newAmmo.drop_chance = newAmmo.base_drop_chance // 2
+	newAmmo.drop_chance = newAmmo.base_drop_chance * 3 // 4
 	if IsKindOf(newAmmo, "Ordnance") then
 		newAmmo.Amount = Min(InteractionRandRange(2, 5, "LDCUAE"), newAmmo.MaxStacks)
 	else
@@ -88,7 +88,7 @@ local function replaceWeapon(unit, orginalWeapon, slot, _type, extraGrenadeQuant
 	-- get and init final weapon from preset
 	local weaponPreset = suitableWeapons[InteractionRandRange(1, #suitableWeapons, "LDCUAE")]
 	local newWeapon = PlaceInventoryItem(weaponPreset.id)
-	newWeapon.drop_chance = IsKindOf(newWeapon, "Grenade") and Cuae_LoadedModOptions.GrenadesDropChance or newWeapon.base_drop_chance
+	newWeapon.drop_chance = g_Classes[weaponPreset.id].base_drop_chance
 	Cuae_Debug("- picked:", _type, weaponPreset.id, weaponPreset.Cost, "Condition:", newCondition)
 
 	if IsKindOf(newWeapon, "MeleeWeapon") then

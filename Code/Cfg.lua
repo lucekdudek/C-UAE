@@ -6,7 +6,6 @@ Cuae_LoadedModOptions = {
 	ExtraGrenadesChance = 50,
 	AllowAlternativeWeaponType = true,
 	ArmamentStrengthFactor = 0,
-	GrenadesDropChance = 5,
 	Debug = false,
 }
 

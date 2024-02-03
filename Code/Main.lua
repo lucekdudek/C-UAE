@@ -89,7 +89,7 @@ function OnMsg.ModsReloaded()
 	-- 	if _tab then
 	-- 		for _, w in pairs(_tab) do
 	-- 			-- Cuae_Debug(w.id)
-	-- 			Cuae_Debug(">>", w.id, "Cost:", w.Cost, "/", g_Classes[w.id].Cost, "CanAppearInShop:", g_Classes[w.id].CanAppearInShop)
+	-- 			Cuae_Debug(">>", w.id, "Cost:", w.Cost, "/", g_Classes[w.id].Cost, "CanAppearInShop:", g_Classes[w.id].CanAppearInShop, "base_drop_chance", g_Classes[w.id].base_drop_chance)
 	-- 			-- for _, slot in pairs(g_Classes[w.id].ComponentSlots) do
 	-- 			-- 	Cuae_Debug(">>-", slot.SlotType, "DefaultComponent", slot.DefaultComponent)
 	-- 			-- 	for _, component in pairs(slot.AvailableComponents) do
