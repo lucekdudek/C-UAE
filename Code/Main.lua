@@ -108,7 +108,7 @@ end
 local function changeArnament(unit)
 	local orginalHandheldsA, orginalHandheldsB, orginalHead, orginalTorso, orginalLegs = Cuae_GetOrginalEq(unit)
 	Cuae_RemoveAmmo(unit)
-	GenerateNewWeapons(unit, orginalHandheldsA, orginalHandheldsB)
+	Cuae_GenerateNewWeapons(unit, orginalHandheldsA, orginalHandheldsB)
 	Cuae_GeneratNewArmor(unit, orginalHead, orginalTorso, orginalLegs)
 	unit:UpdateOutfit()
 end

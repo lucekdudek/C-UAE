@@ -111,7 +111,7 @@ local function replaceWeapon(unit, orginalWeapon, slot, _type, extraGrenadeQuant
 	end
 end
 
-local function AllowAlternativeWeaponType(_type)
+local function allowAlternativeWeaponType(_type)
 	if not Cuae_LoadedModOptions.AllowAlternativeWeaponType then
 		return _type
 	end
@@ -142,7 +142,7 @@ local function getWeaponType(weapon)
 	end
 end
 
-function GenerateNewWeapons(unit, orginalHandheldsA, orginalHandheldsB)
+function Cuae_GenerateNewWeapons(unit, orginalHandheldsA, orginalHandheldsB)
 	Cuae_Debug("C-UAE Adding new weapons", unit.Affiliation)
 	-- Night/Day cycle affects grenades
 	local currentGrenadeType = Cuae_GetGrenadeCurrentType()
@@ -150,7 +150,7 @@ function GenerateNewWeapons(unit, orginalHandheldsA, orginalHandheldsB)
 	-- Handheld A
 	if #orginalHandheldsA == 1 then
 		_type1A = getWeaponType(orginalHandheldsA[1])
-		replaceWeapon(unit, orginalHandheldsA[1], "Handheld A", AllowAlternativeWeaponType(_type1A))
+		replaceWeapon(unit, orginalHandheldsA[1], "Handheld A", allowAlternativeWeaponType(_type1A))
 	elseif #orginalHandheldsA == 2 then
 		_type1A = getWeaponType(orginalHandheldsA[1])
 		_type2A = getWeaponType(orginalHandheldsA[2])
@@ -160,7 +160,7 @@ function GenerateNewWeapons(unit, orginalHandheldsA, orginalHandheldsB)
 	-- Handheld B
 	if #orginalHandheldsB == 1 then
 		_type1B = getWeaponType(orginalHandheldsB[1])
-		replaceWeapon(unit, orginalHandheldsB[1], "Handheld B", AllowAlternativeWeaponType(_type1B))
+		replaceWeapon(unit, orginalHandheldsB[1], "Handheld B", allowAlternativeWeaponType(_type1B))
 	elseif #orginalHandheldsB == 2 then
 		_type1B = getWeaponType(orginalHandheldsB[1])
 		_type2B = getWeaponType(orginalHandheldsB[2])
