@@ -19,3 +19,5 @@ function CUAEAddImmunityTable(immunityTable)
 		Cuae_ImmunityTable[armamentId] = true
 	end
 end
+
+-- CUAEBuildWeaponTables()

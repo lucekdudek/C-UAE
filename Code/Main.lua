@@ -10,7 +10,7 @@ end
 -- register property when loading mod
 addCuaePorperty()
 
-local function buildWeaponTables()
+function CUAEBuildWeaponTables()
 	Cuae_Debug("C-UAE Building tables...")
 	for _type, _ in pairs(Cuae_AllWeapons) do
 		local suitableWeapons = {}
@@ -70,8 +70,8 @@ local function buildWeaponTables()
 end
 
 -- build tables
-function OnMsg.ModsReloaded()
-	buildWeaponTables()
+function OnMsg.PreLoadSessionData()
+	CUAEBuildWeaponTables()
 
 	-- CUAEAddImmunityTable({
 	-- 	'FlakLeggings',
