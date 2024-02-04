@@ -70,6 +70,10 @@ function CUAEBuildWeaponTables()
 end
 
 -- build tables
+function OnMsg.NewGame()
+	CUAEBuildWeaponTables()
+end
+
 function OnMsg.PreLoadSessionData()
 	CUAEBuildWeaponTables()
 
