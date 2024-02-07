@@ -53,7 +53,7 @@ end
 local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type, extraGrenadeQuantity)
 	local itemAdded, reason = false, ""
 	-- extraGrenadeQuantity(Options.ExtraGrenadesCount) is affected by Options.ExtraGrenadesChance
-	if extraGrenadeQuantity ~= nil and InteractionRand(100, "LDCUAE") > Cuae_LoadedModOptions.ExtraGrenadesChance then
+	if extraGrenadeQuantity ~= nil and InteractionRandRange(1, 100, "LDCUAE") > Cuae_LoadedModOptions.ExtraGrenadesChance then
 		return itemAdded, reason
 	end
 
@@ -108,7 +108,7 @@ local function allowAlternativeWeaponType(_type)
 	if not Cuae_LoadedModOptions.AllowAlternativeWeaponType then
 		return _type
 	end
-	local rand = InteractionRand(100, "LDCUAE")
+	local rand = InteractionRandRange(1, 100, "LDCUAE")
 	if _type == "Handgun" then
 		return rand <= 20 and "SMG" or _type
 	elseif _type == "SMG" then
