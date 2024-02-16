@@ -1,26 +1,16 @@
-local function generateAmmo(weaponCaliber, adjustedUnitLevel)
+local function generateAmmo(weaponCaliber, affiliation, adjustedUnitLevel)
 	Cuae_Debug("-- getting suitable ammo for AdjustedLvl:", adjustedUnitLevel)
 
-	if not Cuae_AllAmmunition[weaponCaliber] then
-		Cuae_Debug("C-UAE Building", weaponCaliber, "ammunition table...")
-		Cuae_AllAmmunition[weaponCaliber] = GetAmmosWithCaliber(weaponCaliber)
-		table.sort(Cuae_AllAmmunition[weaponCaliber], function(a, b) return (a.Cost or 0) < (b.Cost or 0) end)
-		for _, a in pairs(Cuae_AllAmmunition[weaponCaliber]) do
-			Cuae_Debug(">>", a.id, "Cost:", a.Cost)
-		end
-		Cuae_Debug("C-UAE Building", weaponCaliber, "ammunition table DONE")
-	end
+	local allAmmunitionOfCaliber = Cuae_GetAllAmmunitionOfCaliber(weaponCaliber, affiliation)
 
 	local costRangeFrom, costRangeTo = Cuae_CalculateCostRange(adjustedUnitLevel, 5, 9)
 
-	local minIdx = Min(#Cuae_AllAmmunition[weaponCaliber],
-		Max(1, DivRound(#Cuae_AllAmmunition[weaponCaliber] * costRangeFrom, 100)))
-	local maxIdx = Min(#Cuae_AllAmmunition[weaponCaliber],
-		Max(1, DivRound(#Cuae_AllAmmunition[weaponCaliber] * costRangeTo, 100)))
+	local minIdx = Min(#allAmmunitionOfCaliber, Max(1, DivRound(#allAmmunitionOfCaliber * costRangeFrom, 100)))
+	local maxIdx = Min(#allAmmunitionOfCaliber, Max(1, DivRound(#allAmmunitionOfCaliber * costRangeTo, 100)))
 
-	local minCost = Cuae_AllAmmunition[weaponCaliber][minIdx].Cost or 0
-	local maxCost = Cuae_AllAmmunition[weaponCaliber][maxIdx].Cost or 0
-	local suitableAmmos = table.ifilter(Cuae_AllAmmunition[weaponCaliber], function(i, a)
+	local minCost = allAmmunitionOfCaliber[minIdx].Cost or 0
+	local maxCost = allAmmunitionOfCaliber[maxIdx].Cost or 0
+	local suitableAmmos = table.ifilter(allAmmunitionOfCaliber, function(i, a)
 		return (a.Cost or 0) >= minCost and (a.Cost or 0) <= maxCost
 	end)
 
@@ -46,14 +36,15 @@ end
 
 local function tryAddAmmo(unit, adjustedUnitLevel, orginalWeapon)
 	if not IsKindOf(orginalWeapon, "MeleeWeapon") and not IsKindOf(orginalWeapon, "Grenade") and IsKindOf(orginalWeapon, "BaseWeapon") then
-		addAmmo(unit, generateAmmo(orginalWeapon.Caliber, adjustedUnitLevel), orginalWeapon.MagazineSize)
+		addAmmo(unit, generateAmmo(orginalWeapon.Caliber, unit.Affiliation, adjustedUnitLevel),
+			orginalWeapon.MagazineSize)
 	end
 end
 
 local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type, extraGrenadeQuantity)
 	local itemAdded, reason = false, ""
 	-- extraGrenadeQuantity(Options.ExtraGrenadesCount) is affected by Options.ExtraGrenadesChance
-	if extraGrenadeQuantity ~= nil and InteractionRand(100, "LDCUAE") > Cuae_LoadedModOptions.ExtraGrenadesChance then
+	if extraGrenadeQuantity ~= nil and InteractionRandRange(1, 100, "LDCUAE") > Cuae_LoadedModOptions.ExtraGrenadesChance then
 		return itemAdded, reason
 	end
 
@@ -94,7 +85,7 @@ local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type
 		newWeapon.Condition = newCondition
 		Cuae_AddRandomComponents(newWeapon, adjustedUnitLevel)
 
-		local ammo = generateAmmo(newWeapon.Caliber, adjustedUnitLevel)
+		local ammo = generateAmmo(newWeapon.Caliber, unit.Affiliation, adjustedUnitLevel)
 		-- load weapon
 		itemAdded = unit:TryEquip({ newWeapon }, slot, "BaseWeapon")
 		unit:TryLoadAmmo(slot, "BaseWeapon", ammo.id)
@@ -108,7 +99,7 @@ local function allowAlternativeWeaponType(_type)
 	if not Cuae_LoadedModOptions.AllowAlternativeWeaponType then
 		return _type
 	end
-	local rand = InteractionRand(100, "LDCUAE")
+	local rand = InteractionRandRange(1, 100, "LDCUAE")
 	if _type == "Handgun" then
 		return rand <= 20 and "SMG" or _type
 	elseif _type == "SMG" then
@@ -172,7 +163,8 @@ function Cuae_GenerateNewWeapons(unit, orginalHandheldsA, orginalHandheldsB)
 			-- TODO fix #suitableWeapons == 0: move suitableWeapons logic out of replaceWeapon function
 			Cuae_Removeitem(unit, "Handheld A", orginalHandheldsA[2])
 			replaceWeapon(unit, adjLevel, orginalHandheldsA[1], "Handheld A", _type1A)
-			orginalHandheldsA2ItemAdded, reason = replaceWeapon(unit, adjLevel, orginalHandheldsA[2], "Handheld A", _type2A)
+			orginalHandheldsA2ItemAdded, reason = replaceWeapon(unit, adjLevel, orginalHandheldsA[2], "Handheld A",
+				_type2A)
 		end
 	end
 	-- Handheld B

@@ -14,7 +14,7 @@ local function replaceArmorPiece(unit, orginalArmor, slot)
 	local adjustedUnitLevel = Cuae_CalculateAdjustedUnitLevel(unitLevel, unit.Affiliation)
 	local orginalCost = orginalArmor and orginalArmor.Cost or 0
 
-	if orginalCost == 0 and InteractionRand(100, "LDCUAE") >= Cuae_UnitLevelToComponentChance[adjustedUnitLevel] then
+	if orginalCost == 0 and InteractionRandRange(1, 100, "LDCUAE") >= Cuae_UnitLevelToComponentChance[adjustedUnitLevel] then
 		return
 	end
 

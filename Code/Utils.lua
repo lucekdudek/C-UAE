@@ -13,6 +13,24 @@ function Cuae_GetAllWeaponsOfType(_type, affiliation)
 	return weapons
 end
 
+function Cuae_GetAllAmmunitionOfCaliber(weaponCaliber, affiliation)
+	if not Cuae_AllAmmunition[weaponCaliber] then
+		Cuae_Debug("C-UAE Building", weaponCaliber, "ammunition table...")
+		Cuae_AllAmmunition[weaponCaliber] = GetAmmosWithCaliber(weaponCaliber)
+		table.sort(Cuae_AllAmmunition[weaponCaliber], function(a, b) return (a.Cost or 0) < (b.Cost or 0) end)
+		for _, a in pairs(Cuae_AllAmmunition[weaponCaliber]) do
+			Cuae_Debug(">>", a.id, "Cost:", a.Cost)
+		end
+		Cuae_Debug("C-UAE Building", weaponCaliber, "ammunition table DONE")
+	end
+	local allAmmunition = Cuae_AllAmmunition[weaponCaliber] or {}
+	local exclusionTable = Cuae_AffiliationExclusionTable[affiliation]
+	local ammunition = exclusionTable and
+		table.ifilter(allAmmunition, function(_, w) return not exclusionTable[w.id] end) or
+		allAmmunition
+	return ammunition
+end
+
 function Cuae_CalculateAdjustedUnitLevel(level, affiliation)
 	return Min(20, Max(1, level + Cuae_AffiliationWeight[affiliation] + Cuae_LoadedModOptions.ArmamentStrengthFactor))
 end
