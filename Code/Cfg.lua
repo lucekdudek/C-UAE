@@ -37,13 +37,13 @@ Cuae_ImmunityTable = {
 }
 
 Cuae_AffiliationWeight = {
-	Rebel = -1,
+	Rebel = 0,
 	Legion = -1,
 	Thugs = -1,
 	Army = 0,
 	Adonis = 1,
-	SuperSoldiers = 2,
-	SiegfriedSuperSoldiers = 3,
+	SuperSoldiers = 0,
+	SiegfriedSuperSoldiers = 0,
 }
 
 Cuae_DefaultCost = {
