@@ -70,6 +70,8 @@ Cuae_DefaultCost = {
 Cuae_UnitLevelToComponentChance = { 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 92, 94, 95, 96, 97, 98, 99 }
 
 Cuae_ExcludeWeapons = {
+	--ToG OP
+	'Katana_1',
 	--ToG outdated/broken
 	'MK23_1',
 	'Fn2000_1',
@@ -98,6 +100,16 @@ Cuae_ExcludeWeapons = {
 
 Cuae_ExcludeComponents = {
 	ImprovisedSuppressor = true,
+	-- ToG shotguns range
+	BarrelLongShotgun = true,
+	M1897_barrel_ext = true,
+	Auto5_Long_LMag = true,
+	Auto5_Long_NMag = true,
+	Caws_Barrel_long_1 = true,
+	FP6_Barrel_ext_1 = true,
+	Spas12_Barrel_ext_1 = true,
+	CondorN_Barrel_ext_1 = true,
+	Condor_Barrel_ext_1 = true,
 }
 
 -- Build on OnMsg.ModsReloaded

@@ -90,25 +90,25 @@ function OnMsg.ModsReloaded()
 	-- 	}
 	-- })
 
-	for _type, _ in pairs(Cuae_AllWeapons) do
-		local _tab = Cuae_GetAllWeaponsOfType(_type, "Legion")
-		Cuae_Debug(">", _type)
-		if _tab then
-			for _, w in pairs(_tab) do
-				-- Cuae_Debug(w.id)
-				Cuae_Debug(">>", w.id, "Cost:", w.Cost, "/", g_Classes[w.id].Cost, "CanAppearInShop:", g_Classes[w.id].CanAppearInShop, "base_drop_chance", g_Classes[w.id].base_drop_chance)
-				-- for _, slot in pairs(g_Classes[w.id].ComponentSlots) do
-				-- 	Cuae_Debug(">>-", slot.SlotType, "DefaultComponent", slot.DefaultComponent)
-				-- 	for _, component in pairs(slot.AvailableComponents) do
-				-- 		local compCls = WeaponComponents[component]
-				-- 		if compCls then
-				-- 			Cuae_Debug(component, "ModificationDifficulty", compCls.ModificationDifficulty, "Cost", compCls.Cost, "compCls.AdditionalCosts", compCls.AdditionalCosts)
-				-- 		end
-				-- 	end
-				-- end
-			end
-		end
-	end
+	-- for _type, _ in pairs(Cuae_AllWeapons) do
+	-- 	local _tab = Cuae_GetAllWeaponsOfType(_type, "Legion")
+	-- 	Cuae_Debug(">", _type)
+	-- 	if _tab then
+	-- 		for _, w in pairs(_tab) do
+	-- 			-- Cuae_Debug(w.id)
+	-- 			Cuae_Debug(">>", w.id, "Cost:", w.Cost, "/", g_Classes[w.id].Cost, "CanAppearInShop:", g_Classes[w.id].CanAppearInShop, "base_drop_chance", g_Classes[w.id].base_drop_chance)
+	-- 			-- for _, slot in pairs(g_Classes[w.id].ComponentSlots) do
+	-- 			-- 	Cuae_Debug(">>-", slot.SlotType, "DefaultComponent", slot.DefaultComponent)
+	-- 			-- 	for _, component in pairs(slot.AvailableComponents) do
+	-- 			-- 		local compCls = WeaponComponents[component]
+	-- 			-- 		if compCls then
+	-- 			-- 			Cuae_Debug(component, "ModificationDifficulty", compCls.ModificationDifficulty, "Cost", compCls.Cost, "compCls.AdditionalCosts", compCls.AdditionalCosts)
+	-- 			-- 		end
+	-- 			-- 	end
+	-- 			-- end
+	-- 		end
+	-- 	end
+	-- end
 end
 
 -- alter armament
