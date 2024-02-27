@@ -45,7 +45,8 @@ function CUAEBuildWeaponTables()
 			end
 		elseif _type == "Head" or _type == "Torso" or _type == "Legs" then
 			local allArmors = table.ifilter(GetWeaponsByType("Armor"), function(i, a)
-				return _type == (g_Classes[a.id].Slot or 'Torso') and g_Classes[a.id].CanAppearInShop
+				return _type == (g_Classes[a.id].Slot or 'Torso') and not table.find(Cuae_ExcludeWeapons, a.id) and
+					g_Classes[a.id].CanAppearInShop
 			end)
 			for _, w in pairs(allArmors) do
 				if w.id == "LightHelmet" then
@@ -96,7 +97,7 @@ function OnMsg.ModsReloaded()
 	-- 	if _tab then
 	-- 		for _, w in pairs(_tab) do
 	-- 			-- Cuae_Debug(w.id)
-	-- 			Cuae_Debug(">>", w.id, "Cost:", w.Cost, "/", g_Classes[w.id].Cost, "CanAppearInShop:", g_Classes[w.id].CanAppearInShop, "base_drop_chance", g_Classes[w.id].base_drop_chance)
+	-- 			Cuae_Debug(">>", w.id, "Cost:", w.Cost, "/", g_Classes[w.id].Cost, "CanAppearInShop:", g_Classes[w.id].CanAppearInShop, "PenetrationClass", g_Classes[w.id].PenetrationClass, "base_drop_chance", g_Classes[w.id].base_drop_chance)
 	-- 			-- for _, slot in pairs(g_Classes[w.id].ComponentSlots) do
 	-- 			-- 	Cuae_Debug(">>-", slot.SlotType, "DefaultComponent", slot.DefaultComponent)
 	-- 			-- 	for _, component in pairs(slot.AvailableComponents) do
@@ -112,27 +113,53 @@ function OnMsg.ModsReloaded()
 end
 
 -- alter armament
-local function changeArnament(unit)
+local function changeArnament(unit, avgAllyLevel)
 	local orginalHandheldsA, orginalHandheldsB, orginalHead, orginalTorso, orginalLegs = Cuae_GetOrginalEq(unit)
+	if #orginalHandheldsA == 0 then
+		Cuae_Debug("C-UAE Chaning Arnament SKIP du to empty orginalHandheldsA", unit.Affiliation)
+		return
+	end
 	Cuae_RemoveAmmo(unit)
-	Cuae_GenerateNewWeapons(unit, orginalHandheldsA, orginalHandheldsB)
-	Cuae_GeneratNewArmor(unit, orginalHead, orginalTorso, orginalLegs)
-	unit:UpdateOutfit()
+	Cuae_GenerateNewWeapons(unit, avgAllyLevel, orginalHandheldsA, orginalHandheldsB)
+	Cuae_GeneratNewArmor(unit, avgAllyLevel, orginalHead, orginalTorso, orginalLegs)
+	if IsKindOf(unit, "Unit") then unit:UpdateOutfit() end
 end
 
 -- main entrypoint
+function OnMsg.ConflictStart(sector_id)
+	if not Cuae_LoadedModOptions.ApplyChangesInSateliteView then
+		return
+	end
+	local allySquads, enemySquads = GetSquadsInSector(sector_id, "exclTravel", "inclMilitia", "exclArrive", "exclRetreat")
+
+	local count, sum = 0, 0
+	for _, u in ipairs(GetUnitsFromSquads(allySquads, "getUnitData")) do
+		count = count + 1
+		sum = sum + u:GetLevel()
+	end
+	local avgAllyLevel = count > 0 and sum // count or 1
+	Cuae_Debug("C-UAE Calcualted avg Ally level", sum, "//", count, "=", avgAllyLevel)
+
+	local enemyUnits = GetUnitsFromSquads(enemySquads, "getUnitData")
+	for _, unit_data in pairs(enemyUnits) do
+		if unit_data.species == "Human" and (Cuae_AffiliationWeight[unit_data.Affiliation]) and not unit_data:IsDead() then
+			Cuae_Debug("C-UAE Chaning Arnament on ConflictStart... unit.CUAE", unit_data.CUAE, unit_data.session_id)
+			if not unit_data.CUAE then
+				changeArnament(unit_data, avgAllyLevel)
+				unit_data.CUAE = true
+			end
+			Cuae_Debug("C-UAE Chaning Arnament on ConflictStart DONE")
+		end
+	end
+end
+
 function OnMsg.UnitCreated(unit)
-	-- TODO add support for auto resolve satelite combat - mod options - disable for REW
-	if unit.species == "Human" and (Cuae_AffiliationWeight[unit.Affiliation]) and not (unit.militia or unit:IsCivilian()) and unit:GetActiveWeapons() and not unit:IsDead() then
-		if GetMapName() == "I-1 - Flag Hill" and GameState.ConflictScripted then
-			Cuae_Debug("C-UAE Chaning Arnament SKIP du to I-1 - Flag Hill double map loading issue")
-			return
-		end
-		Cuae_Debug("C-UAE Chaning Arnament... unit.CUAE", unit.CUAE, unit.session_id)
+	if unit.species == "Human" and (Cuae_AffiliationWeight[unit.Affiliation]) and not unit:IsCivilian() and not unit:IsDead() then
+		Cuae_Debug("C-UAE Chaning Arnament on UnitCreated... unit.CUAE", unit.CUAE, unit.session_id)
 		if not unit.CUAE then
+			changeArnament(unit, 1)
 			unit.CUAE = true
-			changeArnament(unit)
 		end
-		Cuae_Debug("C-UAE Chaning Arnament DONE")
+		Cuae_Debug("C-UAE Chaning Arnament on UnitCreated DONE")
 	end
 end

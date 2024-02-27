@@ -28,7 +28,10 @@ local function addAmmo(unit, ammo, magazineSize)
 	if IsKindOf(newAmmo, "Ordnance") then
 		newAmmo.Amount = Min(InteractionRandRange(2, 5, "LDCUAE"), newAmmo.MaxStacks)
 	else
-		newAmmo.Amount = Min(InteractionRandRange(Max(8, magazineSize), Max(12, magazineSize * 2), "LDCUAE"),
+		-- mininium range 10-24
+		-- maximum range 30-65
+		newAmmo.Amount = Min(
+			InteractionRandRange(Min(30, Max(10, magazineSize)), Min(65, Max(24, magazineSize * 2)), "LDCUAE"),
 			newAmmo.MaxStacks)
 	end
 	unit:AddItem("Inventory", newAmmo)
@@ -142,9 +145,9 @@ local function canReplaceOrAddAmmo(unit, adjustedUnitLevel, orginalWeapon1, orgi
 	end
 end
 
-function Cuae_GenerateNewWeapons(unit, orginalHandheldsA, orginalHandheldsB)
+function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandheldsA, orginalHandheldsB)
 	local level = Min(10, unit:GetLevel())
-	local adjLevel = Cuae_CalculateAdjustedUnitLevel(level, unit.Affiliation)
+	local adjLevel = Cuae_CalculateAdjustedUnitLevel(level, avgLevel, unit.Affiliation)
 	Cuae_Debug("C-UAE Adding new weapons", unit.Affiliation, adjLevel)
 	-- Night/Day cycle affects grenades
 	local currentGrenadeType = Cuae_GetGrenadeCurrentType()

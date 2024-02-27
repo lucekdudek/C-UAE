@@ -1,11 +1,13 @@
 Cuae_LoadedModOptions = {
 	ReplaceWeapons = true,
+	AddWeaponComponents = true,
 	ReplaceArmor = true,
 	ExtraHandgun = true,
 	ExtraGrenadesCount = 2,
 	ExtraGrenadesChance = 50,
 	AllowAlternativeWeaponType = true,
 	ArmamentStrengthFactor = 0,
+	ApplyChangesInSateliteView = true,
 	Debug = false,
 }
 
@@ -34,12 +36,15 @@ Cuae_ImmunityTable = {
 	PostApoHelmet = true,
 	-- U-Bahn DLC
 	Gasmaskenhelm = true,
+	--Task-oriented head pieces
+	GasMask = true,
+	NightVisionGoggles = true,
 }
 
 Cuae_AffiliationWeight = {
 	Rebel = 0,
-	Legion = -1,
-	Thugs = -1,
+	Legion = 0,
+	Thugs = 0,
 	Army = 0,
 	Adonis = 1,
 	SuperSoldiers = 0,
@@ -96,6 +101,9 @@ Cuae_ExcludeWeapons = {
 	'ProximityC4',
 	'ProximityPETN',
 	'ProximityTNT',
+	--Task-oriented head pieces
+	'GasMask',
+	'NightVisionGoggles',
 }
 
 Cuae_ExcludeComponents = {

@@ -54,9 +54,8 @@ The goal of this modification is to be [b]compatible[/b] with other modification
 
 [list]
     [*][b][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3021320057] Rato's Gameplay Balance and Overhaul 3 [/url][/b] Note: new weapons logic
-    [*][b][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3022236291] Timmeh's Armor Overhaul [/url][/b] Note: new armors and new armor logic
-    [*][b][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3017633184] Timmeh's Weapon Overhaul [/url][/b] Note: new weapons and new weapons logic and new economy
-    [*][b][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3038472406] BCE Guns [/url][/b] Note: new weapons and new economy
+    [*][b][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3022236291] Timmeh's Armor Overhaul [/url][/b] and [b][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3017633184] Timmeh's Weapon Overhaul [/url][/b] Note: new weapons and armors and new armor, not compatible with other mods
+    [*][b][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3038472406] BCE Guns [/url][/b] and [b][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3031643676] Armor Crafting Economy [/url][/b] Note: new weapons and armor, not compatible with other mods
 [/list]
 
 Note: [b]BCE[/b] and [b]Timmeh's[/b] Weapon are changing prices of vanilla weapons and are not balanced for vanilla prices so they will not work with ToG and/or MoW
@@ -64,7 +63,7 @@ Note: [b]BCE[/b] and [b]Timmeh's[/b] Weapon are changing prices of vanilla weapo
 Don't use all mods from the above lists together. For information on which mods can be used with which related to the particular mod's description
 
 [h2]How does it do[/h2]
-Whenever players enter a sector all enemies are scanned and a profile of their [b]level[/b], [b]affiliation[/b], and [b]loadout[/b] is created. This profile then is used to generate new weapons and armor.
+Whenever players meet enemies in the satellite or tactical view, all enemies are scanned and a profile of their [b]level[/b], [b]affiliation[/b], and [b]loadout[/b] is created. This profile then is used to generate new weapons and armor. Mod remembers which enemies were already changed and meeting the same enemies for a second time will not trigger the mod's logic. 
 
 [h3]Avaiable Armaments Logic[/h3]
 C-UAE is built based on in game system of Cost and Bobby Ray's CanAppearInShop property. So only armaments that can appear in the shop are distributed to enemies.
@@ -85,15 +84,7 @@ Armor follows a similar logic to weapons. Based on the enemy level, affiliation,
 Enemies can't get unique weapons like Golden Gun. But also enemies who wield unique weapons or armor will keep them. For example, enemies with "Shiny and Chrome Helmet" will keep it but their weapon and other armor pieces will get replaced according to the mod logic.
 
 [h2]Configuration options[/h2]
-[list]
-    [*][b]Replace Weapons[/b] When enabled, replace original enemy weapons with new ones. Allows to use C-UAE along site Random Enemy Weapons mod which provides different way of distributing weapons in Grand Chien.
-    [*][b]Replace Armor[/b] When enabled, replace the original enemy armor with new ones.
-    [*][b]Extra Handgun[/b] If the original loadout has free spots left and there is no Handgun the enemy will get an extra Handgun.
-    [*][b]Extra Grenades Count[/b] If the original loadout has free spots left and there is no Grenade the enemy will get an extra Grenade of this count. Setting it to 0 causes no extra grenades.
-    [*][b]Extra Grenades Chance[/b] modifies the chance an enemy will get extra granades.
-    [*][b]Armament Strength Factor[/b] difficulty adjustmen. Negative values cause the cost range to be closer to the cheapest armaments. Positive values make the cost range to be closer to expensive armaments. Note: The original loadout is always within the cost range.
-    [*][b]Allow Alternative Weapon Type[/b] alternative version of weapon generation. Handguns can randomly be upgraded to SMGs, SMGs to ARs, and ARs to LMG or Sniper Rifles. 
-[/list]
+See [b]Discussions[/b] section.
 
 [h2]Special compatibility options for modders[/h2]
 
@@ -101,9 +92,7 @@ Read more in the [b]Discussions[/b] section.
 
 [h2]Notes[/h2]
 [list]
-    [*]Mod uses enemy level as a base therefore it is affected by difficulty and can be more adjusted by using my other mod [b]Adjust Difficulty Settings[/b]
     [*]Will not change enemies in the middle of a fight.
+    [*]Does not work with [b]New weapons of combinations of the original model[/b] as it is outdated.
     [*]Source code is available at [url=https://github.com/lucekdudek/C-UAE]GitHub[/url]
-    [*]Does not affect weapons used in auto-resolve battles therefore, it does not affect drop from said battles
-    [*]Does not work with [b]New weapons of combinations of the original model[/b] as it is outdated
 [/list]

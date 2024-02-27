@@ -38,6 +38,12 @@ return {
 		'DefaultValue', true,
 	}),
 	PlaceObj('ModItemOptionToggle', {
+		'name', "AddWeaponComponents",
+		'DisplayName', "Add Weapon Components",
+		'Help', "When enabled, weapons are strengthened with attachemetns. Better attachemetns are given to higher level enemies. This also causes the dropped weapons to have attachemetns.",
+		'DefaultValue', true,
+	}),
+	PlaceObj('ModItemOptionToggle', {
 		'name', "ReplaceArmor",
 		'DisplayName', "Replace Armor",
 		'Help', "When enabled, replaces orginal enemy armor with new ones",
@@ -120,6 +126,12 @@ return {
 		'name', "AllowAlternativeWeaponType",
 		'DisplayName', "Allow Alternative Weapon Type",
 		'Help', "When enabled, gives enemies chance of upgrading Handguns to SMGs and SMGs to ARs",
+		'DefaultValue', true,
+	}),
+	PlaceObj('ModItemOptionToggle', {
+		'name', "ApplyChangesInSateliteView",
+		'DisplayName', "Apply Changes In The Satelite View",
+		'Help', "When enabled, enemies get new armaments when you meet them in the satellite view. This allows them to use and drop new armament in auto-resolved battles. Otherwise, they get new armaments when entering tactical view only",
 		'DefaultValue', true,
 	}),
 	PlaceObj('ModItemOptionToggle', {

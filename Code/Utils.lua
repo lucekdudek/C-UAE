@@ -31,8 +31,10 @@ function Cuae_GetAllAmmunitionOfCaliber(weaponCaliber, affiliation)
 	return ammunition
 end
 
-function Cuae_CalculateAdjustedUnitLevel(level, affiliation)
-	return Min(20, Max(1, level + Cuae_AffiliationWeight[affiliation] + Cuae_LoadedModOptions.ArmamentStrengthFactor))
+function Cuae_CalculateAdjustedUnitLevel(level, avgAllyLevel, affiliation)
+	local minimum = Max(1, avgAllyLevel + Cuae_LoadedModOptions.ArmamentStrengthFactor)
+	local adjusted = level + Cuae_AffiliationWeight[affiliation] + Cuae_LoadedModOptions.ArmamentStrengthFactor
+	return Min(20, Max(minimum, adjusted))
 end
 
 function Cuae_CalculateCostRange(level, minFactor, maxFactor)

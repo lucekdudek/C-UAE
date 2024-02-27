@@ -69,6 +69,10 @@ local function addComponentsInSlots(level, weapon, weaponComponentSlots, remanin
 end
 
 function Cuae_AddRandomComponents(weapon, adjustedUnitLevel)
+	if not Cuae_LoadedModOptions.AddWeaponComponents then
+		return
+	end
+
 	local chance = Cuae_UnitLevelToComponentChance[adjustedUnitLevel]
 
 	-- Get all available ComponentsSlot
