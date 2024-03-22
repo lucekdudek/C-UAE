@@ -1,7 +1,6 @@
 local function keepOrginalArmor(orginalArmor, slot)
 	if orginalArmor then
-		Cuae_Debug("- keeping(immunity):", slot, orginalArmor.class, orginalArmor.Cost, "Condition:",
-			orginalArmor.Condition)
+		Cuae_Debug("- keeping(immunity):", slot, orginalArmor.class, orginalArmor.Cost, "Condition:", orginalArmor.Condition)
 	end
 end
 
@@ -12,17 +11,18 @@ local function replaceArmorPiece(unit, avgAllyLevel, orginalArmor, slot)
 	end
 
 	local unitLevel = Min(10, unit:GetLevel())
-	local adjustedUnitLevel = Cuae_CalculateAdjustedUnitLevel(unitLevel, avgAllyLevel, unit.Affiliation)
+	local adjustedUnitLevel = Cuae_CalculateAdjustedUnitLevel(unitLevel, avgAllyLevel, Cuae_UnitAffiliation(unit))
 	local orginalCost = orginalArmor and orginalArmor.Cost or 0
 
 	if orginalCost == 0 and InteractionRandRange(1, 100, "LDCUAE") >= Cuae_UnitLevelToComponentChance[adjustedUnitLevel] then
 		return
 	end
 
-	local suitableArmors = Cuae_GetSuitableArnaments(unit.Affiliation, adjustedUnitLevel, slot, orginalCost)
+	local suitableArmors = Cuae_GetSuitableArnaments(Cuae_UnitAffiliation(unit), adjustedUnitLevel, slot, orginalCost)
 
-	if #suitableArmors == 0 then
-		Cuae_Debug("- skipping as no siutable armors were found", slot, "for", unit.Affiliation)
+	local keepOrginal = orginalArmor and InteractionRandRange(1, 100, "LDCUAE") <= 12
+	if #suitableArmors == 0 or keepOrginal then
+		Cuae_Debug("- skipping as no siutable armors were found", slot, "keepOrginal", keepOrginal, "for", Cuae_UnitAffiliation(unit))
 		if orginalArmor then
 			keepOrginalArmor(orginalArmor, slot)
 		end
@@ -48,7 +48,7 @@ local function replaceArmorPiece(unit, avgAllyLevel, orginalArmor, slot)
 end
 
 function Cuae_GeneratNewArmor(unit, avgAllyLevel, orginalHead, orginalTorso, orginalLegs)
-	Cuae_Debug("C-UAE Adding new armor items", unit.Affiliation)
+	Cuae_Debug("C-UAE Adding new armor items", Cuae_UnitAffiliation(unit))
 	replaceArmorPiece(unit, avgAllyLevel, orginalHead, "Head")
 	replaceArmorPiece(unit, avgAllyLevel, orginalTorso, "Torso")
 	replaceArmorPiece(unit, avgAllyLevel, orginalLegs, "Legs")

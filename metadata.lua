@@ -32,6 +32,7 @@ return PlaceObj('ModDef', {
 		ApplyChangesInSateliteView = true,
 		ArmamentStrengthFactor = "0",
 		Debug = false,
+		DisallowSilencers = true,
 		ExtraGrenadesChance = "50",
 		ExtraGrenadesCount = "2",
 		ExtraHandgun = true,

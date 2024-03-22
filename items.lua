@@ -44,6 +44,12 @@ return {
 		'DefaultValue', true,
 	}),
 	PlaceObj('ModItemOptionToggle', {
+		'name', "DisallowSilencers",
+		'DisplayName', "Disallow Silencers Weapon Components",
+		'Help', "When enabled, silencers wont be given to enemies. Works with vanilla ToG MoW and rato",
+		'DefaultValue', true,
+	}),
+	PlaceObj('ModItemOptionToggle', {
 		'name', "ReplaceArmor",
 		'DisplayName', "Replace Armor",
 		'Help', "When enabled, replaces orginal enemy armor with new ones",

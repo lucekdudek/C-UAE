@@ -116,7 +116,7 @@ end
 local function changeArnament(unit, avgAllyLevel)
 	local orginalHandheldsA, orginalHandheldsB, orginalHead, orginalTorso, orginalLegs = Cuae_GetOrginalEq(unit)
 	if #orginalHandheldsA == 0 then
-		Cuae_Debug("C-UAE Chaning Arnament SKIP du to empty orginalHandheldsA", unit.Affiliation)
+		Cuae_Debug("C-UAE Chaning Arnament SKIP du to empty orginalHandheldsA", Cuae_UnitAffiliation(unit))
 		return
 	end
 	Cuae_RemoveAmmo(unit)
@@ -132,29 +132,42 @@ function OnMsg.ConflictStart(sector_id)
 	end
 	local allySquads, enemySquads = GetSquadsInSector(sector_id, "exclTravel", "inclMilitia", "exclArrive", "exclRetreat")
 
+	local allyUnits = GetUnitsFromSquads(allySquads, "getUnitData")
+
 	local count, sum = 0, 0
-	for _, u in ipairs(GetUnitsFromSquads(allySquads, "getUnitData")) do
+	for _, u in ipairs(allyUnits) do
 		count = count + 1
 		sum = sum + u:GetLevel()
 	end
 	local avgAllyLevel = count > 0 and sum // count or 1
 	Cuae_Debug("C-UAE Calcualted avg Ally level", sum, "//", count, "=", avgAllyLevel)
 
-	local enemyUnits = GetUnitsFromSquads(enemySquads, "getUnitData")
-	for _, unit_data in pairs(enemyUnits) do
-		if unit_data.species == "Human" and (Cuae_AffiliationWeight[unit_data.Affiliation]) and not unit_data:IsDead() then
-			Cuae_Debug("C-UAE Chaning Arnament on ConflictStart... unit.CUAE", unit_data.CUAE, unit_data.session_id)
+	for _, unit_data in pairs(allyUnits) do
+		if unit_data.species == "Human" and (Cuae_AffiliationWeight[Cuae_UnitAffiliation(unit_data)]) and not unit_data:IsDead() then
+			Cuae_Debug("C-UAE Chaning Arnament of an ally on ConflictStart... unit.CUAE", unit_data.CUAE, unit_data.session_id)
 			if not unit_data.CUAE then
 				changeArnament(unit_data, avgAllyLevel)
 				unit_data.CUAE = true
 			end
-			Cuae_Debug("C-UAE Chaning Arnament on ConflictStart DONE")
+			Cuae_Debug("C-UAE Chaning Arnament of an ally on ConflictStart DONE")
+		end
+	end
+
+	local enemyUnits = GetUnitsFromSquads(enemySquads, "getUnitData")
+	for _, unit_data in pairs(enemyUnits) do
+		if unit_data.species == "Human" and (Cuae_AffiliationWeight[Cuae_UnitAffiliation(unit_data)]) and not unit_data:IsDead() then
+			Cuae_Debug("C-UAE Chaning Arnament of an enemy on ConflictStart... unit.CUAE", unit_data.CUAE, unit_data.session_id)
+			if not unit_data.CUAE then
+				changeArnament(unit_data, avgAllyLevel)
+				unit_data.CUAE = true
+			end
+			Cuae_Debug("C-UAE Chaning Arnament of an enemy on ConflictStart DONE")
 		end
 	end
 end
 
 function OnMsg.UnitCreated(unit)
-	if unit.species == "Human" and (Cuae_AffiliationWeight[unit.Affiliation]) and not unit:IsCivilian() and not unit:IsDead() then
+	if unit.species == "Human" and (Cuae_AffiliationWeight[Cuae_UnitAffiliation(unit)]) and not unit:IsDead() then
 		Cuae_Debug("C-UAE Chaning Arnament on UnitCreated... unit.CUAE", unit.CUAE, unit.session_id)
 		if not unit.CUAE then
 			changeArnament(unit, 1)
@@ -162,4 +175,15 @@ function OnMsg.UnitCreated(unit)
 		end
 		Cuae_Debug("C-UAE Chaning Arnament on UnitCreated DONE")
 	end
+end
+
+function OnMsg.ModsReloaded()
+    local cuaeSettings = {
+        ReplaceWeapons = true,
+        ExtraHandgun = true,
+        ExtraGrenadesCount = 10,
+        ExtraGrenadesChance = 100,
+        AllowAlternativeWeaponType = true,
+    }
+    CUAEForceSettings(cuaeSettings)
 end

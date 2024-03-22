@@ -20,4 +20,24 @@ function CUAEAddImmunityTable(immunityTable)
 	end
 end
 
--- CUAEBuildWeaponTables()
+-- local settings = {
+-- 	ReplaceWeapons = true,
+-- 	AddWeaponComponents = true,
+-- 	DisallowSilencers = true,
+-- 	ReplaceArmor = true,
+-- 	ExtraHandgun = true,
+-- 	ExtraGrenadesCount = 2,
+-- 	ExtraGrenadesChance = 50,
+-- 	AllowAlternativeWeaponType = true,
+-- 	ArmamentStrengthFactor = 0,
+-- 	ApplyChangesInSateliteView = true,
+-- }
+-- CUAEForceSettings(settings)
+function CUAEForceSettings(settings)
+	for setting, value in pairs(settings) do
+		Cuae_ForcedOptions[setting] = value
+	end
+	CUAE_ApplyModOptions()
+end
+
+

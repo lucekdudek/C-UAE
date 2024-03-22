@@ -4,6 +4,10 @@ function Cuae_Debug(...)
 	end
 end
 
+function Cuae_UnitAffiliation(unit)
+	return unit.militia and "Militia" or unit.Affiliation
+end
+
 function Cuae_GetAllWeaponsOfType(_type, affiliation)
 	local allWeapons = Cuae_AllWeapons[_type] or {}
 	local exclusionTable = Cuae_AffiliationExclusionTable[affiliation]
@@ -71,8 +75,7 @@ function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost)
 		return (a.Cost or 0) >= minCost and (a.Cost or 0) <= maxCost
 	end)
 
-	Cuae_Debug("-> min:", suitableArnament[1].id, suitableArnament[1].Cost, "max:",
-		suitableArnament[#suitableArnament].id, suitableArnament[#suitableArnament].Cost)
+	Cuae_Debug("-> min:", suitableArnament[1].id, suitableArnament[1].Cost, "max:", suitableArnament[#suitableArnament].id, suitableArnament[#suitableArnament].Cost)
 	return suitableArnament
 end
 
@@ -85,7 +88,7 @@ function Cuae_GetGrenadeCurrentType()
 end
 
 function Cuae_RemoveAmmo(unit)
-	Cuae_Debug("C-UAE Removing orginal ammo from", unit.Affiliation)
+	Cuae_Debug("C-UAE Removing orginal ammo from", Cuae_UnitAffiliation(unit))
 	unit:ForEachItem(function(item, slot_name)
 		-- Ordnance is Ammo for heavy weapons
 		if slot_name == "Inventory" and (IsKindOf(item, "Ammo") or IsKindOf(item, "Ordnance")) then
@@ -97,8 +100,7 @@ function Cuae_RemoveAmmo(unit)
 end
 
 function Cuae_Removeitem(unit, slot, item)
-	Cuae_Debug("- Removing orginal item", "Type:", item.ItemType or item.WeaponType or "", item.class, "Cost:", item
-		.Cost)
+	Cuae_Debug("- Removing orginal item", "Type:", item.ItemType or item.WeaponType or "", item.class, "Cost:", item.Cost)
 	unit:RemoveItem(slot, item)
 	DoneObject(item)
 end
