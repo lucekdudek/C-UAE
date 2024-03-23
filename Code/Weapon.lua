@@ -1,6 +1,4 @@
 local function generateAmmo(weaponCaliber, affiliation, adjustedUnitLevel)
-	Cuae_Debug("-- getting suitable ammo for AdjustedLvl:", adjustedUnitLevel)
-
 	local allAmmunitionOfCaliber = Cuae_GetAllAmmunitionOfCaliber(weaponCaliber, affiliation)
 
 	local costRangeFrom, costRangeTo = Cuae_CalculateCostRange(adjustedUnitLevel, 5, 9)
@@ -14,10 +12,8 @@ local function generateAmmo(weaponCaliber, affiliation, adjustedUnitLevel)
 		return (a.Cost or 0) >= minCost and (a.Cost or 0) <= maxCost
 	end)
 
-	Cuae_Debug("--> min:", suitableAmmos[1].id, suitableAmmos[1].Cost, "max:", suitableAmmos[#suitableAmmos].id, suitableAmmos[#suitableAmmos].Cost)
-
 	local ammo = suitableAmmos[InteractionRandRange(1, #suitableAmmos, "LDCUAE")]
-	Cuae_Debug("-- picked:", weaponCaliber, ammo.id, ammo.Cost)
+	Cuae_Debug("-- picked suitable ammo:", weaponCaliber, ammo.id, ammo.Cost)
 	return ammo
 end
 
@@ -29,44 +25,30 @@ local function addAmmo(unit, ammo, magazineSize)
 	else
 		-- mininium range 10-24
 		-- maximum range 30-65
-		newAmmo.Amount = Min(InteractionRandRange(Min(30, Max(10, magazineSize)), Min(65, Max(24, magazineSize * 2)), "LDCUAE"), newAmmo.MaxStacks)
+		newAmmo.Amount = Min(
+			InteractionRandRange(Min(30, Max(10, magazineSize)), Min(65, Max(24, magazineSize * 2)), "LDCUAE"),
+			newAmmo.MaxStacks)
 	end
 	unit:AddItem("Inventory", newAmmo)
 end
 
-local function tryAddComponentsAndAmmo(unit, adjustedUnitLevel, orginalWeapon)
-	if not IsKindOf(orginalWeapon, "MeleeWeapon") and not IsKindOf(orginalWeapon, "Grenade") and IsKindOf(orginalWeapon, "BaseWeapon") then
+local function tryAddComponentsAndAmmo(unit, adjustedUnitLevel, orginalWeapon, slot)
+	if orginalWeapon and not IsKindOf(orginalWeapon, "MeleeWeapon") and not IsKindOf(orginalWeapon, "Grenade") and IsKindOf(orginalWeapon, "BaseWeapon") then
+		orginalWeapon.ammo = nil
 		Cuae_AddRandomComponents(orginalWeapon, adjustedUnitLevel)
-		addAmmo(unit, generateAmmo(orginalWeapon.Caliber, Cuae_UnitAffiliation(unit), adjustedUnitLevel), orginalWeapon.MagazineSize)
+		local ammo = generateAmmo(orginalWeapon.Caliber, Cuae_UnitAffiliation(unit), adjustedUnitLevel)
+		unit:TryLoadAmmo(slot, "BaseWeapon", ammo.id)
+		addAmmo(unit, ammo, orginalWeapon.MagazineSize)
 	end
 end
 
-local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type, extraGrenadeQuantity)
-	local itemAdded, reason = false, ""
-	-- extraGrenadeQuantity(Options.ExtraGrenadesCount) is affected by Options.ExtraGrenadesChance
-	if extraGrenadeQuantity ~= nil and InteractionRandRange(1, 100, "LDCUAE") > Cuae_LoadedModOptions.ExtraGrenadesChance then
-		return itemAdded, reason
-	end
+local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type)
+	local itemAdded, _ = false, nil
 
-	local orginalCost = orginalWeapon and orginalWeapon.Cost or Cuae_DefaultCost[_type]
 	local newCondition = orginalWeapon and orginalWeapon.Condition or InteractionRandRange(45, 95, "LDCUAE")
 
+	local orginalCost = orginalWeapon and orginalWeapon.Cost or Cuae_DefaultCost[_type]
 	local suitableWeapons = Cuae_GetSuitableArnaments(Cuae_UnitAffiliation(unit), adjustedUnitLevel, _type, orginalCost)
-
-	local keepOrginal = orginalWeapon and InteractionRandRange(1, 100, "LDCUAE") <= 12
-	if #suitableWeapons == 0 or keepOrginal then
-		Cuae_Debug("- skipping as no siutable weapons were found", _type, "keepOrginal", keepOrginal, "for", Cuae_UnitAffiliation(unit))
-		if orginalWeapon then
-			Cuae_Debug("- keeping(no siutable):", _type, orginalWeapon.class, orginalWeapon.Cost, "Condition:", orginalWeapon.Condition)
-			tryAddComponentsAndAmmo(unit, adjustedUnitLevel, orginalWeapon)
-		end
-		return itemAdded, reason
-	end
-
-	-- remove orginal weapon
-	if orginalWeapon then
-		Cuae_Removeitem(unit, slot, orginalWeapon)
-	end
 
 	-- get and init final weapon from preset
 	local weaponPreset = suitableWeapons[InteractionRandRange(1, #suitableWeapons, "LDCUAE")]
@@ -77,11 +59,10 @@ local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type
 	if IsKindOf(newWeapon, "MeleeWeapon") then
 		newWeapon.Condition = newCondition
 		-- TODO handle weaponPreset.CanThrow
-		itemAdded, reason = unit:AddItem(slot, newWeapon)
+		itemAdded, _ = unit:AddItem(slot, newWeapon)
 	elseif IsKindOf(newWeapon, "Grenade") then
-		 -- TODO use extraGrenadeQuantity
-		newWeapon.Amount = Min(extraGrenadeQuantity or InteractionRandRange(1, 4, "LDCUAE"), newWeapon.MaxStacks)
-		itemAdded, reason = unit:AddItem(slot, newWeapon)
+		newWeapon.Amount = Min(Max(Cuae_LoadedModOptions.ExtraGrenadesCount, InteractionRandRange(1, 4, "LDCUAE")), newWeapon.MaxStacks)
+		itemAdded, _ = unit:AddItem(slot, newWeapon)
 	elseif IsKindOf(newWeapon, "BaseWeapon") then
 		newWeapon.Condition = newCondition
 		Cuae_AddRandomComponents(newWeapon, adjustedUnitLevel)
@@ -93,7 +74,7 @@ local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type
 
 		addAmmo(unit, ammo, newWeapon.MagazineSize)
 	end
-	return not not itemAdded, reason
+	return not not itemAdded, newWeapon:GetUIWidth()
 end
 
 local function allowAlternativeWeaponType(_type)
@@ -102,7 +83,7 @@ local function allowAlternativeWeaponType(_type)
 	end
 	local rand = InteractionRandRange(1, 100, "LDCUAE")
 	if _type == "Handgun" then
-		return rand <= 50 and "SMG" or rand <= 80 and "Shotgun" or rand <= 100 and "AssaultRifle" or _type
+		return rand <= 50 and "SMG" or rand <= 80 and "Shotgun" or "AssaultRifle"
 	elseif _type == "SMG" then
 		return rand <= 25 and "AssaultRifle" or _type
 	elseif _type == "Shotgun" then
@@ -129,69 +110,131 @@ local function getWeaponType(weapon)
 	end
 end
 
-local function canReplaceOrAddAmmo(unit, adjustedUnitLevel, orginalWeapon1, orginalWeapon2)
-	if not Cuae_LoadedModOptions.ReplaceWeapons or Cuae_ImmunityTable[orginalWeapon1.class] or (orginalWeapon2 and Cuae_ImmunityTable[orginalWeapon2.class]) then
-		Cuae_Debug("- keeping(immunity):", orginalWeapon1.class, orginalWeapon1.Cost, "Condition:", orginalWeapon1.Condition)
-		tryAddComponentsAndAmmo(unit, adjustedUnitLevel, orginalWeapon1)
-		if orginalWeapon2 then
-			Cuae_Debug("- keeping(immunity):", orginalWeapon2.class, orginalWeapon2.Cost, "Condition:", orginalWeapon2.Condition)
-			tryAddComponentsAndAmmo(unit, adjustedUnitLevel, orginalWeapon2)
-		end
-		return false
-	else
-		return true
-	end
+local function canBeReplaced(unit, adjustedUnitLevel, item, _type, allowRandom)
+	local orginalCost = item and item.Cost or Cuae_DefaultCost[_type]
+	local suitableReplacements = Cuae_GetSuitableArnaments(Cuae_UnitAffiliation(unit), adjustedUnitLevel, _type, orginalCost)
+	return Cuae_LoadedModOptions.ReplaceWeapons and not Cuae_ImmunityTable[item.class] and #suitableReplacements > 0 and
+		not (not Cuae_LoadedModOptions.AllowAlternativeWeaponType and allowRandom and InteractionRandRange(1, 100, "LDCUAE") <= 12)
 end
 
-function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandheldsA, orginalHandheldsB)
+local function isEmptyKeepOrRemove(unit, adjustedUnitLevel, handheld, orginalHandhelds, T1, T1Type, T2, T2Type)
+	local T1IsEmpty, T2IsEmpty = nil, nil
+	if not orginalHandhelds[T2] then
+		T2IsEmpty = true
+	elseif canBeReplaced(unit, adjustedUnitLevel, orginalHandhelds[T2], T2Type) then
+		Cuae_Removeitem(unit, handheld, orginalHandhelds[T2])
+		T2IsEmpty = true
+	else
+		tryAddComponentsAndAmmo(unit, adjustedUnitLevel, orginalHandhelds[T2], handheld)
+		T2IsEmpty = false
+		-- keep T1 as T2 cannot be removed
+		tryAddComponentsAndAmmo(unit, adjustedUnitLevel, orginalHandhelds[T1], handheld)
+		T1IsEmpty = false
+	end
+	if T1IsEmpty == nil then
+		if not orginalHandhelds[T1] then
+			T1IsEmpty = true
+		elseif canBeReplaced(unit, adjustedUnitLevel, orginalHandhelds[T1], T1Type, "allowRandom") then
+			Cuae_Removeitem(unit, handheld, orginalHandhelds[T1])
+			T1IsEmpty = true
+		else
+			tryAddComponentsAndAmmo(unit, adjustedUnitLevel, orginalHandhelds[T1], handheld)
+			T1IsEmpty = false
+			if orginalHandhelds[T1]:GetUIWidth() > 1 then
+				T2IsEmpty = false
+			end
+		end
+	end
+	return T1IsEmpty, T2IsEmpty
+end
+
+function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
+	local itemAdded, _ = false, nil
+	local itemSize = {}
+	local _type1A = orginalHandhelds.A1 and allowAlternativeWeaponType(getWeaponType(orginalHandhelds.A1)) or nil
+	local _type2A = orginalHandhelds.A2 and getWeaponType(orginalHandhelds.A2) or nil
+	local _type1B = orginalHandhelds.B1 and allowAlternativeWeaponType(getWeaponType(orginalHandhelds.B1)) or nil
+	local _type2B = orginalHandhelds.B2 and getWeaponType(orginalHandhelds.B2) or nil
 	local level = Min(10, unit:GetLevel())
 	local adjLevel = Cuae_CalculateAdjustedUnitLevel(level, avgLevel, Cuae_UnitAffiliation(unit))
 	Cuae_Debug("C-UAE Adding new weapons", Cuae_UnitAffiliation(unit), adjLevel)
-	-- Night/Day cycle affects grenades
+	-- unequpe | keep immunes
+	local A1IsEmpty, A2IsEmpty = isEmptyKeepOrRemove(unit, adjLevel, "Handheld A", orginalHandhelds, "A1", _type1A, "A2", _type2A)
+	local B1IsEmpty, B2IsEmpty = isEmptyKeepOrRemove(unit, adjLevel, "Handheld B", orginalHandhelds, "B1", _type1B, "B2", _type2B)
+	-- spawn HandA1 -> HandB1 -> HandA2 -> HandB2 -> Extra Handgun -> Extra Grenade
+	Cuae_Debug("- [1/7](type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 	local currentGrenadeType = Cuae_GetGrenadeCurrentType()
-	local _type1A, _type2A, _type1B, _type2B = nil, nil, nil, nil
-	local orginalHandheldsA2ItemAdded, reason = true, ""
-	-- Handheld A
-	if #orginalHandheldsA == 1 then
-		_type1A = allowAlternativeWeaponType(getWeaponType(orginalHandheldsA[1]))
-		if canReplaceOrAddAmmo(unit, adjLevel, orginalHandheldsA[1]) then
-			replaceWeapon(unit, adjLevel, orginalHandheldsA[1], "Handheld A", _type1A)
-		end
-	elseif #orginalHandheldsA == 2 then
-		_type1A = allowAlternativeWeaponType(getWeaponType(orginalHandheldsA[1]))
-		_type2A = getWeaponType(orginalHandheldsA[2])
-		if canReplaceOrAddAmmo(unit, adjLevel, orginalHandheldsA[1], orginalHandheldsA[2]) then
-			-- TODO fix #suitableWeapons == 0: move suitableWeapons logic out of replaceWeapon function
-			Cuae_Removeitem(unit, "Handheld A", orginalHandheldsA[2])
-			replaceWeapon(unit, adjLevel, orginalHandheldsA[1], "Handheld A", _type1A)
-			orginalHandheldsA2ItemAdded, reason = replaceWeapon(unit, adjLevel, orginalHandheldsA[2], "Handheld A", _type2A)
+	if orginalHandhelds.A1 and A1IsEmpty then
+		itemAdded, itemSize.A1 = replaceWeapon(unit, adjLevel, orginalHandhelds.A1, "Handheld A", _type1A)
+		A1IsEmpty = not itemAdded
+		if itemSize.A1 > 1 then
+			A2IsEmpty = false
 		end
 	end
-	-- Handheld B
-	if #orginalHandheldsB == 1 then
-		_type1B = allowAlternativeWeaponType(getWeaponType(orginalHandheldsB[1]))
-		if canReplaceOrAddAmmo(unit, adjLevel, orginalHandheldsB[1]) then
-			replaceWeapon(unit, adjLevel, orginalHandheldsB[1], "Handheld B", _type1B)
+	Cuae_Debug("- [2/7](type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
+	if orginalHandhelds.B1 and B1IsEmpty then
+		itemAdded, itemSize.B1 = replaceWeapon(unit, adjLevel, orginalHandhelds.B1, "Handheld B", _type1B)
+		B1IsEmpty = not itemAdded
+		if itemSize.B1 > 1 then
+			B2IsEmpty = false
 		end
-	elseif #orginalHandheldsB == 2 then
-		_type1B = allowAlternativeWeaponType(getWeaponType(orginalHandheldsB[1]))
-		_type2B = getWeaponType(orginalHandheldsB[2])
-		if canReplaceOrAddAmmo(unit, adjLevel, orginalHandheldsB[1], orginalHandheldsB[2]) then
-			Cuae_Removeitem(unit, "Handheld B", orginalHandheldsB[2])
-			replaceWeapon(unit, adjLevel, orginalHandheldsB[1], "Handheld B", _type1B)
-			replaceWeapon(unit, adjLevel, orginalHandheldsB[2], "Handheld B", _type2B)
+	end
+	Cuae_Debug("- [3/7](type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
+	if orginalHandhelds.A2 then
+		if A2IsEmpty then
+			itemAdded, _ = replaceWeapon(unit, adjLevel, orginalHandhelds.A2, "Handheld A", _type2A)
+			A2IsEmpty = not itemAdded
+		elseif B1IsEmpty then
+			itemAdded, _ = replaceWeapon(unit, adjLevel, orginalHandhelds.A2, "Handheld B", _type2A)
+			B1IsEmpty = not itemAdded
+		elseif B2IsEmpty then
+			itemAdded, _ = replaceWeapon(unit, adjLevel, orginalHandhelds.A2, "Handheld B", _type2A)
+			B2IsEmpty = not itemAdded
 		end
-	elseif orginalHandheldsA2ItemAdded == false then
-		Cuae_Debug("-- there was no sapce for", _type2A, "in Handheld A, but there is in Handheld B")
-		replaceWeapon(unit, adjLevel, orginalHandheldsA[2], "Handheld B", _type2A)
-		_type1B = _type2A
+	end
+	Cuae_Debug("- [4/7](type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
+	if orginalHandhelds.B2 then
+		if B2IsEmpty then
+			itemAdded, _ = replaceWeapon(unit, adjLevel, orginalHandhelds.B2, "Handheld B", _type2B)
+			B2IsEmpty = not itemAdded
+		elseif A2IsEmpty then
+			itemAdded, _ = replaceWeapon(unit, adjLevel, orginalHandhelds.B2, "Handheld A", _type2B)
+			A2IsEmpty = not itemAdded
+		end
 	end
 	-- extra Handgun
-	if _type1B == nil and Cuae_LoadedModOptions.ExtraHandgun and _type1A ~= 'Handgun' and _type2A ~= 'Handgun' then
-		replaceWeapon(unit, adjLevel, nil, "Handheld B", 'Handgun')
+	Cuae_Debug("- [5/7](type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
+	if Cuae_LoadedModOptions.ExtraHandgun and _type1A ~= 'Handgun' and _type2A ~= 'Handgun' and _type1B ~= 'Handgun' and _type2B ~= 'Handgun' then
+		if (not _type1A or _type1A == currentGrenadeType) and (not _type2A or _type2A == currentGrenadeType) then
+			if A1IsEmpty then
+				itemAdded, _ = replaceWeapon(unit, adjLevel, nil, "Handheld A", 'Handgun')
+				A1IsEmpty = not itemAdded
+			elseif A2IsEmpty then
+				itemAdded, _ = replaceWeapon(unit, adjLevel, nil, "Handheld A", 'Handgun')
+				A2IsEmpty = not itemAdded
+			end
+		elseif (not _type1B or _type1B == currentGrenadeType) and (not _type2B or _type2B == currentGrenadeType) then
+			if B1IsEmpty then
+				itemAdded, _ = replaceWeapon(unit, adjLevel, nil, "Handheld B", 'Handgun')
+				B1IsEmpty = not itemAdded
+			elseif B2IsEmpty then
+				itemAdded, _ = replaceWeapon(unit, adjLevel, nil, "Handheld B", 'Handgun')
+				B2IsEmpty = not itemAdded
+			end
+		end
 	end
 	-- extra Grenades
-	if _type1B == nil and Cuae_LoadedModOptions.ExtraGrenadesCount ~= 0 and _type1A ~= currentGrenadeType and _type2A ~= currentGrenadeType then
-		replaceWeapon(unit, adjLevel, nil, "Handheld B", currentGrenadeType, Cuae_LoadedModOptions.ExtraGrenadesCount)
+	Cuae_Debug("- [6/7](type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
+	if InteractionRandRange(1, 100, "LDCUAE") <= Cuae_LoadedModOptions.ExtraGrenadesChance and Cuae_LoadedModOptions.ExtraGrenadesCount ~= 0 and _type1A ~= currentGrenadeType and _type2A ~= currentGrenadeType and _type1B ~= currentGrenadeType and _type2B ~= currentGrenadeType then
+		local handheld = nil
+		if A1IsEmpty or A2IsEmpty then
+			handheld = "Handheld A"
+		elseif B1IsEmpty or B2IsEmpty then
+			handheld = "Handheld B"
+		end
+		if handheld then
+			replaceWeapon(unit, adjLevel, nil, handheld, currentGrenadeType)
+		end
 	end
+	Cuae_Debug("- [7/7](type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 end

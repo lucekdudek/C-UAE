@@ -114,13 +114,13 @@ end
 
 -- alter armament
 local function changeArnament(unit, avgAllyLevel)
-	local orginalHandheldsA, orginalHandheldsB, orginalHead, orginalTorso, orginalLegs = Cuae_GetOrginalEq(unit)
-	if #orginalHandheldsA == 0 then
+	local orginalHandhelds, orginalHead, orginalTorso, orginalLegs = Cuae_GetOrginalEq(unit)
+	if orginalHandhelds.A1 == nil and orginalHandhelds.A2 == nil then
 		Cuae_Debug("C-UAE Chaning Arnament SKIP du to empty orginalHandheldsA", Cuae_UnitAffiliation(unit))
 		return
 	end
 	Cuae_RemoveAmmo(unit)
-	Cuae_GenerateNewWeapons(unit, avgAllyLevel, orginalHandheldsA, orginalHandheldsB)
+	Cuae_GenerateNewWeapons(unit, avgAllyLevel, orginalHandhelds)
 	Cuae_GeneratNewArmor(unit, avgAllyLevel, orginalHead, orginalTorso, orginalLegs)
 	if IsKindOf(unit, "Unit") then unit:UpdateOutfit() end
 end
@@ -177,13 +177,16 @@ function OnMsg.UnitCreated(unit)
 	end
 end
 
-function OnMsg.ModsReloaded()
-    local cuaeSettings = {
-        ReplaceWeapons = true,
-        ExtraHandgun = true,
-        ExtraGrenadesCount = 10,
-        ExtraGrenadesChance = 100,
-        AllowAlternativeWeaponType = true,
-    }
-    CUAEForceSettings(cuaeSettings)
-end
+-- function OnMsg.ModsReloaded()
+-- 	local cuaeSettings = {
+-- 		ReplaceWeapons = true,
+-- 		ReplaceArmor = false,
+-- 		ExtraHandgun = true,
+-- 		ExtraGrenadesCount = 10,
+-- 		ExtraGrenadesChance = 100,
+-- 		AllowAlternativeWeaponType = true,
+-- 		AddWeaponComponents = true,
+-- 		Debug = true,
+-- 	}
+-- 	CUAEForceSettings(cuaeSettings)
+-- end
