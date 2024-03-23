@@ -1,14 +1,32 @@
+local function Cuae_ForcedOptionsOrCurrentModOptions(key, hidden)
+	if Cuae_ForcedOptions[key] ~= nil then
+		return Cuae_ForcedOptions[key]
+	elseif hidden then
+		return Cuae_LoadedModOptions[key]
+	else
+		return CurrentModOptions[key]
+	end
+end
+
+function CUAE_ApplyModOptions()
+	-- visible options
+	Cuae_LoadedModOptions.ReplaceWeapons = Cuae_ForcedOptionsOrCurrentModOptions("ReplaceWeapons")
+	Cuae_LoadedModOptions.ReplaceArmor = Cuae_ForcedOptionsOrCurrentModOptions("ReplaceArmor")
+	Cuae_LoadedModOptions.ExtraGrenadesChance = tonumber(Cuae_ForcedOptionsOrCurrentModOptions("ExtraGrenadesChance"))
+	Cuae_LoadedModOptions.ArmamentStrengthFactor = tonumber(Cuae_ForcedOptionsOrCurrentModOptions("ArmamentStrengthFactor"))
+	-- hidden options
+	Cuae_LoadedModOptions.ApplyChangesInSateliteView = Cuae_ForcedOptionsOrCurrentModOptions("ApplyChangesInSateliteView", "HIDDEN")
+	Cuae_LoadedModOptions.AddWeaponComponents = Cuae_ForcedOptionsOrCurrentModOptions("AddWeaponComponents", "HIDDEN")
+	Cuae_LoadedModOptions.AllowAlternativeWeaponType = Cuae_ForcedOptionsOrCurrentModOptions("AllowAlternativeWeaponType", "HIDDEN")
+	Cuae_LoadedModOptions.ExtraHandgun = Cuae_ForcedOptionsOrCurrentModOptions("ExtraHandgun", "HIDDEN")
+	Cuae_LoadedModOptions.ExtraGrenadesCount = tonumber(Cuae_ForcedOptionsOrCurrentModOptions("ExtraGrenadesCount", "HIDDEN"))
+	Cuae_LoadedModOptions.DisallowSilencers = Cuae_ForcedOptionsOrCurrentModOptions("DisallowSilencers", "HIDDEN")
+	Cuae_ExcludeComponents_DisallowSilencers()
+	Cuae_LoadedModOptions.Debug = Cuae_ForcedOptionsOrCurrentModOptions("Debug", "HIDDEN")
+end
+
 function OnMsg.ApplyModOptions(id)
 	if id == "LDCUAE" then
-		Cuae_LoadedModOptions.ReplaceWeapons = CurrentModOptions.ReplaceWeapons
-		Cuae_LoadedModOptions.AddWeaponComponents = CurrentModOptions.AddWeaponComponents
-		Cuae_LoadedModOptions.ReplaceArmor = CurrentModOptions.ReplaceArmor
-		Cuae_LoadedModOptions.ExtraHandgun = CurrentModOptions.ExtraHandgun
-		Cuae_LoadedModOptions.ExtraGrenadesCount = tonumber(CurrentModOptions.ExtraGrenadesCount)
-		Cuae_LoadedModOptions.ExtraGrenadesChance = tonumber(CurrentModOptions.ExtraGrenadesChance)
-		Cuae_LoadedModOptions.AllowAlternativeWeaponType = CurrentModOptions.AllowAlternativeWeaponType
-		Cuae_LoadedModOptions.ArmamentStrengthFactor = tonumber(CurrentModOptions.ArmamentStrengthFactor)
-		Cuae_LoadedModOptions.ApplyChangesInSateliteView = CurrentModOptions.ApplyChangesInSateliteView
-		Cuae_LoadedModOptions.Debug = CurrentModOptions.Debug
+		CUAE_ApplyModOptions()
 	end
 end

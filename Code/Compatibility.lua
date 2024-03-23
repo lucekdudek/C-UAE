@@ -1,8 +1,3 @@
--- exclusionTable = {
--- 	affiliation = {"armamentId", "armamentId", "armamentId"}
--- 	affiliation = {"armamentId", "armamentId", "armamentId"}
--- }
--- CUAEAddExclusionTable(exclusionTable)
 function CUAEAddExclusionTable(exclusionTable)
 	for affiliation, armamentIds in pairs(exclusionTable) do
 		for _, armamentId in ipairs(armamentIds) do
@@ -12,12 +7,15 @@ function CUAEAddExclusionTable(exclusionTable)
 	end
 end
 
--- immunityTable = { "armamentId", "armamentId", "armamentId" }
--- CUAEAddImmunityTable(immunityTable)
 function CUAEAddImmunityTable(immunityTable)
 	for _, armamentId in ipairs(immunityTable) do
 		Cuae_ImmunityTable[armamentId] = true
 	end
 end
 
--- CUAEBuildWeaponTables()
+function CUAEForceSettings(settings)
+	for setting, value in pairs(settings) do
+		Cuae_ForcedOptions[setting] = value
+	end
+	CUAE_ApplyModOptions()
+end

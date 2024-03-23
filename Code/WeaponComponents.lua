@@ -82,8 +82,7 @@ function Cuae_AddRandomComponents(weapon, adjustedUnitLevel)
 
 	local remaningComponentsCount = Min(#availableComponentsSlots,
 		Max(1, DivRound(#availableComponentsSlots * chance, 100)))
-	Cuae_Debug("-- adding components", remaningComponentsCount, "/", #availableComponentsSlots, "AdjustedLvl:",
-		adjustedUnitLevel)
+	Cuae_Debug("-- adding components", remaningComponentsCount, "/", #availableComponentsSlots, "AdjustedLvl:", adjustedUnitLevel)
 
 	local handledSlots = {}
 	for _ = 1, 2 do

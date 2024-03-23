@@ -1,15 +1,20 @@
 Cuae_LoadedModOptions = {
+	-- visible options
 	ReplaceWeapons = true,
-	AddWeaponComponents = true,
 	ReplaceArmor = true,
-	ExtraHandgun = true,
-	ExtraGrenadesCount = 2,
 	ExtraGrenadesChance = 50,
-	AllowAlternativeWeaponType = true,
 	ArmamentStrengthFactor = 0,
+	-- hidden options
+	AddWeaponComponents = true,
+	DisallowSilencers = true,
+	ExtraHandgun = false,
+	ExtraGrenadesCount = 3,
+	AllowAlternativeWeaponType = false,
 	ApplyChangesInSateliteView = true,
 	Debug = false,
 }
+
+Cuae_ForcedOptions = {}
 
 Cuae_AffiliationExclusionTable = {}
 
@@ -48,7 +53,7 @@ Cuae_AffiliationWeight = {
 	Army = 0,
 	Adonis = 1,
 	SuperSoldiers = 0,
-	SiegfriedSuperSoldiers = 0,
+	Militia = 0,
 }
 
 Cuae_DefaultCost = {
@@ -107,7 +112,6 @@ Cuae_ExcludeWeapons = {
 }
 
 Cuae_ExcludeComponents = {
-	ImprovisedSuppressor = true,
 	-- ToG shotguns range
 	BarrelLongShotgun = true,
 	M1897_barrel_ext = true,
@@ -119,6 +123,35 @@ Cuae_ExcludeComponents = {
 	CondorN_Barrel_ext_1 = true,
 	Condor_Barrel_ext_1 = true,
 }
+
+function Cuae_ExcludeComponents_DisallowSilencers()
+	Cuae_ExcludeComponents.ImprovisedSuppressor = Cuae_LoadedModOptions.DisallowSilencers
+	Cuae_ExcludeComponents.ImprovisedSuppressor_Anaconda = Cuae_LoadedModOptions.DisallowSilencers
+	Cuae_ExcludeComponents.Suppressor = Cuae_LoadedModOptions.DisallowSilencers
+	Cuae_ExcludeComponents.Suppressor_Anaconda = Cuae_LoadedModOptions.DisallowSilencers
+	-- ToG
+	Cuae_ExcludeComponents.FN2000_silencer_1 = Cuae_LoadedModOptions.DisallowSilencers
+	Cuae_ExcludeComponents.ToG_Shotgun_Silencer = Cuae_LoadedModOptions.DisallowSilencers
+	-- MoW
+	Cuae_ExcludeComponents.MoW_Muz_Obs9 = Cuae_LoadedModOptions.DisallowSilencers
+	Cuae_ExcludeComponents.MoW_Muz_Obs9s = Cuae_LoadedModOptions.DisallowSilencers
+	Cuae_ExcludeComponents.MoW_Muz_Rev9 = Cuae_LoadedModOptions.DisallowSilencers
+	Cuae_ExcludeComponents.MoW_Muz_Rev45 = Cuae_LoadedModOptions.DisallowSilencers
+	Cuae_ExcludeComponents.MoW_Muz_Omega9 = Cuae_LoadedModOptions.DisallowSilencers
+	Cuae_ExcludeComponents.MoW_Muz_N4 = Cuae_LoadedModOptions.DisallowSilencers
+	Cuae_ExcludeComponents.MoW_Muz_Spectre = Cuae_LoadedModOptions.DisallowSilencers
+	Cuae_ExcludeComponents.MoW_Muz_RotexIII = Cuae_LoadedModOptions.DisallowSilencers
+	Cuae_ExcludeComponents.MoW_Muz_SR25 = Cuae_LoadedModOptions.DisallowSilencers
+	Cuae_ExcludeComponents.MoW_Muz_MP9 = Cuae_LoadedModOptions.DisallowSilencers
+	Cuae_ExcludeComponents.MoW_Muz_Vector = Cuae_LoadedModOptions.DisallowSilencers
+	Cuae_ExcludeComponents.MoW_Muz_Phantom = Cuae_LoadedModOptions.DisallowSilencers
+	Cuae_ExcludeComponents.MoW_Muz_TGPA = Cuae_LoadedModOptions.DisallowSilencers
+	Cuae_ExcludeComponents.MoW_Muz_PBS1 = Cuae_LoadedModOptions.DisallowSilencers
+	-- rato
+	Cuae_ExcludeComponents.RAT_TOG_suppressor = Cuae_LoadedModOptions.DisallowSilencers
+end
+
+Cuae_ExcludeComponents_DisallowSilencers()
 
 -- Build on OnMsg.ModsReloaded
 Cuae_AllWeapons = {
