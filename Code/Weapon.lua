@@ -162,7 +162,7 @@ function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
 	local A1IsEmpty, A2IsEmpty = isEmptyKeepOrRemove(unit, adjLevel, "Handheld A", orginalHandhelds, "A1", _type1A, "A2", _type2A)
 	local B1IsEmpty, B2IsEmpty = isEmptyKeepOrRemove(unit, adjLevel, "Handheld B", orginalHandhelds, "B1", _type1B, "B2", _type2B)
 	-- spawn HandA1 -> HandB1 -> HandA2 -> HandB2 -> Extra Handgun -> Extra Grenade
-	Cuae_Debug("- [1/7](type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
+	Cuae_Debug("- [1/6] orginal A1 (type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 	local currentGrenadeType = Cuae_GetGrenadeCurrentType()
 	if orginalHandhelds.A1 and A1IsEmpty then
 		itemAdded, itemSize.A1 = replaceWeapon(unit, adjLevel, orginalHandhelds.A1, "Handheld A", _type1A)
@@ -171,7 +171,7 @@ function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
 			A2IsEmpty = false
 		end
 	end
-	Cuae_Debug("- [2/7](type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
+	Cuae_Debug("- [2/6] orginal B1 (type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 	if orginalHandhelds.B1 and B1IsEmpty then
 		itemAdded, itemSize.B1 = replaceWeapon(unit, adjLevel, orginalHandhelds.B1, "Handheld B", _type1B)
 		B1IsEmpty = not itemAdded
@@ -179,7 +179,7 @@ function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
 			B2IsEmpty = false
 		end
 	end
-	Cuae_Debug("- [3/7](type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
+	Cuae_Debug("- [3/6] orginal A2 (type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 	if orginalHandhelds.A2 then
 		if A2IsEmpty then
 			itemAdded, _ = replaceWeapon(unit, adjLevel, orginalHandhelds.A2, "Handheld A", _type2A)
@@ -192,7 +192,7 @@ function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
 			B2IsEmpty = not itemAdded
 		end
 	end
-	Cuae_Debug("- [4/7](type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
+	Cuae_Debug("- [4/6] orginal B2 (type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 	if orginalHandhelds.B2 then
 		if B2IsEmpty then
 			itemAdded, _ = replaceWeapon(unit, adjLevel, orginalHandhelds.B2, "Handheld B", _type2B)
@@ -203,7 +203,7 @@ function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
 		end
 	end
 	-- extra Handgun
-	Cuae_Debug("- [5/7](type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
+	Cuae_Debug("- [5/6] extra Handgun (type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 	if Cuae_LoadedModOptions.ExtraHandgun and _type1A ~= 'Handgun' and _type2A ~= 'Handgun' and _type1B ~= 'Handgun' and _type2B ~= 'Handgun' then
 		if (not _type1A or _type1A == currentGrenadeType) and (not _type2A or _type2A == currentGrenadeType) then
 			if A1IsEmpty then
@@ -224,7 +224,7 @@ function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
 		end
 	end
 	-- extra Grenades
-	Cuae_Debug("- [6/7](type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
+	Cuae_Debug("- [6/6] extra Grenades (type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 	if InteractionRandRange(1, 100, "LDCUAE") <= Cuae_LoadedModOptions.ExtraGrenadesChance and Cuae_LoadedModOptions.ExtraGrenadesCount ~= 0 and _type1A ~= currentGrenadeType and _type2A ~= currentGrenadeType and _type1B ~= currentGrenadeType and _type2B ~= currentGrenadeType then
 		local handheld = nil
 		if A1IsEmpty or A2IsEmpty then
@@ -236,5 +236,4 @@ function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
 			replaceWeapon(unit, adjLevel, nil, handheld, currentGrenadeType)
 		end
 	end
-	Cuae_Debug("- [7/7](type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 end
