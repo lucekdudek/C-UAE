@@ -1,0 +1,115 @@
+[h1] Exclusion Table [/h1]
+
+Calling function [b]CUAEAddExclusionTable[/b] allows to add custom exclusion logic. Mod then won't distribute armaments among units of given affiliation. 
+
+Example use case: lore friendly mod that restricts legion from using advance weaponry and Adonis from using AK47
+
+Table format:
+[code]
+cuaeExclusionTable = {
+	affiliation = {"armamentId", "armamentId", "armamentId"},
+	affiliation = {"armamentId", "armamentId", "armamentId"},
+}
+[/code]
+
+
+Usage example (legion units will never be given FAMAS and Army will not use AK47):
+[code]
+function OnMsg.ModsReloaded()
+	local cuaeExclusionTable = {
+		Legion = {
+			'FAMAS',
+			'M16A2',
+		},
+		Army= {
+			'AK47',
+			'Galil',
+		}
+	}
+	CUAEAddExclusionTable(cuaeExclusionTable)
+end
+[/code]
+
+Affects Weapons, Armor and Ammunition
+
+[h2]Affiliation affected by the CUAE[/h2]
+[list]
+    [*]Rebel
+    [*]Legion
+    [*]Thugs
+    [*]Army
+    [*]Adonis
+    [*]SuperSoldiers
+    [*]Militia *(It is not a real Affiliation in the soruce code but in C-UAE is treated as the Affiliation of militia units)
+[/list]
+
+[h1] Immunity Table [/h1]
+
+Calling function [b]CUAEAddImmunityTable[/b] allows to protect items from being replaced by C-UAE. This logic is applied to Quest items by default (Pierre's Melee won't be changed to different Melee but his AR and Armor will)
+
+Example use case: enemy AI mod in which one of the archetypes uses specific type of grenades (e.g. all kind of smokes). Providing loot tables with Toxic gas will result in random armor and weapon along side the original grenade. 
+
+Table format:
+[code]
+immunityTable = { "armamentId", "armamentId", "armamentId" }
+[/code]
+
+Usage example:
+[code]
+function OnMsg.ModsReloaded()
+	local cuaeImmunityTable = {
+		'SmokeGrenade',
+		'TearGasGrenade',
+		'ToxicGasGrenade',
+	}
+	CUAEAddImmunityTable(cuaeImmunityTable)
+end
+[/code]
+
+Affects Weapons and Armor
+
+[h1] Forced mod options [/h1]
+
+Other modders can force specific mod configuration for best compability a long with hidden option not accasable for regular users.
+
+Example use case: Tactical AI Project logic requires enemies to have handguns and grenades for advance manovers.
+
+Table format:
+[code]
+settings = {
+	-- visible options
+	ReplaceWeapons = boolean,
+	ReplaceArmor = boolean,
+	ExtraGrenadesChance = number[0, 100],
+	ArmamentStrengthFactor = number[-10,10],
+	-- hidden options
+	-- Should C-UAE add attachements to weapons [default:true]
+	AddWeaponComponents = boolean,
+	-- Should C-UAE add disalove silencers attachements [default:true]
+	DisallowSilencers = boolean,
+	-- Should C-UAE add extra pistols to all enemies [default:false]
+	ExtraHandgun = boolean,
+	-- How many grenades should C-UAE add to enemies [default:3]
+	ExtraGrenadesCount = number[0,~],
+	-- Enables C-UAE to repalce weapons with difrent types [default:false]
+	AllowAlternativeWeaponType = boolean,
+	-- Should C-UAE work for satelite conflicts [default:true]
+	ApplyChangesInSateliteView = boolean,
+	-- Adds C-UAE debug logs [default:false]
+	Debug = boolean,
+}
+[/code]
+
+Usage example:
+[code]
+function OnMsg.ModsReloaded()
+    local cuaeSettings = {
+        ReplaceWeapons = true,
+        ExtraGrenadesChance = 100,
+        ExtraHandgun = true,
+        ExtraGrenadesCount = 5,
+        AllowAlternativeWeaponType = true,
+    }
+    CUAEForceSettings(cuaeSettings)
+end
+[/code]
