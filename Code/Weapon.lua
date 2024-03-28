@@ -82,7 +82,7 @@ local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type
 
 		addAmmo(unit, ammo, newWeapon.MagazineSize)
 	end
-	return not not itemAdded, newWeapon:GetUIWidth()
+	return not not itemAdded, newWeapon:GetUIWidth(), newWeapon:IsWeapon()
 end
 
 local function allowAlternativeWeaponType(_type)
@@ -159,6 +159,7 @@ end
 function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
 	local itemAdded, _ = false, nil
 	local itemSize = {}
+	local isWeapon = {}
 	local _type1A = orginalHandhelds.A1 and allowAlternativeWeaponType(getWeaponType(orginalHandhelds.A1)) or nil
 	local _type2A = orginalHandhelds.A2 and getWeaponType(orginalHandhelds.A2) or nil
 	local _type1B = orginalHandhelds.B1 and allowAlternativeWeaponType(getWeaponType(orginalHandhelds.B1)) or nil
@@ -173,60 +174,62 @@ function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
 	Cuae_Debug("- [1/6] orginal A1 (type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 	local currentGrenadeType = Cuae_GetGrenadeCurrentType()
 	if orginalHandhelds.A1 and A1IsEmpty then
-		itemAdded, itemSize.A1 = replaceWeapon(unit, adjLevel, orginalHandhelds.A1, "Handheld A", _type1A)
+		itemAdded, itemSize.A1, isWeapon.A1 = replaceWeapon(unit, adjLevel, orginalHandhelds.A1, "Handheld A", _type1A)
 		A1IsEmpty = not itemAdded
 		if itemSize.A1 > 1 then
 			A2IsEmpty = false
+			isWeapon.A2 = isWeapon.A1
 		end
 	end
 	Cuae_Debug("- [2/6] orginal B1 (type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 	if orginalHandhelds.B1 and B1IsEmpty then
-		itemAdded, itemSize.B1 = replaceWeapon(unit, adjLevel, orginalHandhelds.B1, "Handheld B", _type1B)
+		itemAdded, itemSize.B1, isWeapon.B1 = replaceWeapon(unit, adjLevel, orginalHandhelds.B1, "Handheld B", _type1B)
 		B1IsEmpty = not itemAdded
 		if itemSize.B1 > 1 then
 			B2IsEmpty = false
+			isWeapon.B2 = isWeapon.B1
 		end
 	end
 	Cuae_Debug("- [3/6] orginal A2 (type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 	if orginalHandhelds.A2 then
 		if A2IsEmpty then
-			itemAdded, _ = replaceWeapon(unit, adjLevel, orginalHandhelds.A2, "Handheld A", _type2A)
+			itemAdded, _, isWeapon.A2 = replaceWeapon(unit, adjLevel, orginalHandhelds.A2, "Handheld A", _type2A)
 			A2IsEmpty = not itemAdded
 		elseif B1IsEmpty then
-			itemAdded, _ = replaceWeapon(unit, adjLevel, orginalHandhelds.A2, "Handheld B", _type2A)
+			itemAdded, _, isWeapon.B1 = replaceWeapon(unit, adjLevel, orginalHandhelds.A2, "Handheld B", _type2A)
 			B1IsEmpty = not itemAdded
 		elseif B2IsEmpty then
-			itemAdded, _ = replaceWeapon(unit, adjLevel, orginalHandhelds.A2, "Handheld B", _type2A)
+			itemAdded, _, isWeapon.B2 = replaceWeapon(unit, adjLevel, orginalHandhelds.A2, "Handheld B", _type2A)
 			B2IsEmpty = not itemAdded
 		end
 	end
 	Cuae_Debug("- [4/6] orginal B2 (type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 	if orginalHandhelds.B2 then
 		if B2IsEmpty then
-			itemAdded, _ = replaceWeapon(unit, adjLevel, orginalHandhelds.B2, "Handheld B", _type2B)
+			itemAdded, _, isWeapon.B2 = replaceWeapon(unit, adjLevel, orginalHandhelds.B2, "Handheld B", _type2B)
 			B2IsEmpty = not itemAdded
 		elseif A2IsEmpty then
-			itemAdded, _ = replaceWeapon(unit, adjLevel, orginalHandhelds.B2, "Handheld A", _type2B)
+			itemAdded, _, isWeapon.A2 = replaceWeapon(unit, adjLevel, orginalHandhelds.B2, "Handheld A", _type2B)
 			A2IsEmpty = not itemAdded
 		end
 	end
 	-- extra Handgun
 	Cuae_Debug("- [5/6] extra Handgun (type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 	if Cuae_LoadedModOptions.ExtraHandgun and _type1A ~= 'Handgun' and _type2A ~= 'Handgun' and _type1B ~= 'Handgun' and _type2B ~= 'Handgun' then
-		if (not _type1A or _type1A == currentGrenadeType) and (not _type2A or _type2A == currentGrenadeType) then
+		if not isWeapon.A1 and not isWeapon.A2 then
 			if A1IsEmpty then
-				itemAdded, _ = replaceWeapon(unit, adjLevel, nil, "Handheld A", 'Handgun')
+				itemAdded, _, isWeapon.A1 = replaceWeapon(unit, adjLevel, nil, "Handheld A", 'Handgun')
 				A1IsEmpty = not itemAdded
 			elseif A2IsEmpty then
-				itemAdded, _ = replaceWeapon(unit, adjLevel, nil, "Handheld A", 'Handgun')
+				itemAdded, _, isWeapon.A2 = replaceWeapon(unit, adjLevel, nil, "Handheld A", 'Handgun')
 				A2IsEmpty = not itemAdded
 			end
-		elseif (not _type1B or _type1B == currentGrenadeType) and (not _type2B or _type2B == currentGrenadeType) then
+		elseif not isWeapon.B1 and not isWeapon.B2 then
 			if B1IsEmpty then
-				itemAdded, _ = replaceWeapon(unit, adjLevel, nil, "Handheld B", 'Handgun')
+				itemAdded, _, isWeapon.B1 = replaceWeapon(unit, adjLevel, nil, "Handheld B", 'Handgun')
 				B1IsEmpty = not itemAdded
 			elseif B2IsEmpty then
-				itemAdded, _ = replaceWeapon(unit, adjLevel, nil, "Handheld B", 'Handgun')
+				itemAdded, _, isWeapon.B2 = replaceWeapon(unit, adjLevel, nil, "Handheld B", 'Handgun')
 				B2IsEmpty = not itemAdded
 			end
 		end
