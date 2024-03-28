@@ -8,12 +8,11 @@ function Cuae_UnitAffiliation(unit)
 	return unit.militia and "Militia" or unit.Affiliation
 end
 
-function Cuae_GetAllWeaponsOfType(_type, affiliation)
+function Cuae_GetAllWeaponsOfType(_type, affiliation, maxSize)
+	maxSize = maxSize or 2
 	local allWeapons = Cuae_AllWeapons[_type] or {}
-	local exclusionTable = Cuae_AffiliationExclusionTable[affiliation]
-	local weapons = exclusionTable and
-		table.ifilter(allWeapons, function(_, w) return not exclusionTable[w.id] end) or
-		allWeapons
+	local exclusionTable = Cuae_AffiliationExclusionTable[affiliation] or {}
+	local weapons = table.ifilter(allWeapons, function(_, w) return not exclusionTable[w.id] and g_Classes[w.id].LargeItem + 1 <= maxSize end)
 	return weapons
 end
 
@@ -56,8 +55,8 @@ local function getCostIdx(cost, weapons)
 	return #weapons
 end
 
-function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost)
-	local allWeaponsOfTyp = Cuae_GetAllWeaponsOfType(_type, affiliation)
+function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, maxSize)
+	local allWeaponsOfTyp = Cuae_GetAllWeaponsOfType(_type, affiliation, maxSize)
 	if #allWeaponsOfTyp <= 1 then
 		return allWeaponsOfTyp
 	end

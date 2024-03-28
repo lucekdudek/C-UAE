@@ -42,13 +42,16 @@ local function tryAddComponentsAndAmmo(unit, adjustedUnitLevel, orginalWeapon, s
 	end
 end
 
-local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type)
+local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type, maxSize)
 	local itemAdded, _ = false, nil
 
 	local newCondition = orginalWeapon and orginalWeapon.Condition or InteractionRandRange(45, 95, "LDCUAE")
 
 	local orginalCost = orginalWeapon and orginalWeapon.Cost or Cuae_DefaultCost[_type]
-	local suitableWeapons = Cuae_GetSuitableArnaments(Cuae_UnitAffiliation(unit), adjustedUnitLevel, _type, orginalCost)
+	local suitableWeapons = Cuae_GetSuitableArnaments(Cuae_UnitAffiliation(unit), adjustedUnitLevel, _type, orginalCost, maxSize)
+	if #suitableWeapons < 1 then
+		return false, 0, false
+	end
 
 	-- get and init final weapon from preset
 	local weaponPreset = suitableWeapons[InteractionRandRange(1, #suitableWeapons, "LDCUAE")]
@@ -174,7 +177,7 @@ function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
 	Cuae_Debug("- [1/6] orginal A1 (type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 	local currentGrenadeType = Cuae_GetGrenadeCurrentType()
 	if orginalHandhelds.A1 and A1IsEmpty then
-		itemAdded, itemSize.A1, isWeapon.A1 = replaceWeapon(unit, adjLevel, orginalHandhelds.A1, "Handheld A", _type1A)
+		itemAdded, itemSize.A1, isWeapon.A1 = replaceWeapon(unit, adjLevel, orginalHandhelds.A1, "Handheld A", _type1A, 2)
 		A1IsEmpty = not itemAdded
 		if itemSize.A1 > 1 then
 			A2IsEmpty = false
@@ -183,7 +186,7 @@ function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
 	end
 	Cuae_Debug("- [2/6] orginal B1 (type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 	if orginalHandhelds.B1 and B1IsEmpty then
-		itemAdded, itemSize.B1, isWeapon.B1 = replaceWeapon(unit, adjLevel, orginalHandhelds.B1, "Handheld B", _type1B)
+		itemAdded, itemSize.B1, isWeapon.B1 = replaceWeapon(unit, adjLevel, orginalHandhelds.B1, "Handheld B", _type1B, 2)
 		B1IsEmpty = not itemAdded
 		if itemSize.B1 > 1 then
 			B2IsEmpty = false
@@ -193,23 +196,27 @@ function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
 	Cuae_Debug("- [3/6] orginal A2 (type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 	if orginalHandhelds.A2 then
 		if A2IsEmpty then
-			itemAdded, _, isWeapon.A2 = replaceWeapon(unit, adjLevel, orginalHandhelds.A2, "Handheld A", _type2A)
+			itemAdded, _, isWeapon.A2 = replaceWeapon(unit, adjLevel, orginalHandhelds.A2, "Handheld A", _type2A, 1)
 			A2IsEmpty = not itemAdded
 		elseif B1IsEmpty then
-			itemAdded, _, isWeapon.B1 = replaceWeapon(unit, adjLevel, orginalHandhelds.A2, "Handheld B", _type2A)
+			itemAdded, itemSize.B1, isWeapon.B1 = replaceWeapon(unit, adjLevel, orginalHandhelds.A2, "Handheld B", _type2A, 2)
 			B1IsEmpty = not itemAdded
+			if itemSize.B1 > 1 then
+				B2IsEmpty = false
+				isWeapon.B2 = isWeapon.B1
+			end
 		elseif B2IsEmpty then
-			itemAdded, _, isWeapon.B2 = replaceWeapon(unit, adjLevel, orginalHandhelds.A2, "Handheld B", _type2A)
+			itemAdded, _, isWeapon.B2 = replaceWeapon(unit, adjLevel, orginalHandhelds.A2, "Handheld B", _type2A, 1)
 			B2IsEmpty = not itemAdded
 		end
 	end
 	Cuae_Debug("- [4/6] orginal B2 (type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 	if orginalHandhelds.B2 then
 		if B2IsEmpty then
-			itemAdded, _, isWeapon.B2 = replaceWeapon(unit, adjLevel, orginalHandhelds.B2, "Handheld B", _type2B)
+			itemAdded, _, isWeapon.B2 = replaceWeapon(unit, adjLevel, orginalHandhelds.B2, "Handheld B", _type2B, 1)
 			B2IsEmpty = not itemAdded
 		elseif A2IsEmpty then
-			itemAdded, _, isWeapon.A2 = replaceWeapon(unit, adjLevel, orginalHandhelds.B2, "Handheld A", _type2B)
+			itemAdded, _, isWeapon.A2 = replaceWeapon(unit, adjLevel, orginalHandhelds.B2, "Handheld A", _type2B, 1)
 			A2IsEmpty = not itemAdded
 		end
 	end
@@ -218,18 +225,18 @@ function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
 	if Cuae_LoadedModOptions.ExtraHandgun and _type1A ~= 'Handgun' and _type2A ~= 'Handgun' and _type1B ~= 'Handgun' and _type2B ~= 'Handgun' then
 		if not isWeapon.A1 and not isWeapon.A2 then
 			if A1IsEmpty then
-				itemAdded, _, isWeapon.A1 = replaceWeapon(unit, adjLevel, nil, "Handheld A", 'Handgun')
+				itemAdded, _, isWeapon.A1 = replaceWeapon(unit, adjLevel, nil, "Handheld A", 'Handgun', 1)
 				A1IsEmpty = not itemAdded
 			elseif A2IsEmpty then
-				itemAdded, _, isWeapon.A2 = replaceWeapon(unit, adjLevel, nil, "Handheld A", 'Handgun')
+				itemAdded, _, isWeapon.A2 = replaceWeapon(unit, adjLevel, nil, "Handheld A", 'Handgun', 1)
 				A2IsEmpty = not itemAdded
 			end
 		elseif not isWeapon.B1 and not isWeapon.B2 then
 			if B1IsEmpty then
-				itemAdded, _, isWeapon.B1 = replaceWeapon(unit, adjLevel, nil, "Handheld B", 'Handgun')
+				itemAdded, _, isWeapon.B1 = replaceWeapon(unit, adjLevel, nil, "Handheld B", 'Handgun', 1)
 				B1IsEmpty = not itemAdded
 			elseif B2IsEmpty then
-				itemAdded, _, isWeapon.B2 = replaceWeapon(unit, adjLevel, nil, "Handheld B", 'Handgun')
+				itemAdded, _, isWeapon.B2 = replaceWeapon(unit, adjLevel, nil, "Handheld B", 'Handgun', 1)
 				B2IsEmpty = not itemAdded
 			end
 		end
@@ -244,7 +251,7 @@ function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
 			handheld = "Handheld B"
 		end
 		if handheld then
-			replaceWeapon(unit, adjLevel, nil, handheld, currentGrenadeType)
+			replaceWeapon(unit, adjLevel, nil, handheld, currentGrenadeType, 1)
 		end
 	end
 end
