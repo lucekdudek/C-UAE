@@ -103,9 +103,6 @@ Cuae_ExcludeWeapons = {
 	'RemoteC4',
 	'RemotePETN',
 	'RemoteTNT',
-	'ProximityC4',
-	'ProximityPETN',
-	'ProximityTNT',
 	--Task-oriented head pieces
 	'GasMask',
 	'NightVisionGoggles',
