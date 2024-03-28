@@ -52,18 +52,26 @@ local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type
 
 	-- get and init final weapon from preset
 	local weaponPreset = suitableWeapons[InteractionRandRange(1, #suitableWeapons, "LDCUAE")]
+	local dropChance = g_Classes[weaponPreset.id].base_drop_chance
 	local newWeapon = PlaceInventoryItem(weaponPreset.id)
-	newWeapon.drop_chance = g_Classes[weaponPreset.id].base_drop_chance
 	Cuae_Debug("- picked:", _type, weaponPreset.id, weaponPreset.Cost, "Condition:", newCondition)
 
 	if IsKindOf(newWeapon, "MeleeWeapon") then
+		newWeapon.drop_chance = dropChance
 		newWeapon.Condition = newCondition
 		-- TODO handle weaponPreset.CanThrow
 		itemAdded, _ = unit:AddItem(slot, newWeapon)
 	elseif IsKindOf(newWeapon, "Grenade") then
 		newWeapon.Amount = Min(Max(Cuae_LoadedModOptions.ExtraGrenadesCount, InteractionRandRange(1, 4, "LDCUAE")), newWeapon.MaxStacks)
 		itemAdded, _ = unit:AddItem(slot, newWeapon)
+		-- separated stack of grenade that cna be droped (so enemy cna have stack of 10 to throw but wont drop that big of a stick to the player)
+		local greadnesToDrop = PlaceInventoryItem(weaponPreset.id)
+		greadnesToDrop.Amount = Min(InteractionRandRange(1, 3, "LDCUAE"), newWeapon.MaxStacks)
+		-- base_chance // (100% + ExtraGrenadesChance%*2) e.g. 5 // 100% + 40%*2 => 5 // 180% => 2.777(7) => 3
+		greadnesToDrop.drop_chance = DivRound(dropChance, DivRound(100 + 2 * Cuae_LoadedModOptions.ExtraGrenadesChance, 100))
+		unit:AddItem("Inventory", greadnesToDrop)
 	elseif IsKindOf(newWeapon, "BaseWeapon") then
+		newWeapon.drop_chance = dropChance
 		newWeapon.Condition = newCondition
 		Cuae_AddRandomComponents(newWeapon, adjustedUnitLevel)
 
