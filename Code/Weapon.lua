@@ -165,7 +165,7 @@ function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
 	local isWeapon = {}
 	local _type1A = orginalHandhelds.A1 and allowAlternativeWeaponType(getWeaponType(orginalHandhelds.A1)) or nil
 	local _type2A = orginalHandhelds.A2 and getWeaponType(orginalHandhelds.A2) or nil
-	local _type1B = orginalHandhelds.B1 and allowAlternativeWeaponType(getWeaponType(orginalHandhelds.B1)) or nil
+	local _type1B = orginalHandhelds.B1 and getWeaponType(orginalHandhelds.B1) or nil
 	local _type2B = orginalHandhelds.B2 and getWeaponType(orginalHandhelds.B2) or nil
 	local level = Min(10, unit:GetLevel())
 	local adjLevel = Cuae_CalculateAdjustedUnitLevel(level, avgLevel, Cuae_UnitAffiliation(unit))

@@ -180,17 +180,17 @@ end
 -- function OnMsg.ModsReloaded()
 -- 	local cuaeSettings = {
 -- 		-- visible options
--- 		ReplaceWeapons = true,
--- 		ReplaceArmor = true,
--- 		ExtraGrenadesChance = 50,
--- 		ArmamentStrengthFactor = 0,
+-- 		-- ReplaceWeapons = true,
+-- 		-- ReplaceArmor = true,
+-- 		-- ExtraGrenadesChance = 50,
+-- 		-- ArmamentStrengthFactor = 0,
 -- 		-- hidden options
--- 		AddWeaponComponents = true,
--- 		DisallowSilencers = true,
--- 		ExtraHandgun = false,
--- 		ExtraGrenadesCount = 3,
--- 		AllowAlternativeWeaponType = false,
--- 		ApplyChangesInSateliteView = true,
+-- 		-- AddWeaponComponents = true,
+-- 		-- DisallowSilencers = true,
+-- 		-- ExtraHandgun = false,
+-- 		-- ExtraGrenadesCount = 3,
+-- 		-- AllowAlternativeWeaponType = false,
+-- 		-- ApplyChangesInSateliteView = true,
 -- 		Debug = true,
 -- 	}
 -- 	CUAEForceSettings(cuaeSettings)
