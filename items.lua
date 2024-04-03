@@ -38,6 +38,12 @@ return {
 		'DefaultValue', true,
 	}),
 	PlaceObj('ModItemOptionToggle', {
+		'name', "AddWeaponComponents",
+		'DisplayName', "Add Weapon Components",
+		'Help', "When enabled, weapons are strengthened with attachemetns. Better attachemetns are given to higher level enemies. This also causes the dropped weapons to have attachemetns.",
+		'DefaultValue', true,
+	}),
+	PlaceObj('ModItemOptionToggle', {
 		'name', "ReplaceArmor",
 		'DisplayName', "Replace Armor",
 		'Help', "When enabled, replaces orginal enemy armor with new ones",

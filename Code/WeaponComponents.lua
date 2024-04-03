@@ -26,7 +26,7 @@ local function addComponentInSlot(adjustedUnitLevel, slotType, slotDefault, weap
 		return componentA.Cost + componentA.ModificationDifficulty < componentB.Cost + componentB.ModificationDifficulty
 	end)
 
-	local rangeFrom, rangeTo = Cuae_CalculateCostRange(adjustedUnitLevel, 6, 11)
+	local rangeFrom, rangeTo = Cuae_CalculateCostRange(adjustedUnitLevel, 1, 8)
 	local minIdx = Min(#availableComponents, Max(1, DivRound(#availableComponents * rangeFrom, 100)))
 	local maxIdx = Min(#availableComponents, Max(1, DivRound(#availableComponents * rangeTo, 100)))
 	local suitableComponents = Cuae_TableSlice(availableComponents, minIdx, maxIdx)

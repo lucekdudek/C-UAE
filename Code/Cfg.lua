@@ -1,11 +1,11 @@
 Cuae_LoadedModOptions = {
 	-- visible options
 	ReplaceWeapons = true,
+	AddWeaponComponents = true,
 	ReplaceArmor = true,
 	ExtraGrenadesChance = 50,
 	ArmamentStrengthFactor = 0,
 	-- hidden options
-	AddWeaponComponents = true,
 	DisallowSilencers = true,
 	ExtraHandgun = false,
 	ExtraGrenadesCount = 3,
