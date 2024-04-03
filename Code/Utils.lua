@@ -62,7 +62,7 @@ function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, maxSi
 	end
 
 	local orginalCostIdx = getCostIdx(orginalCost, allWeaponsOfTyp)
-	local costRangeFrom, costRangeTo = Cuae_CalculateCostRange(level, 5, 11)
+	local costRangeFrom, costRangeTo = Cuae_CalculateCostRange(level, 3, 10)
 
 	local minIdx = Min(orginalCostIdx, Max(1, orginalCostIdx - 1, DivRound(#allWeaponsOfTyp * costRangeFrom, 100)))
 	local maxIdx = Max(orginalCostIdx, Min(#allWeaponsOfTyp, DivRound(#allWeaponsOfTyp * costRangeTo, 100)))

@@ -1,7 +1,7 @@
 local function generateAmmo(weaponCaliber, affiliation, adjustedUnitLevel)
 	local allAmmunitionOfCaliber = Cuae_GetAllAmmunitionOfCaliber(weaponCaliber, affiliation)
 
-	local costRangeFrom, costRangeTo = Cuae_CalculateCostRange(adjustedUnitLevel, 5, 9)
+	local costRangeFrom, costRangeTo = Cuae_CalculateCostRange(adjustedUnitLevel, 1, 8)
 
 	local minIdx = Min(#allAmmunitionOfCaliber, Max(1, DivRound(#allAmmunitionOfCaliber * costRangeFrom, 100)))
 	local maxIdx = Min(#allAmmunitionOfCaliber, Max(1, DivRound(#allAmmunitionOfCaliber * costRangeTo, 100)))
