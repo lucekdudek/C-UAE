@@ -40,7 +40,7 @@ return {
 	PlaceObj('ModItemOptionToggle', {
 		'name', "AddWeaponComponents",
 		'DisplayName', "Add Weapon Components",
-		'Help', "When enabled, weapons are strengthened with attachemetns. Better attachemetns are given to higher level enemies. This also causes the dropped weapons to have attachemetns.",
+		'Help', "When enabled, weapons are strengthened with attachments. Better attachments are given to higher-level enemies. This also causes the dropped weapons to have attachments.",
 		'DefaultValue', true,
 	}),
 	PlaceObj('ModItemOptionToggle', {
