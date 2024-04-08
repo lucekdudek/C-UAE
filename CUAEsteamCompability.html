@@ -90,8 +90,8 @@ settings = {
 	ExtraHandgun = boolean,
 	-- How many grenades should C-UAE add to enemies [default:3]
 	ExtraGrenadesCount = number[0,~],
-	-- Enables C-UAE to repalce weapons with difrent types [default:false]
-	AllowAlternativeWeaponType = boolean,
+	-- Enables C-UAE to repalce weapons with difrent types [default:nil]
+	AlternativeWeaponTypeTables = table
 	-- Should C-UAE work for satelite conflicts [default:true]
 	ApplyChangesInSateliteView = boolean,
 	-- Adds C-UAE debug logs [default:false]
@@ -107,7 +107,12 @@ function OnMsg.ModsReloaded()
         ExtraGrenadesChance = 100,
         ExtraHandgun = true,
         ExtraGrenadesCount = 5,
-        AllowAlternativeWeaponType = true,
+        AlternativeWeaponTypeTables = {
+            Handgun = {{"SMG",50}, {"Shotgun",80}, {"AssaultRifle",100}},
+            SMG = {{"AssaultRifle",25}},
+            Shotgun = {{"AssaultRifle",15}},
+            AssaultRifle = {{"Sniper",12}, {"MachineGun",20}},
+        },
     }
     CUAEForceSettings(cuaeSettings)
 end

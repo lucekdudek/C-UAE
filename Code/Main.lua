@@ -189,7 +189,12 @@ end
 -- 		-- DisallowSilencers = true,
 -- 		-- ExtraHandgun = false,
 -- 		-- ExtraGrenadesCount = 3,
--- 		-- AllowAlternativeWeaponType = false,
+-- 		-- AlternativeWeaponTypeTables = {
+-- 		-- 	Handgun = {{"SMG",50}, {"Shotgun",80}, {"AssaultRifle",100}},
+-- 		-- 	SMG = {{"AssaultRifle",25}},
+-- 		-- 	Shotgun = {{"AssaultRifle",15}},
+-- 		-- 	AssaultRifle = {{"Sniper",12}, {"MachineGun",20}},
+-- 		-- },
 -- 		-- ApplyChangesInSateliteView = true,
 -- 		Debug = true,
 -- 	}

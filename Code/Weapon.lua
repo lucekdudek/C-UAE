@@ -89,21 +89,30 @@ local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type
 end
 
 local function allowAlternativeWeaponType(_type)
-	if not Cuae_LoadedModOptions.AllowAlternativeWeaponType then
-		return _type
+	if Cuae_LoadedModOptions.AlternativeWeaponTypeTables then
+		local typeAlternativeWeaponTable = Cuae_LoadedModOptions.AlternativeWeaponTypeTables[_type] or {}
+		local rand = InteractionRandRange(1, 100, "LDCUAE")
+		for _, tuple in ipairs(typeAlternativeWeaponTable) do
+			if rand <= tuple[2] then
+				return tuple[1]
+			end
+		end
 	end
-	local rand = InteractionRandRange(1, 100, "LDCUAE")
-	if _type == "Handgun" then
-		return rand <= 50 and "SMG" or rand <= 80 and "Shotgun" or "AssaultRifle"
-	elseif _type == "SMG" then
-		return rand <= 25 and "AssaultRifle" or _type
-	elseif _type == "Shotgun" then
-		return rand <= 15 and "AssaultRifle" or _type
-	elseif _type == "AssaultRifle" then
-		return rand <= 12 and "Sniper" or rand <= 20 and "MachineGun" or _type
-	else
-		return _type
+	if Cuae_LoadedModOptions.AllowAlternativeWeaponType then -- deprecated
+		local rand = InteractionRandRange(1, 100, "LDCUAE")
+		if _type == "Handgun" then
+			return rand <= 50 and "SMG" or rand <= 80 and "Shotgun" or "AssaultRifle"
+		elseif _type == "SMG" then
+			return rand <= 25 and "AssaultRifle" or _type
+		elseif _type == "Shotgun" then
+			return rand <= 15 and "AssaultRifle" or _type
+		elseif _type == "AssaultRifle" then
+			return rand <= 12 and "Sniper" or rand <= 20 and "MachineGun" or _type
+		else
+			return _type
+		end
 	end
+	return _type
 end
 
 local function getWeaponType(weapon)
@@ -125,7 +134,7 @@ local function canBeReplaced(unit, adjustedUnitLevel, item, _type, allowRandom)
 	local orginalCost = item and item.Cost or Cuae_DefaultCost[_type]
 	local suitableReplacements = Cuae_GetSuitableArnaments(Cuae_UnitAffiliation(unit), adjustedUnitLevel, _type, orginalCost)
 	return Cuae_LoadedModOptions.ReplaceWeapons and not Cuae_ImmunityTable[item.class] and #suitableReplacements > 0 and
-		not (not Cuae_LoadedModOptions.AllowAlternativeWeaponType and allowRandom and InteractionRandRange(1, 100, "LDCUAE") <= 12)
+		not (not (Cuae_LoadedModOptions.AllowAlternativeWeaponType or Cuae_LoadedModOptions.AlternativeWeaponTypeTables) and allowRandom and InteractionRandRange(1, 100, "LDCUAE") <= 12)
 end
 
 local function isEmptyKeepOrRemove(unit, adjustedUnitLevel, handheld, orginalHandhelds, T1, T1Type, T2, T2Type)
