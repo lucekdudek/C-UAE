@@ -9,7 +9,8 @@ Cuae_LoadedModOptions = {
 	DisallowSilencers = true,
 	ExtraHandgun = false,
 	ExtraGrenadesCount = 3,
-	AllowAlternativeWeaponType = false,
+	AllowAlternativeWeaponType = false, -- deprecated
+	AlternativeWeaponTypeTables = nil,
 	ApplyChangesInSateliteView = true,
 	Debug = false,
 }

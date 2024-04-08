@@ -17,7 +17,8 @@ function CUAE_ApplyModOptions()
 	Cuae_LoadedModOptions.ArmamentStrengthFactor = tonumber(Cuae_ForcedOptionsOrCurrentModOptions("ArmamentStrengthFactor"))
 	-- hidden options
 	Cuae_LoadedModOptions.ApplyChangesInSateliteView = Cuae_ForcedOptionsOrCurrentModOptions("ApplyChangesInSateliteView", "HIDDEN")
-	Cuae_LoadedModOptions.AllowAlternativeWeaponType = Cuae_ForcedOptionsOrCurrentModOptions("AllowAlternativeWeaponType", "HIDDEN")
+	Cuae_LoadedModOptions.AllowAlternativeWeaponType = Cuae_ForcedOptionsOrCurrentModOptions("AllowAlternativeWeaponType", "HIDDEN") -- deprecated
+	Cuae_LoadedModOptions.AlternativeWeaponTypeTables = Cuae_ForcedOptionsOrCurrentModOptions("AlternativeWeaponTypeTables", "HIDDEN")
 	Cuae_LoadedModOptions.ExtraHandgun = Cuae_ForcedOptionsOrCurrentModOptions("ExtraHandgun", "HIDDEN")
 	Cuae_LoadedModOptions.ExtraGrenadesCount = tonumber(Cuae_ForcedOptionsOrCurrentModOptions("ExtraGrenadesCount", "HIDDEN"))
 	Cuae_LoadedModOptions.DisallowSilencers = Cuae_ForcedOptionsOrCurrentModOptions("DisallowSilencers", "HIDDEN")
