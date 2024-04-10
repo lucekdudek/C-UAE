@@ -20,9 +20,8 @@ local function replaceArmorPiece(unit, avgAllyLevel, orginalArmor, slot)
 
 	local suitableArmors = Cuae_GetSuitableArnaments(Cuae_UnitAffiliation(unit), adjustedUnitLevel, slot, orginalCost)
 
-	local keepOrginal = orginalArmor and InteractionRandRange(1, 100, "LDCUAE") <= 12
-	if #suitableArmors == 0 or keepOrginal then
-		Cuae_Debug("- skipping as no siutable armors were found", slot, "keepOrginal", keepOrginal, "for", Cuae_UnitAffiliation(unit))
+	if #suitableArmors == 0 then
+		Cuae_Debug("- skipping as no siutable armors were found", slot, "for", Cuae_UnitAffiliation(unit))
 		if orginalArmor then
 			keepOrginalArmor(orginalArmor, slot)
 		end
