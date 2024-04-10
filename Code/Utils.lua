@@ -121,7 +121,7 @@ function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, maxSiz
 			max = distance[#distance]
 		end
 	end
-	local powerFactor = 1.0 - (1.0 / #distance)
+	local powerFactor = 100 - DivRound(100, #distance)
 
 	local oddsFactor = {}
 	local oddsFactorsSum = 0
@@ -134,11 +134,11 @@ function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, maxSiz
 	local singularOdds
 	local culOdds = {}
 	for _, of in ipairs(oddsFactor) do
-		singularOdds = of * 10000 / oddsFactorsSum
+		singularOdds = DivRound(of * 100000, oddsFactorsSum)
 		culOdds[#culOdds + 1] = (culOdds[#culOdds] or 0) + singularOdds
 	end
 
-	local random = DiceInteractionRandRange(1, 10000, DivRound(culOdds[orginalCostIdx], 1), 2, "LDCUAE")
+	local random = DiceInteractionRandRange(1, 100000, DivRound(culOdds[orginalCostIdx], 1), 2, "LDCUAE")
 	for idx, odds in ipairs(culOdds) do
 		if random <= odds then return suitableArnaments[idx] end
 	end
