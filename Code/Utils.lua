@@ -83,9 +83,9 @@ function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, maxSi
 end
 
 function DiceInteractionRandRange(_from, _to, _mid, dice_count, interaction)
-	local dist = Max(_to - _mid, _mid - _from) / dice_count
-	local dice_from = _mid / dice_count - dist
-	local dice_to = _mid / dice_count + dist
+	local dist = DivRound(Max(_to - _mid, _mid - _from), dice_count)
+	local dice_from = DivRound(_mid, dice_count) - dist
+	local dice_to = DivRound(_mid, dice_count) + dist
 	local rand
 	for _ = 1, 10 do
 		rand = 0
@@ -110,7 +110,7 @@ function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, maxSiz
 		"max:", suitableArnaments[#suitableArnaments].id, suitableArnaments[#suitableArnaments].Cost
 	)
 
-	orginalCostIdx = orginalCostIdx or Max(1, Min(#suitableArnaments, #suitableArnaments / 2))
+	orginalCostIdx = orginalCostIdx or Max(1, Min(#suitableArnaments, DivRound(#suitableArnaments, 2)))
 	orginalCost = orginalCost or suitableArnaments[orginalCostIdx].Cost
 
 	local distance = {}
