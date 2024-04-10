@@ -48,12 +48,12 @@ Cuae_ImmunityTable = {
 
 Cuae_AffiliationWeight = {
 	Rebel = 0,
-	Legion = 0,
+	Legion = -1,
 	Thugs = 0,
 	Army = 0,
 	Adonis = 1,
 	SuperSoldiers = 0,
-	Militia = 0,
+	Militia = 1,
 }
 
 Cuae_DefaultCost = {

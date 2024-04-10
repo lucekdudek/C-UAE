@@ -48,16 +48,15 @@ local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type
 	local newCondition = orginalWeapon and orginalWeapon.Condition or InteractionRandRange(45, 95, "LDCUAE")
 
 	local orginalCost = orginalWeapon and orginalWeapon.Cost or Cuae_DefaultCost[_type]
-	local suitableWeapons = Cuae_GetSuitableArnaments(Cuae_UnitAffiliation(unit), adjustedUnitLevel, _type, orginalCost, maxSize)
-	if #suitableWeapons < 1 then
+	local newWeaponPreset = Cuae_GetSuitableArnament(Cuae_UnitAffiliation(unit), adjustedUnitLevel, _type, orginalCost, maxSize)
+	if newWeaponPreset == nil then
 		return false, 0, false
 	end
 
 	-- get and init final weapon from preset
-	local weaponPreset = suitableWeapons[InteractionRandRange(1, #suitableWeapons, "LDCUAE")]
-	local dropChance = g_Classes[weaponPreset.id].base_drop_chance
-	local newWeapon = PlaceInventoryItem(weaponPreset.id)
-	Cuae_Debug("- picked:", _type, weaponPreset.id, weaponPreset.Cost, "Condition:", newCondition)
+	local dropChance = g_Classes[newWeaponPreset.id].base_drop_chance
+	local newWeapon = PlaceInventoryItem(newWeaponPreset.id)
+	Cuae_Debug("- picked:", _type, newWeaponPreset.id, newWeaponPreset.Cost, "Condition:", newCondition)
 
 	if IsKindOf(newWeapon, "MeleeWeapon") then
 		newWeapon.drop_chance = dropChance
@@ -68,7 +67,7 @@ local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type
 		newWeapon.Amount = Min(Max(Cuae_LoadedModOptions.ExtraGrenadesCount, InteractionRandRange(1, 4, "LDCUAE")), newWeapon.MaxStacks)
 		itemAdded, _ = unit:AddItem(slot, newWeapon)
 		-- separated stack of grenades that can be dropped (so the enemy can have a stack of 10 to throw but won't drop that big of a stick to the player)
-		local greadnesToDrop = PlaceInventoryItem(weaponPreset.id)
+		local greadnesToDrop = PlaceInventoryItem(newWeaponPreset.id)
 		greadnesToDrop.Amount = Min(InteractionRandRange(1, 3, "LDCUAE"), newWeapon.MaxStacks)
 		-- base_chance // (100% + ExtraGrenadesChance%*2) e.g. 5 // 100% + 40%*2 => 5 // 180% => 2.777(7) => 3
 		greadnesToDrop.drop_chance = DivRound(dropChance, DivRound(100 + 2 * Cuae_LoadedModOptions.ExtraGrenadesChance, 100))

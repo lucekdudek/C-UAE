@@ -64,7 +64,7 @@ function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, maxSi
 	local orginalCostIdx = getCostIdx(orginalCost, allWeaponsOfTyp)
 	local costRangeFrom, costRangeTo = Cuae_CalculateCostRange(level, 3, 10)
 
-	local minIdx = Min(orginalCostIdx, Max(1, orginalCostIdx - 1, DivRound(#allWeaponsOfTyp * costRangeFrom, 100)))
+	local minIdx = Min(orginalCostIdx, Max(1, DivRound(#allWeaponsOfTyp * costRangeFrom, 100)))
 	local maxIdx = Max(orginalCostIdx, Min(#allWeaponsOfTyp, DivRound(#allWeaponsOfTyp * costRangeTo, 100)))
 
 	local minCost = allWeaponsOfTyp[minIdx].Cost or 0
@@ -79,6 +79,14 @@ function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, maxSi
 		"max:", suitableArnament[#suitableArnament].id, suitableArnament[#suitableArnament].Cost
 	)
 	return suitableArnament
+end
+
+function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, maxSize)
+	local suitableArnaments = Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, maxSize)
+	if #suitableArnaments < 1 then
+		return nil
+	end
+	return suitableArnaments[InteractionRandRange(1, #suitableArnaments, "LDCUAE")]
 end
 
 function Cuae_GetGrenadeCurrentType()
