@@ -73,11 +73,6 @@ function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, maxSi
 		return (a.Cost or 0) >= minCost and (a.Cost or 0) <= maxCost
 	end)
 
-	Cuae_Debug(
-		"- suitable arnaments for AdjustedLvl:", level, _type, "Orginal Cost", orginalCost,
-		"min:", suitableArnament[1].id, suitableArnament[1].Cost,
-		"max:", suitableArnament[#suitableArnament].id, suitableArnament[#suitableArnament].Cost
-	)
 	return suitableArnament
 end
 
@@ -86,6 +81,12 @@ function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, maxSiz
 	if #suitableArnaments < 1 then
 		return nil
 	end
+	Cuae_Debug(
+		"- suitable arnaments for AdjustedLvl:", level, _type, "Orginal Cost", orginalCost,
+		"min:", suitableArnament[1].id, suitableArnament[1].Cost,
+		"max:", suitableArnament[#suitableArnament].id, suitableArnament[#suitableArnament].Cost
+	)
+
 	return suitableArnaments[InteractionRandRange(1, #suitableArnaments, "LDCUAE")]
 end
 
