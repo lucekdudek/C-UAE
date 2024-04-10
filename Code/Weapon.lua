@@ -47,8 +47,7 @@ local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type
 
 	local newCondition = orginalWeapon and orginalWeapon.Condition or InteractionRandRange(45, 95, "LDCUAE")
 
-	local orginalCost = orginalWeapon and orginalWeapon.Cost or Cuae_DefaultCost[_type]
-	local newWeaponPreset = Cuae_GetSuitableArnament(Cuae_UnitAffiliation(unit), adjustedUnitLevel, _type, orginalCost, maxSize)
+	local newWeaponPreset = Cuae_GetSuitableArnament(Cuae_UnitAffiliation(unit), adjustedUnitLevel, _type, orginalWeapon and orginalWeapon.Cost, maxSize)
 	if newWeaponPreset == nil then
 		return false, 0, false
 	end
@@ -116,8 +115,7 @@ local function getWeaponType(weapon)
 end
 
 local function canBeReplaced(unit, adjustedUnitLevel, item, _type)
-	local orginalCost = item and item.Cost or Cuae_DefaultCost[_type]
-	local suitableReplacements = Cuae_GetSuitableArnaments(Cuae_UnitAffiliation(unit), adjustedUnitLevel, _type, orginalCost)
+	local suitableReplacements, _ = Cuae_GetSuitableArnaments(Cuae_UnitAffiliation(unit), adjustedUnitLevel, _type, item and item.Cost)
 	return Cuae_LoadedModOptions.ReplaceWeapons and not Cuae_ImmunityTable[item.class] and #suitableReplacements > 0
 end
 
