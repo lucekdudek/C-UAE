@@ -83,8 +83,8 @@ function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, maxSiz
 	end
 	Cuae_Debug(
 		"- suitable arnaments for AdjustedLvl:", level, _type, "Orginal Cost", orginalCost,
-		"min:", suitableArnament[1].id, suitableArnament[1].Cost,
-		"max:", suitableArnament[#suitableArnament].id, suitableArnament[#suitableArnament].Cost
+		"min:", suitableArnaments[1].id, suitableArnaments[1].Cost,
+		"max:", suitableArnaments[#suitableArnaments].id, suitableArnaments[#suitableArnaments].Cost
 	)
 
 	return suitableArnaments[InteractionRandRange(1, #suitableArnaments, "LDCUAE")]
