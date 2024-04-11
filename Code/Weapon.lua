@@ -47,17 +47,15 @@ local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type
 
 	local newCondition = orginalWeapon and orginalWeapon.Condition or InteractionRandRange(45, 95, "LDCUAE")
 
-	local orginalCost = orginalWeapon and orginalWeapon.Cost or Cuae_DefaultCost[_type]
-	local suitableWeapons = Cuae_GetSuitableArnaments(Cuae_UnitAffiliation(unit), adjustedUnitLevel, _type, orginalCost, maxSize)
-	if #suitableWeapons < 1 then
+	local newWeaponPreset = Cuae_GetSuitableArnament(Cuae_UnitAffiliation(unit), adjustedUnitLevel, _type, orginalWeapon and orginalWeapon.Cost, maxSize)
+	if newWeaponPreset == nil then
 		return false, 0, false
 	end
 
 	-- get and init final weapon from preset
-	local weaponPreset = suitableWeapons[InteractionRandRange(1, #suitableWeapons, "LDCUAE")]
-	local dropChance = g_Classes[weaponPreset.id].base_drop_chance
-	local newWeapon = PlaceInventoryItem(weaponPreset.id)
-	Cuae_Debug("- picked:", _type, weaponPreset.id, weaponPreset.Cost, "Condition:", newCondition)
+	local dropChance = g_Classes[newWeaponPreset.id].base_drop_chance
+	local newWeapon = PlaceInventoryItem(newWeaponPreset.id)
+	Cuae_Debug("- picked:", _type, newWeaponPreset.id, newWeaponPreset.Cost, "Condition:", newCondition)
 
 	if IsKindOf(newWeapon, "MeleeWeapon") then
 		newWeapon.drop_chance = dropChance
@@ -68,7 +66,7 @@ local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type
 		newWeapon.Amount = Min(Max(Cuae_LoadedModOptions.ExtraGrenadesCount, InteractionRandRange(1, 4, "LDCUAE")), newWeapon.MaxStacks)
 		itemAdded, _ = unit:AddItem(slot, newWeapon)
 		-- separated stack of grenades that can be dropped (so the enemy can have a stack of 10 to throw but won't drop that big of a stick to the player)
-		local greadnesToDrop = PlaceInventoryItem(weaponPreset.id)
+		local greadnesToDrop = PlaceInventoryItem(newWeaponPreset.id)
 		greadnesToDrop.Amount = Min(InteractionRandRange(1, 3, "LDCUAE"), newWeapon.MaxStacks)
 		-- base_chance // (100% + ExtraGrenadesChance%*2) e.g. 5 // 100% + 40%*2 => 5 // 180% => 2.777(7) => 3
 		greadnesToDrop.drop_chance = DivRound(dropChance, DivRound(100 + 2 * Cuae_LoadedModOptions.ExtraGrenadesChance, 100))
@@ -98,20 +96,6 @@ local function allowAlternativeWeaponType(_type)
 			end
 		end
 	end
-	if Cuae_LoadedModOptions.AllowAlternativeWeaponType then -- deprecated
-		local rand = InteractionRandRange(1, 100, "LDCUAE")
-		if _type == "Handgun" then
-			return rand <= 50 and "SMG" or rand <= 80 and "Shotgun" or "AssaultRifle"
-		elseif _type == "SMG" then
-			return rand <= 25 and "AssaultRifle" or _type
-		elseif _type == "Shotgun" then
-			return rand <= 15 and "AssaultRifle" or _type
-		elseif _type == "AssaultRifle" then
-			return rand <= 12 and "Sniper" or rand <= 20 and "MachineGun" or _type
-		else
-			return _type
-		end
-	end
 	return _type
 end
 
@@ -130,11 +114,9 @@ local function getWeaponType(weapon)
 	end
 end
 
-local function canBeReplaced(unit, adjustedUnitLevel, item, _type, allowRandom)
-	local orginalCost = item and item.Cost or Cuae_DefaultCost[_type]
-	local suitableReplacements = Cuae_GetSuitableArnaments(Cuae_UnitAffiliation(unit), adjustedUnitLevel, _type, orginalCost)
-	return Cuae_LoadedModOptions.ReplaceWeapons and not Cuae_ImmunityTable[item.class] and #suitableReplacements > 0 and
-		not (not (Cuae_LoadedModOptions.AllowAlternativeWeaponType or Cuae_LoadedModOptions.AlternativeWeaponTypeTables) and allowRandom and InteractionRandRange(1, 100, "LDCUAE") <= 12)
+local function canBeReplaced(unit, adjustedUnitLevel, item, _type)
+	local suitableReplacements, _ = Cuae_GetSuitableArnaments(Cuae_UnitAffiliation(unit), adjustedUnitLevel, _type, item and item.Cost)
+	return Cuae_LoadedModOptions.ReplaceWeapons and not Cuae_ImmunityTable[item.class] and #suitableReplacements > 0
 end
 
 local function isEmptyKeepOrRemove(unit, adjustedUnitLevel, handheld, orginalHandhelds, T1, T1Type, T2, T2Type)
@@ -154,7 +136,7 @@ local function isEmptyKeepOrRemove(unit, adjustedUnitLevel, handheld, orginalHan
 	if T1IsEmpty == nil then
 		if not orginalHandhelds[T1] then
 			T1IsEmpty = true
-		elseif canBeReplaced(unit, adjustedUnitLevel, orginalHandhelds[T1], T1Type, "allowRandom") then
+		elseif canBeReplaced(unit, adjustedUnitLevel, orginalHandhelds[T1], T1Type) then
 			Cuae_Removeitem(unit, handheld, orginalHandhelds[T1])
 			T1IsEmpty = true
 		else

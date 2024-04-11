@@ -18,11 +18,10 @@ local function replaceArmorPiece(unit, avgAllyLevel, orginalArmor, slot)
 		return
 	end
 
-	local suitableArmors = Cuae_GetSuitableArnaments(Cuae_UnitAffiliation(unit), adjustedUnitLevel, slot, orginalCost)
+	local newArmorPreset = Cuae_GetSuitableArnament(Cuae_UnitAffiliation(unit), adjustedUnitLevel, slot, orginalCost)
 
-	local keepOrginal = orginalArmor and InteractionRandRange(1, 100, "LDCUAE") <= 12
-	if #suitableArmors == 0 or keepOrginal then
-		Cuae_Debug("- skipping as no siutable armors were found", slot, "keepOrginal", keepOrginal, "for", Cuae_UnitAffiliation(unit))
+	if newArmorPreset == nil then
+		Cuae_Debug("- skipping as no siutable armors were found", slot, "for", Cuae_UnitAffiliation(unit))
 		if orginalArmor then
 			keepOrginalArmor(orginalArmor, slot)
 		end
@@ -37,14 +36,13 @@ local function replaceArmorPiece(unit, avgAllyLevel, orginalArmor, slot)
 	local newCondition = orginalArmor and orginalArmor.Condition or InteractionRandRange(45, 95, "LDCUAE")
 
 	-- get and init final armor from preset
-	local armorPreset = suitableArmors[InteractionRandRange(1, #suitableArmors, "LDCUAE")]
 	local newArmor = nil
-	newArmor = PlaceInventoryItem(armorPreset.id)
+	newArmor = PlaceInventoryItem(newArmorPreset.id)
 	newArmor.drop_chance = newArmor.base_drop_chance
 	newArmor.Condition = newCondition
 
 	unit:AddItem(slot, newArmor)
-	Cuae_Debug("- picked:", slot, armorPreset.id, armorPreset.Cost, "Condition:", newArmor.Condition)
+	Cuae_Debug("- picked:", slot, newArmorPreset.id, newArmorPreset.Cost, "Condition:", newArmor.Condition)
 end
 
 function Cuae_GeneratNewArmor(unit, avgAllyLevel, orginalHead, orginalTorso, orginalLegs)
