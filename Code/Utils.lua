@@ -126,24 +126,26 @@ function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, maxSiz
 	local oddsFactor = {}
 	local oddsFactorsSum = 0
 	for _, d in ipairs(distance) do
-		local temp = max - d * powerFactor
-		oddsFactor[#oddsFactor + 1] = temp * temp
+		oddsFactor[#oddsFactor + 1] = max - DivRound(d * powerFactor, 100)
 		oddsFactorsSum = oddsFactorsSum + oddsFactor[#oddsFactor]
 	end
+
+	-- MulDiv: division by zero
+	if oddsFactorsSum == 0 then oddsFactorsSum = 1 end
 
 	local singularOdds
 	local culOdds = {}
 	for _, of in ipairs(oddsFactor) do
-		singularOdds = DivRound(of * 100000, oddsFactorsSum)
+		singularOdds = DivRound(of * 1000, oddsFactorsSum)
 		culOdds[#culOdds + 1] = (culOdds[#culOdds] or 0) + singularOdds
 	end
 
-	local random = DiceInteractionRandRange(1, 100000, DivRound(culOdds[orginalCostIdx], 1), 2, "LDCUAE")
+	local random = InteractionRandRange(1, 1000, "LDCUAE")
 	for idx, odds in ipairs(culOdds) do
 		if random <= odds then return suitableArnaments[idx] end
 	end
 
-	return suitableArnaments[#suitableArnaments]
+	return suitableArnaments[InteractionRandRange(1, #suitableArnaments, "LDCUAE")]
 end
 
 function Cuae_GetGrenadeCurrentType()
