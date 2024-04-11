@@ -9,7 +9,6 @@ Cuae_LoadedModOptions = {
 	DisallowSilencers = true,
 	ExtraHandgun = false,
 	ExtraGrenadesCount = 3,
-	AllowAlternativeWeaponType = false, -- deprecated
 	AlternativeWeaponTypeTables = nil,
 	ApplyChangesInSateliteView = true,
 	Debug = false,
@@ -49,32 +48,12 @@ Cuae_ImmunityTable = {
 
 Cuae_AffiliationWeight = {
 	Rebel = 0,
-	Legion = 0,
+	Legion = -1,
 	Thugs = 0,
 	Army = 0,
 	Adonis = 1,
 	SuperSoldiers = 0,
-	Militia = 0,
-}
-
-Cuae_DefaultCost = {
-	Handgun = 500,
-	SMG = 900,
-	AssaultRifle = 1500,
-	Sniper = 1100,
-	Shotgun = 1000,
-	MachineGun = 2000,
-	FlareGun = 500,
-	MeleeWeapon = 100,
-	HeavyWeapon40mmGrenade = 1,
-	HeavyWeaponWarhead = 1,
-	HeavyWeaponMortarShell = 1,
-	MissileLauncher = 1,
-	GrenadeDay = 150,
-	GrenadeNight = 150,
-	Head = 0,
-	Torso = 0,
-	Legs = 0,
+	Militia = 1,
 }
 
 -- Position in table coresponds with a adjusted unit level 1...20
@@ -88,15 +67,6 @@ Cuae_ExcludeWeapons = {
 	'Fn2000_1',
 	'B93R_1',
 	'G3_1',
-	--ToG duplicates
-	'M1Garand_2',
-	'M1Garand_3',
-	'M1Garand_4',
-	'M1Garand_5',
-	'Papovka2SKS_1',
-	'Type56B_1',
-	'Type56C_1',
-	'Type56D_1',
 	--Grenade
 	'ConcussiveGrenade_Mine',
 	'ShapedCharge',

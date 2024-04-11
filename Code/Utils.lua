@@ -58,14 +58,20 @@ end
 function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, maxSize)
 	local allWeaponsOfTyp = Cuae_GetAllWeaponsOfType(_type, affiliation, maxSize)
 	if #allWeaponsOfTyp <= 1 then
-		return allWeaponsOfTyp
+		return allWeaponsOfTyp, nil
 	end
 
-	local orginalCostIdx = getCostIdx(orginalCost, allWeaponsOfTyp)
 	local costRangeFrom, costRangeTo = Cuae_CalculateCostRange(level, 3, 10)
 
-	local minIdx = Min(orginalCostIdx, Max(1, orginalCostIdx - 1, DivRound(#allWeaponsOfTyp * costRangeFrom, 100)))
-	local maxIdx = Max(orginalCostIdx, Min(#allWeaponsOfTyp, DivRound(#allWeaponsOfTyp * costRangeTo, 100)))
+	local minIdx = Max(1, DivRound(#allWeaponsOfTyp * costRangeFrom, 100))
+	local maxIdx = Min(#allWeaponsOfTyp, DivRound(#allWeaponsOfTyp * costRangeTo, 100))
+
+	local orginalCostIdx = nil
+	if orginalCost then
+		local orginalCostIdx = getCostIdx(orginalCost, allWeaponsOfTyp)
+		minIdx = Min(orginalCostIdx, minIdx)
+		maxIdx = Max(orginalCostIdx, maxIdx)
+	end
 
 	local minCost = allWeaponsOfTyp[minIdx].Cost or 0
 	local maxCost = allWeaponsOfTyp[maxIdx].Cost or 0
@@ -73,12 +79,73 @@ function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, maxSi
 		return (a.Cost or 0) >= minCost and (a.Cost or 0) <= maxCost
 	end)
 
+	return suitableArnament, orginalCostIdx
+end
+
+function DiceInteractionRandRange(_from, _to, _mid, dice_count, interaction)
+	local dist = DivRound(Max(_to - _mid, _mid - _from), dice_count)
+	local dice_from = DivRound(_mid, dice_count) - dist
+	local dice_to = DivRound(_mid, dice_count) + dist
+	local rand
+	for _ = 1, 10 do
+		rand = 0
+		for __ = 1, dice_count do
+			rand = rand + InteractionRandRange(dice_from, dice_to, interaction)
+		end
+		if rand >= _from and rand <= _to then
+			return rand
+		end
+	end
+	return _mid
+end
+
+function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, maxSize)
+	local suitableArnaments, orginalCostIdx = Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, maxSize)
+	if #suitableArnaments < 1 then
+		return nil
+	end
 	Cuae_Debug(
 		"- suitable arnaments for AdjustedLvl:", level, _type, "Orginal Cost", orginalCost,
-		"min:", suitableArnament[1].id, suitableArnament[1].Cost,
-		"max:", suitableArnament[#suitableArnament].id, suitableArnament[#suitableArnament].Cost
+		"min:", suitableArnaments[1].id, suitableArnaments[1].Cost,
+		"max:", suitableArnaments[#suitableArnaments].id, suitableArnaments[#suitableArnaments].Cost
 	)
-	return suitableArnament
+
+	orginalCostIdx = orginalCostIdx or Max(1, Min(#suitableArnaments, DivRound(#suitableArnaments, 2)))
+	orginalCost = orginalCost or suitableArnaments[orginalCostIdx].Cost
+
+	local distance = {}
+	local max = 0
+	for _, a in ipairs(suitableArnaments) do
+		distance[#distance + 1] = abs(orginalCost - a.Cost)
+		if distance[#distance] > max then
+			max = distance[#distance]
+		end
+	end
+	local powerFactor = 100 - DivRound(100, #distance)
+
+	local oddsFactor = {}
+	local oddsFactorsSum = 0
+	for _, d in ipairs(distance) do
+		oddsFactor[#oddsFactor + 1] = max - DivRound(d * powerFactor, 100)
+		oddsFactorsSum = oddsFactorsSum + oddsFactor[#oddsFactor]
+	end
+
+	-- MulDiv: division by zero
+	if oddsFactorsSum == 0 then oddsFactorsSum = 1 end
+
+	local singularOdds
+	local culOdds = {}
+	for _, of in ipairs(oddsFactor) do
+		singularOdds = DivRound(of * 1000, oddsFactorsSum)
+		culOdds[#culOdds + 1] = (culOdds[#culOdds] or 0) + singularOdds
+	end
+
+	local random = InteractionRandRange(1, 1000, "LDCUAE")
+	for idx, odds in ipairs(culOdds) do
+		if random <= odds then return suitableArnaments[idx] end
+	end
+
+	return suitableArnaments[InteractionRandRange(1, #suitableArnaments, "LDCUAE")]
 end
 
 function Cuae_GetGrenadeCurrentType()
