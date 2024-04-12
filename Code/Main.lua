@@ -71,13 +71,10 @@ function CUAEBuildWeaponTables()
 end
 
 -- build tables
-function OnMsg.NewGame()
-	CUAEBuildWeaponTables()
-end
-
-function OnMsg.PreLoadSessionData()
-	CUAEBuildWeaponTables()
-end
+OnMsg.NewGame = CUAEBuildWeaponTables
+OnMsg.PreLoadSessionData = CUAEBuildWeaponTables
+OnMsg.LoadSessionData = CUAEBuildWeaponTables
+OnMsg.DataLoaded = CUAEBuildWeaponTables
 
 function OnMsg.ModsReloaded()
 	CUAEBuildWeaponTables()
