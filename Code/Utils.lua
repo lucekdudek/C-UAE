@@ -111,12 +111,12 @@ function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, maxSiz
 	)
 
 	orginalCostIdx = orginalCostIdx or Max(1, Min(#suitableArnaments, DivRound(#suitableArnaments, 2)))
-	orginalCost = orginalCost or suitableArnaments[orginalCostIdx].Cost
+	orginalCost = orginalCost or suitableArnaments[orginalCostIdx].Cost or 0
 
 	local distance = {}
 	local max = 0
 	for _, a in ipairs(suitableArnaments) do
-		distance[#distance + 1] = abs(orginalCost - a.Cost)
+		distance[#distance + 1] = abs(orginalCost - (a.Cost or 0))
 		if distance[#distance] > max then
 			max = distance[#distance]
 		end

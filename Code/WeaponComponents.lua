@@ -23,7 +23,7 @@ local function addComponentInSlot(adjustedUnitLevel, slotType, slotDefault, weap
 	end
 	table.sort(availableComponents, function(a, b)
 		local componentA, componentB = WeaponComponents[a], WeaponComponents[b]
-		return componentA.Cost + componentA.ModificationDifficulty < componentB.Cost + componentB.ModificationDifficulty
+		return (componentA.Cost or 0) + componentA.ModificationDifficulty < (componentB.Cost or 0) + componentB.ModificationDifficulty
 	end)
 
 	local rangeFrom, rangeTo = Cuae_CalculateCostRange(adjustedUnitLevel, 1, 8)
