@@ -75,39 +75,7 @@ OnMsg.NewGame = CUAEBuildWeaponTables
 OnMsg.PreLoadSessionData = CUAEBuildWeaponTables
 OnMsg.LoadSessionData = CUAEBuildWeaponTables
 OnMsg.DataLoaded = CUAEBuildWeaponTables
-
-function OnMsg.ModsReloaded()
-	CUAEBuildWeaponTables()
-	-- CUAEAddImmunityTable({
-	-- 	'FlakLeggings',
-	-- 	'AK47',
-	-- })
-	-- CUAEAddExclusionTable({
-	-- 	Legion = {
-	-- 		'AK74',
-	-- 	}
-	-- })
-
-	-- for _type, _ in pairs(Cuae_AllWeapons) do
-	-- 	local _tab = Cuae_GetAllWeaponsOfType(_type, "Legion")
-	-- 	Cuae_Debug(">", _type)
-	-- 	if _tab then
-	-- 		for _, w in pairs(_tab) do
-	-- 			-- Cuae_Debug(w.id)
-	-- 			Cuae_Debug(">>", w.id, "Cost:", w.Cost, "/", g_Classes[w.id].Cost, "CanAppearInShop:", g_Classes[w.id].CanAppearInShop, "PenetrationClass", g_Classes[w.id].PenetrationClass, "base_drop_chance", g_Classes[w.id].base_drop_chance)
-	-- 			-- for _, slot in pairs(g_Classes[w.id].ComponentSlots) do
-	-- 			-- 	Cuae_Debug(">>-", slot.SlotType, "DefaultComponent", slot.DefaultComponent)
-	-- 			-- 	for _, component in pairs(slot.AvailableComponents) do
-	-- 			-- 		local compCls = WeaponComponents[component]
-	-- 			-- 		if compCls then
-	-- 			-- 			Cuae_Debug(component, "ModificationDifficulty", compCls.ModificationDifficulty, "Cost", compCls.Cost, "compCls.AdditionalCosts", compCls.AdditionalCosts)
-	-- 			-- 		end
-	-- 			-- 	end
-	-- 			-- end
-	-- 		end
-	-- 	end
-	-- end
-end
+OnMsg.ModsReloaded = CUAEBuildWeaponTables
 
 -- alter armament
 local function changeArnament(unit, avgAllyLevel)
@@ -174,26 +142,3 @@ function OnMsg.UnitCreated(unit)
 	end
 end
 
--- function OnMsg.ModsReloaded()
--- 	local cuaeSettings = {
--- 		-- visible options
--- 		-- ReplaceWeapons = true,
--- 		-- AddWeaponComponents = true,
--- 		-- ReplaceArmor = true,
--- 		-- ExtraGrenadesChance = 50,
--- 		-- ArmamentStrengthFactor = 0,
--- 		-- hidden options
--- 		-- DisallowSilencers = true,
--- 		-- ExtraHandgun = false,
--- 		-- ExtraGrenadesCount = 3,
--- 		-- AlternativeWeaponTypeTables = {
--- 		-- 	Handgun = {{"SMG",50}, {"Shotgun",80}, {"AssaultRifle",100}},
--- 		-- 	SMG = {{"AssaultRifle",25}},
--- 		-- 	Shotgun = {{"AssaultRifle",15}},
--- 		-- 	AssaultRifle = {{"Sniper",12}, {"MachineGun",20}},
--- 		-- },
--- 		-- ApplyChangesInSateliteView = true,
--- 		Debug = true,
--- 	}
--- 	CUAEForceSettings(cuaeSettings)
--- end
