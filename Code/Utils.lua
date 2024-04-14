@@ -99,6 +99,21 @@ function DiceInteractionRandRange(_from, _to, _mid, dice_count, interaction)
 	return _mid
 end
 
+function Cuae_GetDefaultArnament(affiliation, _type, maxSize)
+	local _id = Cuae_DefaultWeapons[affiliation][_type]
+	if _id == nil then return nil end
+
+	if g_Classes[_id].LargeItem + 1 > maxSize then
+		_id = Cuae_DefaultSmallWeapons[_type]
+		if _id == nil then return nil end
+	end
+
+	Cuae_Debug(
+		"- suitable default arnament", _type, _id
+	)
+	return { id = _id }
+end
+
 function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, maxSize)
 	local suitableArnaments, orginalCostIdx = Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, maxSize)
 	if #suitableArnaments < 1 then

@@ -47,7 +47,12 @@ local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type
 
 	local newCondition = orginalWeapon and orginalWeapon.Condition or InteractionRandRange(45, 95, "LDCUAE")
 
-	local newWeaponPreset = Cuae_GetSuitableArnament(Cuae_UnitAffiliation(unit), adjustedUnitLevel, _type, orginalWeapon and orginalWeapon.Cost, maxSize)
+	local newWeaponPreset = nil
+	if Cuae_LoadedModOptions.ReplaceWeapons or _type == "GrenadeDay" or _type == "GrenadeNight" then
+		newWeaponPreset = Cuae_GetSuitableArnament(Cuae_UnitAffiliation(unit), adjustedUnitLevel, _type, orginalWeapon and orginalWeapon.Cost, maxSize)
+	else
+		newWeaponPreset = Cuae_GetDefaultArnament(Cuae_UnitAffiliation(unit), _type, maxSize)
+	end
 	if newWeaponPreset == nil then
 		return false, 0, false
 	end
@@ -55,7 +60,7 @@ local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type
 	-- get and init final weapon from preset
 	local dropChance = g_Classes[newWeaponPreset.id].base_drop_chance
 	local newWeapon = PlaceInventoryItem(newWeaponPreset.id)
-	Cuae_Debug("- picked:", _type, newWeaponPreset.id, newWeaponPreset.Cost, "Condition:", newCondition)
+	Cuae_Debug("- picked:", _type, newWeaponPreset.id, g_Classes[newWeaponPreset.id].Cost, "Condition:", newCondition)
 
 	if IsKindOf(newWeapon, "MeleeWeapon") then
 		newWeapon.drop_chance = dropChance
@@ -92,11 +97,12 @@ local function allowAlternativeWeaponType(_type)
 		local rand = InteractionRandRange(1, 100, "LDCUAE")
 		for _, tuple in ipairs(typeAlternativeWeaponTable) do
 			if rand <= tuple[2] then
-				return tuple[1]
+				local newType = tuple[1]
+				return newType, newType ~= _type
 			end
 		end
 	end
-	return _type
+	return _type, false
 end
 
 local function getWeaponType(weapon)
@@ -114,47 +120,59 @@ local function getWeaponType(weapon)
 	end
 end
 
-local function canBeReplaced(unit, adjustedUnitLevel, item, _type)
+local function canBeReplaced(unit, adjustedUnitLevel, item, _type, typeChanged)
 	local suitableReplacements, _ = Cuae_GetSuitableArnaments(Cuae_UnitAffiliation(unit), adjustedUnitLevel, _type, item and item.Cost)
-	return Cuae_LoadedModOptions.ReplaceWeapons and not Cuae_ImmunityTable[item.class] and #suitableReplacements > 0
+	return not Cuae_ImmunityTable[item.class] and ((Cuae_LoadedModOptions.ReplaceWeapons and #suitableReplacements > 0) or typeChanged)
 end
 
-local function isEmptyKeepOrRemove(unit, adjustedUnitLevel, handheld, orginalHandhelds, T1, T1Type, T2, T2Type)
-	local T1IsEmpty, T2IsEmpty = nil, nil
+local function isEmptyKeepOrRemove(unit, adjustedUnitLevel, handheld, orginalHandhelds, T1, T1Type, T1TypeChanged, T2, T2Type)
+	local T1IsEmpty, T1IsWeapon, T2IsEmpty, T2IsWeapon = nil, nil, nil, nil
 	if not orginalHandhelds[T2] then
 		T2IsEmpty = true
-	elseif canBeReplaced(unit, adjustedUnitLevel, orginalHandhelds[T2], T2Type) then
+		T2IsWeapon = false
+	elseif canBeReplaced(unit, adjustedUnitLevel, orginalHandhelds[T2], T2Type, T1TypeChanged) then
 		Cuae_Removeitem(unit, handheld, orginalHandhelds[T2])
 		T2IsEmpty = true
+		T2IsWeapon = false
 	else
 		tryAddComponentsAndAmmo(unit, adjustedUnitLevel, orginalHandhelds[T2], handheld)
 		T2IsEmpty = false
+		T2IsWeapon = orginalHandhelds[T2]:IsWeapon()
 		-- keep T1 as T2 cannot be removed
 		tryAddComponentsAndAmmo(unit, adjustedUnitLevel, orginalHandhelds[T1], handheld)
 		T1IsEmpty = false
+		T1IsWeapon = orginalHandhelds[T1] and orginalHandhelds[T1]:IsWeapon()
 	end
 	if T1IsEmpty == nil then
 		if not orginalHandhelds[T1] then
 			T1IsEmpty = true
-		elseif canBeReplaced(unit, adjustedUnitLevel, orginalHandhelds[T1], T1Type) then
+			T1IsWeapon = false
+		elseif canBeReplaced(unit, adjustedUnitLevel, orginalHandhelds[T1], T1Type, T1TypeChanged) then
 			Cuae_Removeitem(unit, handheld, orginalHandhelds[T1])
 			T1IsEmpty = true
+			T1IsWeapon = false
 		else
 			tryAddComponentsAndAmmo(unit, adjustedUnitLevel, orginalHandhelds[T1], handheld)
 			T1IsEmpty = false
+			T1IsWeapon = orginalHandhelds[T1]:IsWeapon()
 			if orginalHandhelds[T1]:GetUIWidth() > 1 then
-				T2IsEmpty = false
+				T2IsEmpty = T1IsEmpty
+				T2IsWeapon = T1IsWeapon
 			end
 		end
 	end
-	return T1IsEmpty, T2IsEmpty
+	return T1IsEmpty, T1IsWeapon, T2IsEmpty, T2IsWeapon
 end
 
 function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
 	local itemAdded, _ = false, nil
 	local itemSize = {}
 	local isWeapon = {}
-	local _type1A = orginalHandhelds.A1 and allowAlternativeWeaponType(getWeaponType(orginalHandhelds.A1)) or nil
+	local A1IsEmpty, A2IsEmpty, B1IsEmpty, B2IsEmpty = nil, nil, nil, nil
+	local _type1A, _type1AChanged = nil, false
+	if orginalHandhelds.A1 then
+		_type1A, _type1AChanged = allowAlternativeWeaponType(getWeaponType(orginalHandhelds.A1))
+	end
 	local _type2A = orginalHandhelds.A2 and getWeaponType(orginalHandhelds.A2) or nil
 	local _type1B = orginalHandhelds.B1 and getWeaponType(orginalHandhelds.B1) or nil
 	local _type2B = orginalHandhelds.B2 and getWeaponType(orginalHandhelds.B2) or nil
@@ -162,8 +180,8 @@ function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
 	local adjLevel = Cuae_CalculateAdjustedUnitLevel(level, avgLevel, Cuae_UnitAffiliation(unit))
 	Cuae_Debug("C-UAE Adding new weapons", Cuae_UnitAffiliation(unit), adjLevel)
 	-- unequpe | keep immunes
-	local A1IsEmpty, A2IsEmpty = isEmptyKeepOrRemove(unit, adjLevel, "Handheld A", orginalHandhelds, "A1", _type1A, "A2", _type2A)
-	local B1IsEmpty, B2IsEmpty = isEmptyKeepOrRemove(unit, adjLevel, "Handheld B", orginalHandhelds, "B1", _type1B, "B2", _type2B)
+	A1IsEmpty, isWeapon.A1, A2IsEmpty, isWeapon.A2 = isEmptyKeepOrRemove(unit, adjLevel, "Handheld A", orginalHandhelds, "A1", _type1A, _type1AChanged, "A2", _type2A)
+	B1IsEmpty, isWeapon.B1, B2IsEmpty, isWeapon.B1 = isEmptyKeepOrRemove(unit, adjLevel, "Handheld B", orginalHandhelds, "B1", _type1B, false, "B2", _type2B)
 	-- spawn HandA1 -> HandB1 -> HandA2 -> HandB2 -> Extra Handgun -> Extra Grenade
 	Cuae_Debug("- [1/6] orginal A1 (type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 	local currentGrenadeType = Cuae_GetGrenadeCurrentType()
