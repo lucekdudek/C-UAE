@@ -42,7 +42,7 @@ local function replaceArmorPiece(unit, avgAllyLevel, orginalArmor, slot)
 	newArmor.Condition = newCondition
 
 	unit:AddItem(slot, newArmor)
-	Cuae_Debug("- picked:", slot, newArmorPreset.id, newArmorPreset.Cost, "Condition:", newArmor.Condition)
+	Cuae_Debug("- picked:", slot, newArmorPreset.id, Cuae_Cost(newArmorPreset), "Condition:", newArmor.Condition)
 end
 
 function Cuae_GeneratNewArmor(unit, avgAllyLevel, orginalHead, orginalTorso, orginalLegs)

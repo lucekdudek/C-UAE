@@ -63,7 +63,7 @@ function CUAEBuildWeaponTables()
 			end
 		end
 		-- sort by Cost
-		table.sort(suitableWeapons, function(a, b) return (a.Cost or 0) < (b.Cost or 0) end)
+		table.sort(suitableWeapons, function(a, b) return Cuae_Cost(a) < Cuae_Cost(b) end)
 
 		Cuae_AllWeapons[_type] = suitableWeapons
 	end
@@ -123,7 +123,7 @@ function OnMsg.ConflictStart(sector_id)
 		if unit_data.species == "Human" and (Cuae_AffiliationWeight[Cuae_UnitAffiliation(unit_data)]) and not unit_data:IsDead() then
 			Cuae_Debug("C-UAE Chaning Arnament of an enemy on ConflictStart... unit.CUAE", unit_data.CUAE, unit_data.session_id)
 			if not unit_data.CUAE then
-				changeArnament(unit_data, avgAllyLevel)
+				changeArnament(unit_data, 1)
 				unit_data.CUAE = true
 			end
 			Cuae_Debug("C-UAE Chaning Arnament of an enemy on ConflictStart DONE")

@@ -4,6 +4,10 @@ function Cuae_Debug(...)
 	end
 end
 
+function Cuae_Cost(preset)
+	return preset.id and g_Classes[preset.id] and g_Classes[preset.id].Cost or 0
+end
+
 function Cuae_UnitAffiliation(unit)
 	return unit.militia and "Militia" or unit.Affiliation
 end
@@ -20,9 +24,9 @@ function Cuae_GetAllAmmunitionOfCaliber(weaponCaliber, affiliation)
 	if not Cuae_AllAmmunition[weaponCaliber] then
 		Cuae_Debug("C-UAE Building", weaponCaliber, "ammunition table...")
 		Cuae_AllAmmunition[weaponCaliber] = GetAmmosWithCaliber(weaponCaliber)
-		table.sort(Cuae_AllAmmunition[weaponCaliber], function(a, b) return (a.Cost or 0) < (b.Cost or 0) end)
+		table.sort(Cuae_AllAmmunition[weaponCaliber], function(a, b) return Cuae_Cost(a) < Cuae_Cost(b) end)
 		for _, a in pairs(Cuae_AllAmmunition[weaponCaliber]) do
-			Cuae_Debug(">>", a.id, "Cost:", a.Cost)
+			Cuae_Debug(">>", a.id, "Cost:", Cuae_Cost(a))
 		end
 		Cuae_Debug("C-UAE Building", weaponCaliber, "ammunition table DONE")
 	end
@@ -48,7 +52,7 @@ end
 
 local function getCostIdx(cost, weapons)
 	for i, w in ipairs(weapons) do
-		if (w.Cost or 0) >= cost then
+		if Cuae_Cost(w) >= cost then
 			return i
 		end
 	end
@@ -73,10 +77,10 @@ function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, maxSi
 		maxIdx = Max(orginalCostIdx, maxIdx)
 	end
 
-	local minCost = allWeaponsOfTyp[minIdx].Cost or 0
-	local maxCost = allWeaponsOfTyp[maxIdx].Cost or 0
+	local minCost = Cuae_Cost(allWeaponsOfTyp[minIdx])
+	local maxCost = Cuae_Cost(allWeaponsOfTyp[maxIdx])
 	local suitableArnament = table.ifilter(allWeaponsOfTyp, function(i, a)
-		return (a.Cost or 0) >= minCost and (a.Cost or 0) <= maxCost
+		return Cuae_Cost(a) >= minCost and Cuae_Cost(a) <= maxCost
 	end)
 
 	return suitableArnament, orginalCostIdx
@@ -121,17 +125,17 @@ function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, maxSiz
 	end
 	Cuae_Debug(
 		"- suitable arnaments for AdjustedLvl:", level, _type, "Orginal Cost", orginalCost,
-		"min:", suitableArnaments[1].id, suitableArnaments[1].Cost,
-		"max:", suitableArnaments[#suitableArnaments].id, suitableArnaments[#suitableArnaments].Cost
+		"min:", suitableArnaments[1].id, Cuae_Cost(suitableArnaments[1]),
+		"max:", suitableArnaments[#suitableArnaments].id, Cuae_Cost(suitableArnaments[#suitableArnaments])
 	)
 
 	orginalCostIdx = orginalCostIdx or Max(1, Min(#suitableArnaments, DivRound(#suitableArnaments, 2)))
-	orginalCost = orginalCost or suitableArnaments[orginalCostIdx].Cost or 0
+	orginalCost = orginalCost or Cuae_Cost(suitableArnaments[orginalCostIdx])
 
 	local distance = {}
 	local max = 0
 	for _, a in ipairs(suitableArnaments) do
-		distance[#distance + 1] = abs(orginalCost - (a.Cost or 0))
+		distance[#distance + 1] = abs(orginalCost - Cuae_Cost(a))
 		if distance[#distance] > max then
 			max = distance[#distance]
 		end
