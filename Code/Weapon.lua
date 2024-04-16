@@ -6,14 +6,14 @@ local function generateAmmo(weaponCaliber, affiliation, adjustedUnitLevel)
 	local minIdx = Min(#allAmmunitionOfCaliber, Max(1, DivRound(#allAmmunitionOfCaliber * costRangeFrom, 100)))
 	local maxIdx = Min(#allAmmunitionOfCaliber, Max(1, DivRound(#allAmmunitionOfCaliber * costRangeTo, 100)))
 
-	local minCost = allAmmunitionOfCaliber[minIdx].Cost or 0
-	local maxCost = allAmmunitionOfCaliber[maxIdx].Cost or 0
+	local minRarity = Cuae_AmmoRarity(allAmmunitionOfCaliber[minIdx])
+	local maxRarity = Cuae_AmmoRarity(allAmmunitionOfCaliber[maxIdx])
 	local suitableAmmos = table.ifilter(allAmmunitionOfCaliber, function(i, a)
-		return (a.Cost or 0) >= minCost and (a.Cost or 0) <= maxCost
+		return Cuae_AmmoRarity(a) >= minRarity and Cuae_AmmoRarity(a) <= maxRarity
 	end)
 
 	local ammo = suitableAmmos[InteractionRandRange(1, #suitableAmmos, "LDCUAE")]
-	Cuae_Debug("-- picked suitable ammo:", weaponCaliber, ammo.id, ammo.Cost)
+	Cuae_Debug("-- picked suitable ammo:", weaponCaliber, ammo.id, "Color:", ammo.colorStyle, "Rarity", Cuae_AmmoRarity(ammo))
 	return ammo
 end
 

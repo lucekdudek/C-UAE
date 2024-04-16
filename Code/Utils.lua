@@ -8,6 +8,17 @@ function Cuae_Cost(preset)
 	return preset.id and g_Classes[preset.id] and g_Classes[preset.id].Cost or 0
 end
 
+local AMMO_RARITY = {
+	AmmoBasicColor = 0,
+	AmmoAPColor = 1,
+	AmmoHPColor = 2,
+	AmmoMatchColor = 3,
+	AmmoTracerColor = 4,
+}
+function Cuae_AmmoRarity(preset)
+	return preset and preset.colorStyle and AMMO_RARITY[preset.colorStyle] or 100
+end
+
 function Cuae_UnitAffiliation(unit)
 	return unit.militia and "Militia" or unit.Affiliation
 end
@@ -23,10 +34,9 @@ end
 function Cuae_GetAllAmmunitionOfCaliber(weaponCaliber, affiliation)
 	if not Cuae_AllAmmunition[weaponCaliber] then
 		Cuae_Debug("C-UAE Building", weaponCaliber, "ammunition table...")
-		Cuae_AllAmmunition[weaponCaliber] = GetAmmosWithCaliber(weaponCaliber)
-		table.sort(Cuae_AllAmmunition[weaponCaliber], function(a, b) return Cuae_Cost(a) < Cuae_Cost(b) end)
+		Cuae_AllAmmunition[weaponCaliber] = GetAmmosWithCaliber(weaponCaliber, "sort")
 		for _, a in pairs(Cuae_AllAmmunition[weaponCaliber]) do
-			Cuae_Debug(">>", a.id, "Cost:", Cuae_Cost(a))
+			Cuae_Debug(">>", a.id, "Color:", a.colorStyle, "Rarity", Cuae_AmmoRarity(a))
 		end
 		Cuae_Debug("C-UAE Building", weaponCaliber, "ammunition table DONE")
 	end

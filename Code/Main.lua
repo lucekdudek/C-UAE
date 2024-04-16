@@ -20,9 +20,6 @@ function CUAEBuildWeaponTables()
 					not table.find(Cuae_ExcludeWeapons, g.id)
 			end)
 			for _, w in pairs(allGrenades) do
-				if w.id == "ToxicGasGrenade" then
-					w.Cost = 800
-				end
 				table.insert(suitableWeapons, w)
 			end
 		elseif _type == "MeleeWeapon" then
@@ -30,9 +27,6 @@ function CUAEBuildWeaponTables()
 				return not table.find(Cuae_ExcludeWeapons, w.id) and g_Classes[w.id].CanAppearInShop
 			end)
 			for _, w in pairs(allMelee) do
-				if w.id == "Tomahawk_1" then
-					w.Cost = 150
-				end
 				table.insert(suitableWeapons, w)
 			end
 		elseif _type == "HeavyWeapon40mmGrenade" or _type == "HeavyWeaponWarhead" or _type == "HeavyWeaponMortarShell" then
@@ -49,9 +43,6 @@ function CUAEBuildWeaponTables()
 					g_Classes[a.id].CanAppearInShop
 			end)
 			for _, w in pairs(allArmors) do
-				if w.id == "LightHelmet" then
-					w.Cost = 1000
-				end
 				table.insert(suitableWeapons, w)
 			end
 		else
@@ -72,9 +63,7 @@ end
 
 -- build tables
 OnMsg.NewGame = CUAEBuildWeaponTables
-OnMsg.PreLoadSessionData = CUAEBuildWeaponTables
 OnMsg.LoadSessionData = CUAEBuildWeaponTables
-OnMsg.DataLoaded = CUAEBuildWeaponTables
 OnMsg.ModsReloaded = CUAEBuildWeaponTables
 
 -- alter armament
@@ -92,6 +81,8 @@ end
 
 -- main entrypoint
 function OnMsg.ConflictStart(sector_id)
+	-- build tables just in case
+	CUAEBuildWeaponTables()
 	if not Cuae_LoadedModOptions.ApplyChangesInSateliteView then
 		return
 	end
