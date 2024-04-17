@@ -40,14 +40,14 @@ function CUAEBuildWeaponTables()
 		elseif _type == "Head" or _type == "Torso" or _type == "Legs" then
 			local allArmors = table.ifilter(GetWeaponsByType("Armor"), function(i, a)
 				return _type == (g_Classes[a.id].Slot or 'Torso') and not table.find(Cuae_ExcludeWeapons, a.id) and
-					g_Classes[a.id].CanAppearInShop
+				(g_Classes[a.id].CanAppearInShop or table.find(Cuae_Whitelist, a.id))
 			end)
 			for _, w in pairs(allArmors) do
 				table.insert(suitableWeapons, w)
 			end
 		else
 			local allWeapons = table.ifilter(GetWeaponsByType(_type), function(i, w)
-				return not table.find(Cuae_ExcludeWeapons, w.id) and g_Classes[w.id].CanAppearInShop
+				return not table.find(Cuae_ExcludeWeapons, w.id) and (g_Classes[w.id].CanAppearInShop or (table.find(Cuae_Whitelist, w.id) and Cuae_GboPatchedOrNoGbo(w)))
 			end)
 			for _, w in pairs(allWeapons) do
 				table.insert(suitableWeapons, w)

@@ -79,6 +79,33 @@ Cuae_ExcludeWeapons = {
 	'NightVisionGoggles',
 }
 
+Cuae_Whitelist = {
+	--ToG
+	--Handgun
+	"Mauser_C96_1",
+	"C96R_1",
+	--SMG
+	"PPSh41_1",
+	--AR
+	"AR10_worn",
+	"AR10commando_worn",
+	"G3A3_1",
+	"M70D_1",
+	"STG44R_1",
+	--Sniper
+	"Gewehr43_1",
+	"M1Garand_5",
+	"SKS_1",
+	"Type56C_1",
+	"Type56D_1",
+	--MachineGun
+	"BrenMKI_1",
+	"HK23ECamo_1",
+	"M1918A2_1",
+	"Mac24_1",
+	"U100C_1",
+}
+
 Cuae_ExcludeComponents = {
 	-- ToG shotguns range
 	BarrelLongShotgun = true,
