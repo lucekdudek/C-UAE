@@ -1,5 +1,9 @@
 return {
 	PlaceObj('ModItemCode', {
+		'name', "Ammo",
+		'CodeFileName', "Code/Ammo.lua",
+	}),
+	PlaceObj('ModItemCode', {
 		'name', "Armor",
 		'CodeFileName', "Code/Armor.lua",
 	}),

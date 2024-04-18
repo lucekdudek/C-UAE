@@ -8,17 +8,6 @@ function Cuae_Cost(preset)
 	return preset.id and g_Classes[preset.id] and g_Classes[preset.id].Cost or 0
 end
 
-local AMMO_RARITY = {
-	AmmoBasicColor = 0,
-	AmmoAPColor = 1,
-	AmmoHPColor = 2,
-	AmmoMatchColor = 3,
-	AmmoTracerColor = 4,
-}
-function Cuae_AmmoRarity(preset)
-	return preset and preset.colorStyle and AMMO_RARITY[preset.colorStyle] or 100
-end
-
 function Cuae_UnitAffiliation(unit)
 	return unit.militia and "Militia" or unit.Affiliation
 end
@@ -29,23 +18,6 @@ function Cuae_GetAllWeaponsOfType(_type, affiliation, maxSize)
 	local exclusionTable = Cuae_AffiliationExclusionTable[affiliation] or {}
 	local weapons = table.ifilter(allWeapons, function(_, w) return not exclusionTable[w.id] and g_Classes[w.id].LargeItem + 1 <= maxSize end)
 	return weapons
-end
-
-function Cuae_GetAllAmmunitionOfCaliber(weaponCaliber, affiliation)
-	if not Cuae_AllAmmunition[weaponCaliber] then
-		Cuae_Debug("C-UAE Building", weaponCaliber, "ammunition table...")
-		Cuae_AllAmmunition[weaponCaliber] = GetAmmosWithCaliber(weaponCaliber, "sort")
-		for _, a in pairs(Cuae_AllAmmunition[weaponCaliber]) do
-			Cuae_Debug(">>", a.id, "Color:", a.colorStyle, "Rarity", Cuae_AmmoRarity(a))
-		end
-		Cuae_Debug("C-UAE Building", weaponCaliber, "ammunition table DONE")
-	end
-	local allAmmunition = Cuae_AllAmmunition[weaponCaliber] or {}
-	local exclusionTable = Cuae_AffiliationExclusionTable[affiliation]
-	local ammunition = exclusionTable and
-		table.ifilter(allAmmunition, function(_, w) return not exclusionTable[w.id] end) or
-		allAmmunition
-	return ammunition
 end
 
 function Cuae_CalculateAdjustedUnitLevel(level, avgAllyLevel, affiliation)
@@ -183,18 +155,6 @@ function Cuae_GetGrenadeCurrentType()
 	else
 		return "GrenadeDay"
 	end
-end
-
-function Cuae_RemoveAmmo(unit)
-	Cuae_Debug("C-UAE Removing orginal ammo from", Cuae_UnitAffiliation(unit))
-	unit:ForEachItem(function(item, slot_name)
-		-- Ordnance is Ammo for heavy weapons
-		if slot_name == "Inventory" and (IsKindOf(item, "Ammo") or IsKindOf(item, "Ordnance")) then
-			Cuae_Debug("-", "Caliber:", item.Caliber, item.class, "Cost:", item.Cost, "Amount", item.Amount)
-			unit:RemoveItem(slot_name, item)
-			DoneObject(item)
-		end
-	end)
 end
 
 function Cuae_Removeitem(unit, slot, item)

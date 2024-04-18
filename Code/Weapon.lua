@@ -1,44 +1,8 @@
-local function generateAmmo(weaponCaliber, affiliation, adjustedUnitLevel)
-	local allAmmunitionOfCaliber = Cuae_GetAllAmmunitionOfCaliber(weaponCaliber, affiliation)
-
-	local costRangeFrom, costRangeTo = Cuae_CalculateCostRange(adjustedUnitLevel, 1, 8)
-
-	local minIdx = Min(#allAmmunitionOfCaliber, Max(1, DivRound(#allAmmunitionOfCaliber * costRangeFrom, 100)))
-	local maxIdx = Min(#allAmmunitionOfCaliber, Max(1, DivRound(#allAmmunitionOfCaliber * costRangeTo, 100)))
-
-	local minRarity = Cuae_AmmoRarity(allAmmunitionOfCaliber[minIdx])
-	local maxRarity = Cuae_AmmoRarity(allAmmunitionOfCaliber[maxIdx])
-	local suitableAmmos = table.ifilter(allAmmunitionOfCaliber, function(i, a)
-		return Cuae_AmmoRarity(a) >= minRarity and Cuae_AmmoRarity(a) <= maxRarity
-	end)
-
-	local ammo = suitableAmmos[InteractionRandRange(1, #suitableAmmos, "LDCUAE")]
-	Cuae_Debug("-- picked suitable ammo:", weaponCaliber, ammo.id, "Color:", ammo.colorStyle, "Rarity", Cuae_AmmoRarity(ammo))
-	return ammo
-end
-
-local function addAmmo(unit, ammo, magazineSize)
-	local newAmmo = PlaceInventoryItem(ammo.id)
-	newAmmo.drop_chance = newAmmo.base_drop_chance * 3 // 4
-	if IsKindOf(newAmmo, "Ordnance") then
-		newAmmo.Amount = Min(InteractionRandRange(2, 5, "LDCUAE"), newAmmo.MaxStacks)
-	else
-		-- mininium range 10-24
-		-- maximum range 30-65
-		newAmmo.Amount = Min(
-			InteractionRandRange(Min(30, Max(10, magazineSize)), Min(65, Max(24, magazineSize * 2)), "LDCUAE"),
-			newAmmo.MaxStacks)
-	end
-	unit:AddItem("Inventory", newAmmo)
-end
-
 local function tryAddComponentsAndAmmo(unit, adjustedUnitLevel, orginalWeapon, slot)
 	if orginalWeapon and not IsKindOf(orginalWeapon, "MeleeWeapon") and not IsKindOf(orginalWeapon, "Grenade") and IsKindOf(orginalWeapon, "BaseWeapon") then
 		orginalWeapon.ammo = nil
 		Cuae_AddRandomComponents(orginalWeapon, adjustedUnitLevel)
-		local ammo = generateAmmo(orginalWeapon.Caliber, Cuae_UnitAffiliation(unit), adjustedUnitLevel)
-		unit:TryLoadAmmo(slot, "BaseWeapon", ammo.id)
-		addAmmo(unit, ammo, orginalWeapon.MagazineSize)
+		Cuae_GenerateNewAmmo(unit, adjustedUnitLevel, orginalWeapon, slot)
 	end
 end
 
@@ -80,13 +44,9 @@ local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type
 		newWeapon.drop_chance = dropChance
 		newWeapon.Condition = newCondition
 		Cuae_AddRandomComponents(newWeapon, adjustedUnitLevel)
-
-		local ammo = generateAmmo(newWeapon.Caliber, Cuae_UnitAffiliation(unit), adjustedUnitLevel)
 		-- load weapon
 		itemAdded = unit:TryEquip({ newWeapon }, slot, "BaseWeapon")
-		unit:TryLoadAmmo(slot, "BaseWeapon", ammo.id)
-
-		addAmmo(unit, ammo, newWeapon.MagazineSize)
+		Cuae_GenerateNewAmmo(unit, adjustedUnitLevel, newWeapon, slot)
 	end
 	return not not itemAdded, newWeapon:GetUIWidth(), newWeapon:IsWeapon()
 end
