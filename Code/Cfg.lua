@@ -57,7 +57,7 @@ Cuae_AffiliationWeight = {
 }
 
 -- Position in table coresponds with a adjusted unit level 1...20
-Cuae_UnitLevelToComponentChance = { 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 92, 94, 95, 96, 97, 98, 99 }
+Cuae_UnitLevelToComponentChance = { 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90, 92, 94, 95, 96, 97, 98, 99 }
 
 Cuae_ExcludeWeapons = {
 	--ToG OP

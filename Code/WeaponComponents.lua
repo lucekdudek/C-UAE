@@ -14,19 +14,38 @@ local function isBlocked(slotType, components)
 	return false
 end
 
+local ITEM_COST = {
+	FineSteelPipe = 1500, -- lv>3
+	OpticalLens = 2000, -- lv>4
+	Microchip = 3500,  -- lv>7
+	-- deafult 2000 in case someone add new crafing item
+}
+local function getComponentRarity(componentId)
+	local component = WeaponComponents[componentId]
+	local difficulty = component.ModificationDifficulty or 0
+	local partsCost = component.Cost or 0
+	local itemsCost = 0
+	for _, additionalCost in ipairs(component.AdditionalCosts) do
+		itemsCost = itemsCost + (ITEM_COST[additionalCost.Type] or 2000) * (additionalCost.Amount or 0)
+	end
+	return difficulty + partsCost + itemsCost
+end
+
 local function addComponentInSlot(adjustedUnitLevel, slotType, slotDefault, weapon, slots)
 	local availableComponents = table.find_value(slots, "SlotType", slotType).AvailableComponents
-	availableComponents = table.ifilter(availableComponents, function(_, c) return c ~= slotDefault and not Cuae_ExcludeComponents[c] end)
+	local maxRarity = adjustedUnitLevel * 500
+	availableComponents = table.ifilter(availableComponents, function(_, c)
+		return c ~= slotDefault and not Cuae_ExcludeComponents[c] and getComponentRarity(c) < maxRarity
+	end)
 	if #availableComponents == 0 then
-		Cuae_Debug("--> Skipping", slotDefault, "from", slotType, "as it is the only one(default)")
+		Cuae_Debug("--> Skipping", slotDefault, "from", slotType, "as it is the only one available")
 		return false
 	end
 	table.sort(availableComponents, function(a, b)
-		local componentA, componentB = WeaponComponents[a], WeaponComponents[b]
-		return (componentA.Cost or 0) + componentA.ModificationDifficulty < (componentB.Cost or 0) + componentB.ModificationDifficulty
+		return getComponentRarity(a) < getComponentRarity(b)
 	end)
 
-	local rangeFrom, rangeTo = Cuae_CalculateCostRange(adjustedUnitLevel, 1, 8)
+	local rangeFrom, rangeTo = Cuae_CalculateCostRange(adjustedUnitLevel, 6, 24)
 	local minIdx = Min(#availableComponents, Max(1, DivRound(#availableComponents * rangeFrom, 100)))
 	local maxIdx = Min(#availableComponents, Max(1, DivRound(#availableComponents * rangeTo, 100)))
 	local suitableComponents = Cuae_TableSlice(availableComponents, minIdx, maxIdx)
@@ -38,7 +57,7 @@ local function addComponentInSlot(adjustedUnitLevel, slotType, slotDefault, weap
 		return false
 	else
 		weapon:SetWeaponComponent(slotType, randComponent)
-		Cuae_Debug("--> Added", slotType, randComponent)
+		Cuae_Debug("--> Added", slotType, randComponent, "Rarity", getComponentRarity(randComponent), "/", maxRarity)
 		return true
 	end
 end
@@ -80,8 +99,7 @@ function Cuae_AddRandomComponents(weapon, adjustedUnitLevel)
 	-- Shuffle to decided which slot is the most lucky
 	table.shuffle(availableComponentsSlots, InteractionRand(nil, "LDCUAE"))
 
-	local remaningComponentsCount = Min(#availableComponentsSlots,
-		Max(1, DivRound(#availableComponentsSlots * chance, 100)))
+	local remaningComponentsCount = Min(#availableComponentsSlots, Max(1, DivRound(#availableComponentsSlots * chance, 100)))
 	Cuae_Debug("-- adding components", remaningComponentsCount, "/", #availableComponentsSlots, "AdjustedLvl:", adjustedUnitLevel)
 
 	local handledSlots = {}
