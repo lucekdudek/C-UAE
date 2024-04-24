@@ -13,6 +13,7 @@ function CUAE_ApplyModOptions()
 	Cuae_LoadedModOptions.ReplaceWeapons = Cuae_ForcedOptionsOrCurrentModOptions("ReplaceWeapons")
 	Cuae_LoadedModOptions.AddWeaponComponents = Cuae_ForcedOptionsOrCurrentModOptions("AddWeaponComponents")
 	Cuae_LoadedModOptions.ReplaceArmor = Cuae_ForcedOptionsOrCurrentModOptions("ReplaceArmor")
+	Cuae_LoadedModOptions.AffectMilitia = Cuae_ForcedOptionsOrCurrentModOptions("AffectMilitia")
 	Cuae_LoadedModOptions.ExtraGrenadesChance = tonumber(Cuae_ForcedOptionsOrCurrentModOptions("ExtraGrenadesChance"))
 	Cuae_LoadedModOptions.ArmamentStrengthFactor = tonumber(Cuae_ForcedOptionsOrCurrentModOptions("ArmamentStrengthFactor"))
 	-- hidden options

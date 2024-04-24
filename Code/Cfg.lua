@@ -3,6 +3,7 @@ Cuae_LoadedModOptions = {
 	ReplaceWeapons = true,
 	AddWeaponComponents = true,
 	ReplaceArmor = true,
+	AffectMilitia = true,
 	ExtraGrenadesChance = 50,
 	ArmamentStrengthFactor = 0,
 	-- hidden options

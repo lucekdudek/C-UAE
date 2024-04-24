@@ -9,7 +9,7 @@ function Cuae_Cost(preset)
 end
 
 function Cuae_UnitAffiliation(unit)
-	return unit.militia and "Militia" or unit.Affiliation
+	return Cuae_LoadedModOptions.AffectMilitia and unit.militia and "Militia" or unit.Affiliation
 end
 
 function Cuae_GetAllWeaponsOfType(_type, affiliation, maxSize)

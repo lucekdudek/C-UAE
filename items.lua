@@ -53,6 +53,12 @@ return {
 		'Help', "When enabled, replaces orginal enemy armor with new ones",
 		'DefaultValue', true,
 	}),
+	PlaceObj('ModItemOptionToggle', {
+		'name', "AffectMilitia",
+		'DisplayName', "Affect Militia",
+		'Help', "When enabled, mod affects Militia squads",
+		'DefaultValue', true,
+	}),
 	PlaceObj('ModItemOptionChoice', {
 		'name', "ExtraGrenadesChance",
 		'DisplayName', "Extra Grenades Chance",

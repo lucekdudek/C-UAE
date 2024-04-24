@@ -22,6 +22,7 @@ local ITEM_COST = {
 }
 local function getComponentRarity(componentId)
 	local component = WeaponComponents[componentId]
+	if not component then return 0 end
 	local difficulty = component.ModificationDifficulty or 0
 	local partsCost = component.Cost or 0
 	local itemsCost = 0
@@ -35,7 +36,7 @@ local function addComponentInSlot(adjustedUnitLevel, slotType, slotDefault, weap
 	local availableComponents = table.find_value(slots, "SlotType", slotType).AvailableComponents
 	local maxRarity = adjustedUnitLevel * 500
 	availableComponents = table.ifilter(availableComponents, function(_, c)
-		return c ~= slotDefault and not Cuae_ExcludeComponents[c] and getComponentRarity(c) < maxRarity
+		return c ~= slotDefault and WeaponComponents[c] and not Cuae_ExcludeComponents[c] and getComponentRarity(c) < maxRarity
 	end)
 	if #availableComponents == 0 then
 		Cuae_Debug("--> Skipping", slotDefault, "from", slotType, "as it is the only one available")

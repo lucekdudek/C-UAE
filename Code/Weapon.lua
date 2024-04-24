@@ -24,7 +24,7 @@ local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type
 	-- get and init final weapon from preset
 	local dropChance = g_Classes[newWeaponPreset.id].base_drop_chance
 	local newWeapon = PlaceInventoryItem(newWeaponPreset.id)
-	Cuae_Debug("- picked:", _type, newWeaponPreset.id, Cuae_Cost(newWeaponPreset), "Condition:", newCondition)
+	Cuae_Debug("- picked:", _type, newWeaponPreset.id, Cuae_Cost(newWeaponPreset), "Condition:", newCondition, "Drop Chnace:", dropChance)
 
 	if IsKindOf(newWeapon, "MeleeWeapon") then
 		newWeapon.drop_chance = dropChance
