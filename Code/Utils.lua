@@ -14,6 +14,9 @@ end
 
 function Cuae_GetAllWeaponsOfType(_type, affiliation, maxSize)
 	maxSize = maxSize or 2
+	if table.find(Cuae_GrenadeTypes, _type) then
+		_type = "Grenade"
+	end
 	local allWeapons = Cuae_AllWeapons[_type] or {}
 	local exclusionTable = Cuae_AffiliationExclusionTable[affiliation] or {}
 	local weapons = table.ifilter(allWeapons, function(_, w) return not exclusionTable[w.id] and g_Classes[w.id].LargeItem + 1 <= maxSize end)
@@ -41,16 +44,62 @@ local function getCostIdx(cost, weapons)
 	return #weapons
 end
 
+local function getGrenadesOfSubtype(allGrenades, subType)
+	if not Cuae_AllGrenade._Filled then
+		Cuae_Debug("C-UAE Building Grenade sub tables...")
+		for _, g in ipairs(allGrenades) do
+			local gCls = g_Classes[g.id]
+			if IsKindOf(gCls, "ThrowableTrapItem") then
+				table.insert(Cuae_AllGrenade.GrenadeTrap, g)
+				print("- ThrowableTrapItem", g.id)
+			elseif IsKindOf(gCls, "Flare") then
+				table.insert(Cuae_AllGrenade.GrenadeNight, g)
+				print("- GrenadeNight", g.id)
+			elseif gCls.aoeType == "smoke" or gCls.aoeType == "teargas" or gCls.aoeType == "toxicgas" then
+				table.insert(Cuae_AllGrenade.GrenadeSmoke, g)
+				print("- GrenadeSmoke", g.id)
+			elseif gCls.DeathType == "BlowUp" then
+				table.insert(Cuae_AllGrenade.GrenadeHe, g)
+				print("- GrenadeHe", g.id)
+			else
+				table.insert(Cuae_AllGrenade.GrenadeUtil, g)
+				print("- GrenadeUtil", g.id)
+			end
+		end
+		Cuae_AllGrenade._Filled = true
+		Cuae_Debug("C-UAE Building Grenade sub tables DONE")
+	end
+
+	if subType == "Grenade" then
+		local subTypes = table.copy(Cuae_GrenadeSubTypes)
+		if GameState.Night or GameState.Underground then table.insert(subTypes, Cuae_GrenadeNightSubType) end
+		table.shuffle(subTypes, InteractionRand(nil, "LDCUAE"))
+		subType = subTypes[1]
+	end
+	Cuae_Debug("-- picked Grenade subType:", subType)
+
+	if #Cuae_AllGrenade[subType] >= 1 then
+		return Cuae_AllGrenade[subType]
+	else
+		Cuae_Debug("--- picked Grenade subType:", subType, "is empty. Using all grenades instead")
+		return allGrenades
+	end
+end
+
 function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, maxSize)
 	local allWeaponsOfTyp = Cuae_GetAllWeaponsOfType(_type, affiliation, maxSize)
 	if #allWeaponsOfTyp <= 1 then
 		return allWeaponsOfTyp, nil
 	end
 
+	if table.find(Cuae_GrenadeTypes, _type) then
+		allWeaponsOfTyp = getGrenadesOfSubtype(allWeaponsOfTyp, _type)
+	end
+
 	local costRangeFrom, costRangeTo = Cuae_CalculateCostRange(level, 3, 10)
 
-	local minIdx = Max(1, DivRound(#allWeaponsOfTyp * costRangeFrom, 100))
-	local maxIdx = Min(#allWeaponsOfTyp, DivRound(#allWeaponsOfTyp * costRangeTo, 100))
+	local minIdx = Min(#allWeaponsOfTyp, Max(1, DivRound(#allWeaponsOfTyp * costRangeFrom, 100)))
+	local maxIdx = Max(1, Min(#allWeaponsOfTyp, DivRound(#allWeaponsOfTyp * costRangeTo, 100)))
 
 	local orginalCostIdx = nil
 	if orginalCost then
@@ -147,14 +196,6 @@ function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, maxSiz
 	end
 
 	return suitableArnaments[InteractionRandRange(1, #suitableArnaments, "LDCUAE")]
-end
-
-function Cuae_GetGrenadeCurrentType()
-	if GameState.Night or GameState.Underground then
-		return "GrenadeNight"
-	else
-		return "GrenadeDay"
-	end
 end
 
 function Cuae_Removeitem(unit, slot, item)

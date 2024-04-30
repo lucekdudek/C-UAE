@@ -14,9 +14,9 @@ function CUAEBuildWeaponTables()
 	Cuae_Debug("C-UAE Building tables...")
 	for _type, _ in pairs(Cuae_AllWeapons) do
 		local suitableWeapons = {}
-		if _type == "GrenadeDay" or _type == "GrenadeNight" then
+		if _type == "Grenade" then
 			local allGrenades = table.ifilter(GetWeaponsByType("Grenade"), function(i, g)
-				return (g.ItemType == 'Grenade' or (_type == "GrenadeNight" and g.ItemType == "Throwables") or g.ItemType == "GrenadeGas" or g.ItemType == "GrenadeFire") and
+				return (g.ItemType == 'Grenade' or g.ItemType == "Throwables" or g.ItemType == "GrenadeGas" or g.ItemType == "GrenadeFire") and
 					not table.find(Cuae_ExcludeWeapons, g.id)
 			end)
 			for _, w in pairs(allGrenades) do
@@ -40,7 +40,7 @@ function CUAEBuildWeaponTables()
 		elseif _type == "Head" or _type == "Torso" or _type == "Legs" then
 			local allArmors = table.ifilter(GetWeaponsByType("Armor"), function(i, a)
 				return _type == (g_Classes[a.id].Slot or 'Torso') and not table.find(Cuae_ExcludeWeapons, a.id) and
-				(g_Classes[a.id].CanAppearInShop or table.find(Cuae_Whitelist, a.id))
+					(g_Classes[a.id].CanAppearInShop or table.find(Cuae_Whitelist, a.id))
 			end)
 			for _, w in pairs(allArmors) do
 				table.insert(suitableWeapons, w)
@@ -58,6 +58,7 @@ function CUAEBuildWeaponTables()
 
 		Cuae_AllWeapons[_type] = suitableWeapons
 	end
+	Cuae_AllGrenade._Filled = false
 	Cuae_Debug("C-UAE Building tables DONE")
 end
 

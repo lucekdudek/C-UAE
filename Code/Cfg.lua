@@ -163,12 +163,26 @@ Cuae_AllWeapons = {
 	HeavyWeaponWarhead = {},
 	HeavyWeaponMortarShell = {},
 	MissileLauncher = {},
-	GrenadeDay = {},
-	GrenadeNight = {},
+	Grenade = {},
 	Head = {},
 	Torso = {},
 	Legs = {},
 }
+
+Cuae_GrenadeTypes = { "Grenade", "GrenadeSmoke", "GrenadeTrap", "GrenadeNight", "GrenadeHe", "GrenadeUtil" }
+Cuae_GrenadeSubTypes = { "GrenadeSmoke", "GrenadeTrap", "GrenadeHe", "GrenadeUtil" }
+Cuae_GrenadeNightSubType = "GrenadeNight"
+
+Cuae_AllGrenade = {
+	_Filled = false,
+	GrenadeSmoke = {},
+	GrenadeTrap = {},
+	GrenadeNight = {},
+	GrenadeHe = {},
+	GrenadeUtil = {},
+}
+
+Cuae_CQBTypes = { "MeleeWeapon", "Handgun", "SMG", "Shotgun" }
 
 Cuae_DefaultSmallWeapons = {
 	Handgun = "HiPower",
