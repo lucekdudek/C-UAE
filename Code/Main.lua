@@ -54,11 +54,10 @@ function CUAEBuildWeaponTables()
 			end
 		end
 		-- sort by Cost
-		table.sort(suitableWeapons, function(a, b) return Cuae_Cost(a) < Cuae_Cost(b) end)
+		table.sort(suitableWeapons, function(a, b) return Cuae_CoparePresets(a, b) end)
 
 		Cuae_AllWeapons[_type] = suitableWeapons
 	end
-	Cuae_AllGrenade._Filled = false
 	Cuae_Debug("C-UAE Building tables DONE")
 end
 

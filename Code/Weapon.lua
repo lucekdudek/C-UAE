@@ -189,32 +189,31 @@ function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
 		end
 	end
 	-- extra Handgun|Melee|Smoke
-	Cuae_Debug("- [5/6] extra Handgun|Melee|Smoke (type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
-	local extraType = nil
+	local extraType, extraIsWeapon = nil, true
 	if table.find(Cuae_CQBTypes, _type1A) or table.find(Cuae_CQBTypes, _type2A) then
 		extraType = "GrenadeSmoke"
+		extraIsWeapon = false
 	elseif InteractionRandRange(1, 100, "LDCUAE") <= 50 then
 		extraType = "Handgun"
 	else
 		extraType = "MeleeWeapon"
 	end
+	Cuae_Debug("- [5/6] extra", extraType, "(type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
 	if Cuae_LoadedModOptions.ExtraHandgun and _type1A ~= extraType and _type2A ~= extraType and _type1B ~= extraType and _type2B ~= extraType then
-		if not isWeapon.A1 and not isWeapon.A2 then
-			if A1IsEmpty then
-				itemAdded, _, isWeapon.A1 = replaceWeapon(unit, adjLevel, nil, "Handheld A", extraType, 1)
-				A1IsEmpty = not itemAdded
-			elseif A2IsEmpty then
-				itemAdded, _, isWeapon.A2 = replaceWeapon(unit, adjLevel, nil, "Handheld A", extraType, 1)
-				A2IsEmpty = not itemAdded
-			end
-		elseif not isWeapon.B1 and not isWeapon.B2 then
-			if B1IsEmpty then
-				itemAdded, _, isWeapon.B1 = replaceWeapon(unit, adjLevel, nil, "Handheld B", extraType, 1)
-				B1IsEmpty = not itemAdded
-			elseif B2IsEmpty then
-				itemAdded, _, isWeapon.B2 = replaceWeapon(unit, adjLevel, nil, "Handheld B", extraType, 1)
-				B2IsEmpty = not itemAdded
-			end
+		local willFitInA = (not isWeapon.A1 and not isWeapon.A2) or not extraIsWeapon
+		local willFitInB = (not isWeapon.B1 and not isWeapon.B2) or not extraIsWeapon
+		if willFitInA and A1IsEmpty then
+			itemAdded, _, isWeapon.A1 = replaceWeapon(unit, adjLevel, nil, "Handheld A", extraType, 1)
+			A1IsEmpty = not itemAdded
+		elseif willFitInA and A2IsEmpty then
+			itemAdded, _, isWeapon.A2 = replaceWeapon(unit, adjLevel, nil, "Handheld A", extraType, 1)
+			A2IsEmpty = not itemAdded
+		elseif willFitInB and B1IsEmpty then
+			itemAdded, _, isWeapon.B1 = replaceWeapon(unit, adjLevel, nil, "Handheld B", extraType, 1)
+			B1IsEmpty = not itemAdded
+		elseif willFitInB and B2IsEmpty then
+			itemAdded, _, isWeapon.B2 = replaceWeapon(unit, adjLevel, nil, "Handheld B", extraType, 1)
+			B2IsEmpty = not itemAdded
 		end
 	end
 	-- extra Grenades

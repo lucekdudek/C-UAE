@@ -8,18 +8,85 @@ function Cuae_Cost(preset)
 	return preset.id and g_Classes[preset.id] and g_Classes[preset.id].Cost or 0
 end
 
+function Cuae_CoparePresets(presetA, presetB)
+	local costA, CostB = Cuae_Cost(presetA), Cuae_Cost(presetB)
+	if costA == CostB then
+		return presetA.id < presetB.id
+	else
+		return costA < CostB
+	end
+end
+
 function Cuae_UnitAffiliation(unit)
 	return Cuae_LoadedModOptions.AffectMilitia and unit.militia and "Militia" or unit.Affiliation
 end
 
+local function getGrenadesOfSubtype(allGrenades, subType)
+	if next(Cuae_AllGrenade) == nil then
+		Cuae_Debug("C-UAE Building Grenade sub tables...")
+
+		Cuae_AllGrenade.GrenadeSmoke = {}
+		Cuae_AllGrenade.GrenadeTrap = {}
+		Cuae_AllGrenade.GrenadeNight = {}
+		Cuae_AllGrenade.GrenadeHe = {}
+		Cuae_AllGrenade.GrenadeUtil = {}
+
+		for _, g in ipairs(allGrenades) do
+			local gCls = g_Classes[g.id]
+			if IsKindOf(gCls, "ThrowableTrapItem") then
+				table.insert(Cuae_AllGrenade.GrenadeTrap, g)
+				print("- ThrowableTrapItem", g.id)
+			elseif IsKindOf(gCls, "Flare") then
+				table.insert(Cuae_AllGrenade.GrenadeNight, g)
+				print("- GrenadeNight", g.id)
+			elseif gCls.aoeType == "smoke" or gCls.aoeType == "teargas" or gCls.aoeType == "toxicgas" then
+				table.insert(Cuae_AllGrenade.GrenadeSmoke, g)
+				print("- GrenadeSmoke", g.id)
+			elseif gCls.DeathType == "BlowUp" then
+				table.insert(Cuae_AllGrenade.GrenadeHe, g)
+				print("- GrenadeHe", g.id)
+			else
+				table.insert(Cuae_AllGrenade.GrenadeUtil, g)
+				print("- GrenadeUtil", g.id)
+			end
+		end
+
+		for _, t in pairs(Cuae_AllGrenade) do
+			table.sort(t, function(a, b) return Cuae_CoparePresets(a, b) end)
+		end
+
+		Cuae_Debug("C-UAE Building Grenade sub tables DONE")
+	end
+
+	if subType == "Grenade" then
+		local subTypes = table.copy(Cuae_GrenadeSubTypes)
+		if (GameState.Night or GameState.Underground) then table.insert(subTypes, Cuae_GrenadeNightSubType) end
+
+		table.sort(subTypes, function(a, b) return a < b end)
+
+		subType = subTypes[InteractionRandRange(1, #subTypes, "LDCUAE")]
+	end
+	Cuae_Debug("-- picked Grenade subType:", subType)
+
+	if #Cuae_AllGrenade[subType] >= 1 then
+		return Cuae_AllGrenade[subType]
+	else
+		Cuae_Debug("--- picked Grenade subType:", subType, "is empty. Using all grenades instead")
+		return allGrenades
+	end
+end
+
 function Cuae_GetAllWeaponsOfType(_type, affiliation, maxSize)
 	maxSize = maxSize or 2
-	if table.find(Cuae_GrenadeTypes, _type) then
-		_type = "Grenade"
-	end
-	local allWeapons = Cuae_AllWeapons[_type] or {}
+	local tempType = table.find(Cuae_GrenadeTypes, _type) and "Grenade" or _type
+
+	local allWeapons = Cuae_AllWeapons[tempType] or {}
 	local exclusionTable = Cuae_AffiliationExclusionTable[affiliation] or {}
 	local weapons = table.ifilter(allWeapons, function(_, w) return not exclusionTable[w.id] and g_Classes[w.id].LargeItem + 1 <= maxSize end)
+
+	if table.find(Cuae_GrenadeTypes, _type) then
+		weapons = getGrenadesOfSubtype(weapons, _type)
+	end
 	return weapons
 end
 
@@ -43,57 +110,10 @@ local function getCostIdx(cost, weapons)
 	end
 	return #weapons
 end
-
-local function getGrenadesOfSubtype(allGrenades, subType)
-	if not Cuae_AllGrenade._Filled then
-		Cuae_Debug("C-UAE Building Grenade sub tables...")
-		for _, g in ipairs(allGrenades) do
-			local gCls = g_Classes[g.id]
-			if IsKindOf(gCls, "ThrowableTrapItem") then
-				table.insert(Cuae_AllGrenade.GrenadeTrap, g)
-				print("- ThrowableTrapItem", g.id)
-			elseif IsKindOf(gCls, "Flare") then
-				table.insert(Cuae_AllGrenade.GrenadeNight, g)
-				print("- GrenadeNight", g.id)
-			elseif gCls.aoeType == "smoke" or gCls.aoeType == "teargas" or gCls.aoeType == "toxicgas" then
-				table.insert(Cuae_AllGrenade.GrenadeSmoke, g)
-				print("- GrenadeSmoke", g.id)
-			elseif gCls.DeathType == "BlowUp" then
-				table.insert(Cuae_AllGrenade.GrenadeHe, g)
-				print("- GrenadeHe", g.id)
-			else
-				table.insert(Cuae_AllGrenade.GrenadeUtil, g)
-				print("- GrenadeUtil", g.id)
-			end
-		end
-		Cuae_AllGrenade._Filled = true
-		Cuae_Debug("C-UAE Building Grenade sub tables DONE")
-	end
-
-	if subType == "Grenade" then
-		local subTypes = table.copy(Cuae_GrenadeSubTypes)
-		if GameState.Night or GameState.Underground then table.insert(subTypes, Cuae_GrenadeNightSubType) end
-		table.shuffle(subTypes, InteractionRand(nil, "LDCUAE"))
-		subType = subTypes[1]
-	end
-	Cuae_Debug("-- picked Grenade subType:", subType)
-
-	if #Cuae_AllGrenade[subType] >= 1 then
-		return Cuae_AllGrenade[subType]
-	else
-		Cuae_Debug("--- picked Grenade subType:", subType, "is empty. Using all grenades instead")
-		return allGrenades
-	end
-end
-
 function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, maxSize)
 	local allWeaponsOfTyp = Cuae_GetAllWeaponsOfType(_type, affiliation, maxSize)
 	if #allWeaponsOfTyp <= 1 then
 		return allWeaponsOfTyp, nil
-	end
-
-	if table.find(Cuae_GrenadeTypes, _type) then
-		allWeaponsOfTyp = getGrenadesOfSubtype(allWeaponsOfTyp, _type)
 	end
 
 	local costRangeFrom, costRangeTo = Cuae_CalculateCostRange(level, 3, 10)

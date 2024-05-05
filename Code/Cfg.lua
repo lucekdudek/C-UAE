@@ -173,14 +173,7 @@ Cuae_GrenadeTypes = { "Grenade", "GrenadeSmoke", "GrenadeTrap", "GrenadeNight", 
 Cuae_GrenadeSubTypes = { "GrenadeSmoke", "GrenadeTrap", "GrenadeHe", "GrenadeUtil" }
 Cuae_GrenadeNightSubType = "GrenadeNight"
 
-Cuae_AllGrenade = {
-	_Filled = false,
-	GrenadeSmoke = {},
-	GrenadeTrap = {},
-	GrenadeNight = {},
-	GrenadeHe = {},
-	GrenadeUtil = {},
-}
+Cuae_AllGrenade = {}
 
 Cuae_CQBTypes = { "MeleeWeapon", "Handgun", "SMG", "Shotgun" }
 
