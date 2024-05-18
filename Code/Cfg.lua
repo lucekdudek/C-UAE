@@ -6,13 +6,13 @@ Cuae_LoadedModOptions = {
 	AffectMilitia = true,
 	ExtraGrenadesChance = 50,
 	ArmamentStrengthFactor = 0,
+	Debug = false,
 	-- hidden options
 	DisallowSilencers = true,
 	ExtraHandgun = false,
 	ExtraGrenadesCount = 3,
 	AlternativeWeaponTypeTables = nil,
 	ApplyChangesInSateliteView = true,
-	Debug = false,
 }
 
 Cuae_ForcedOptions = {}

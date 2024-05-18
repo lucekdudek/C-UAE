@@ -16,6 +16,7 @@ function CUAE_ApplyModOptions()
 	Cuae_LoadedModOptions.AffectMilitia = Cuae_ForcedOptionsOrCurrentModOptions("AffectMilitia")
 	Cuae_LoadedModOptions.ExtraGrenadesChance = tonumber(Cuae_ForcedOptionsOrCurrentModOptions("ExtraGrenadesChance"))
 	Cuae_LoadedModOptions.ArmamentStrengthFactor = tonumber(Cuae_ForcedOptionsOrCurrentModOptions("ArmamentStrengthFactor"))
+	Cuae_LoadedModOptions.Debug = Cuae_ForcedOptionsOrCurrentModOptions("Debug")
 	-- hidden options
 	Cuae_LoadedModOptions.ApplyChangesInSateliteView = Cuae_ForcedOptionsOrCurrentModOptions("ApplyChangesInSateliteView", "HIDDEN")
 	Cuae_LoadedModOptions.AlternativeWeaponTypeTables = Cuae_ForcedOptionsOrCurrentModOptions("AlternativeWeaponTypeTables", "HIDDEN")
@@ -23,7 +24,6 @@ function CUAE_ApplyModOptions()
 	Cuae_LoadedModOptions.ExtraGrenadesCount = tonumber(Cuae_ForcedOptionsOrCurrentModOptions("ExtraGrenadesCount", "HIDDEN"))
 	Cuae_LoadedModOptions.DisallowSilencers = Cuae_ForcedOptionsOrCurrentModOptions("DisallowSilencers", "HIDDEN")
 	Cuae_ExcludeComponents_DisallowSilencers()
-	Cuae_LoadedModOptions.Debug = Cuae_ForcedOptionsOrCurrentModOptions("Debug", "HIDDEN")
 end
 
 function OnMsg.ApplyModOptions(id)

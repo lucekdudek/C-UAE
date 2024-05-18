@@ -58,11 +58,16 @@ local function getGrenadesOfSubtype(allGrenades, subType)
 		Cuae_Debug("C-UAE Building Grenade sub tables DONE")
 	end
 
+	Cuae_Debug("-- picking Grenade subType", subType)
 	if subType == "Grenade" then
 		local subTypes = table.copy(Cuae_GrenadeSubTypes)
 		if (GameState.Night or GameState.Underground) then table.insert(subTypes, Cuae_GrenadeNightSubType) end
 
 		table.sort(subTypes, function(a, b) return a < b end)
+
+		for i, t in ipairs(subTypes) do
+			Cuae_Debug("--- sorted subTypes:", i, t)
+		end
 
 		subType = subTypes[InteractionRandRange(1, #subTypes, "LDCUAE")]
 	end

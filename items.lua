@@ -94,4 +94,9 @@ return {
 			"8",
 		},
 	}),
+	PlaceObj('ModItemOptionToggle', {
+		'name', "Debug",
+		'DisplayName', "Enable debug messages",
+		'Help', "When enabled, debug messages will appeare in logs and in debugging mode",
+	}),
 }
