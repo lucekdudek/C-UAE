@@ -52,7 +52,9 @@ local function getGrenadesOfSubtype(allGrenades, subType)
 		end
 
 		for _, t in pairs(Cuae_AllGrenade) do
-			table.sort(t, function(a, b) return Cuae_CoparePresets(a, b) end)
+			table.sort(t, function(a, b)
+				return Cuae_CoparePresets(a, b)
+			end)
 		end
 
 		Cuae_Debug("C-UAE Building Grenade sub tables DONE")
@@ -61,9 +63,13 @@ local function getGrenadesOfSubtype(allGrenades, subType)
 	Cuae_Debug("-- picking Grenade subType", subType)
 	if subType == "Grenade" then
 		local subTypes = table.copy(Cuae_GrenadeSubTypes)
-		if (GameState.Night or GameState.Underground) then table.insert(subTypes, Cuae_GrenadeNightSubType) end
+		if (GameState.Night or GameState.Underground) then
+			table.insert(subTypes, Cuae_GrenadeNightSubType)
+		end
 
-		table.sort(subTypes, function(a, b) return a < b end)
+		table.sort(subTypes, function(a, b)
+			return a < b
+		end)
 
 		for i, t in ipairs(subTypes) do
 			Cuae_Debug("--- sorted subTypes:", i, t)
@@ -87,7 +93,9 @@ function Cuae_GetAllWeaponsOfType(_type, affiliation, maxSize)
 
 	local allWeapons = Cuae_AllWeapons[tempType] or {}
 	local exclusionTable = Cuae_AffiliationExclusionTable[affiliation] or {}
-	local weapons = table.ifilter(allWeapons, function(_, w) return not exclusionTable[w.id] and g_Classes[w.id].LargeItem + 1 <= maxSize end)
+	local weapons = table.ifilter(allWeapons, function(_, w)
+		return not exclusionTable[w.id] and g_Classes[w.id].LargeItem + 1 <= maxSize
+	end)
 
 	if table.find(Cuae_GrenadeTypes, _type) then
 		weapons = getGrenadesOfSubtype(weapons, _type)
@@ -161,17 +169,21 @@ end
 
 function Cuae_GetDefaultArnament(affiliation, _type, maxSize)
 	local _id = Cuae_DefaultWeapons[affiliation][_type]
-	if _id == nil then return nil end
+	if _id == nil then
+		return nil
+	end
 
 	if g_Classes[_id].LargeItem + 1 > maxSize then
 		_id = Cuae_DefaultSmallWeapons[_type]
-		if _id == nil then return nil end
+		if _id == nil then
+			return nil
+		end
 	end
 
-	Cuae_Debug(
-		"- suitable default arnament", _type, _id
-	)
-	return { id = _id }
+	Cuae_Debug("- suitable default arnament", _type, _id)
+	return {
+		id = _id,
+	}
 end
 
 function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, maxSize)
@@ -179,11 +191,8 @@ function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, maxSiz
 	if #suitableArnaments < 1 then
 		return nil
 	end
-	Cuae_Debug(
-		"- suitable arnaments for AdjustedLvl:", level, _type, "Orginal Cost", orginalCost,
-		"min:", suitableArnaments[1].id, Cuae_Cost(suitableArnaments[1]),
-		"max:", suitableArnaments[#suitableArnaments].id, Cuae_Cost(suitableArnaments[#suitableArnaments])
-	)
+	Cuae_Debug("- suitable arnaments for AdjustedLvl:", level, _type, "Orginal Cost", orginalCost, "min:", suitableArnaments[1].id, Cuae_Cost(suitableArnaments[1]), "max:",
+					suitableArnaments[#suitableArnaments].id, Cuae_Cost(suitableArnaments[#suitableArnaments]))
 
 	orginalCostIdx = orginalCostIdx or Max(1, Min(#suitableArnaments, DivRound(#suitableArnaments, 2)))
 	orginalCost = orginalCost or Cuae_Cost(suitableArnaments[orginalCostIdx])
@@ -206,7 +215,9 @@ function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, maxSiz
 	end
 
 	-- MulDiv: division by zero
-	if oddsFactorsSum == 0 then oddsFactorsSum = 1 end
+	if oddsFactorsSum == 0 then
+		oddsFactorsSum = 1
+	end
 
 	local singularOdds
 	local culOdds = {}
@@ -217,7 +228,9 @@ function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, maxSiz
 
 	local random = InteractionRandRange(1, 1000, "LDCUAE")
 	for idx, odds in ipairs(culOdds) do
-		if random <= odds then return suitableArnaments[idx] end
+		if random <= odds then
+			return suitableArnaments[idx]
+		end
 	end
 
 	return suitableArnaments[InteractionRandRange(1, #suitableArnaments, "LDCUAE")]

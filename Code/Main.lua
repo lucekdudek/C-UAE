@@ -16,8 +16,7 @@ function CUAEBuildWeaponTables()
 		local suitableWeapons = {}
 		if _type == "Grenade" then
 			local allGrenades = table.ifilter(GetWeaponsByType("Grenade"), function(i, g)
-				return (g.ItemType == 'Grenade' or g.ItemType == "Throwables" or g.ItemType == "GrenadeGas" or g.ItemType == "GrenadeFire") and
-					not table.find(Cuae_ExcludeWeapons, g.id)
+				return (g.ItemType == "Grenade" or g.ItemType == "Throwables" or g.ItemType == "GrenadeGas" or g.ItemType == "GrenadeFire") and not table.find(Cuae_ExcludeWeapons, g.id)
 			end)
 			for _, w in pairs(allGrenades) do
 				table.insert(suitableWeapons, w)
@@ -31,16 +30,14 @@ function CUAEBuildWeaponTables()
 			end
 		elseif _type == "HeavyWeapon40mmGrenade" or _type == "HeavyWeaponWarhead" or _type == "HeavyWeaponMortarShell" then
 			local allWeapons = table.ifilter(GetWeaponsByType("HeavyWeapon"), function(i, w)
-				return (Cuae_HeavyWeaponTypeToCaliber[_type] or "Unsuppoerted") == g_Classes[w.id].Caliber and
-					not table.find(Cuae_ExcludeWeapons, w.id) and g_Classes[w.id].CanAppearInShop
+				return (Cuae_HeavyWeaponTypeToCaliber[_type] or "Unsuppoerted") == g_Classes[w.id].Caliber and not table.find(Cuae_ExcludeWeapons, w.id) and g_Classes[w.id].CanAppearInShop
 			end)
 			for _, w in pairs(allWeapons) do
 				table.insert(suitableWeapons, w)
 			end
 		elseif _type == "Head" or _type == "Torso" or _type == "Legs" then
 			local allArmors = table.ifilter(GetWeaponsByType("Armor"), function(i, a)
-				return _type == (g_Classes[a.id].Slot or 'Torso') and not table.find(Cuae_ExcludeWeapons, a.id) and
-					(g_Classes[a.id].CanAppearInShop or table.find(Cuae_Whitelist, a.id))
+				return _type == (g_Classes[a.id].Slot or "Torso") and not table.find(Cuae_ExcludeWeapons, a.id) and (g_Classes[a.id].CanAppearInShop or table.find(Cuae_Whitelist, a.id))
 			end)
 			for _, w in pairs(allArmors) do
 				table.insert(suitableWeapons, w)
@@ -54,7 +51,9 @@ function CUAEBuildWeaponTables()
 			end
 		end
 		-- sort by Cost
-		table.sort(suitableWeapons, function(a, b) return Cuae_CoparePresets(a, b) end)
+		table.sort(suitableWeapons, function(a, b)
+			return Cuae_CoparePresets(a, b)
+		end)
 
 		Cuae_AllWeapons[_type] = suitableWeapons
 	end
@@ -76,7 +75,9 @@ local function changeArnament(unit, avgAllyLevel)
 	Cuae_RemoveAmmo(unit)
 	Cuae_GenerateNewWeapons(unit, avgAllyLevel, orginalHandhelds)
 	Cuae_GeneratNewArmor(unit, avgAllyLevel, orginalHead, orginalTorso, orginalLegs)
-	if IsKindOf(unit, "Unit") then unit:UpdateOutfit() end
+	if IsKindOf(unit, "Unit") then
+		unit:UpdateOutfit()
+	end
 end
 
 -- main entrypoint

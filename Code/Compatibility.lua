@@ -1,7 +1,9 @@
 function Cuae_isModActive(modId)
 	local activeMods = GetLoadedModsSavegameData() or {}
 	for _, mod in ipairs(activeMods) do
-		if mod.id == modId then return true end
+		if mod.id == modId then
+			return true
+		end
 	end
 	return false
 end

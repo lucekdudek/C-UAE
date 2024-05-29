@@ -1,5 +1,5 @@
 local function isBlocked(slotType, components)
-	--check if slot is blocked by any curently attached comp.
+	-- check if slot is blocked by any curently attached comp.
 	for _, rawComponent in pairs(components) do
 		if rawComponent ~= "" then
 			local component = WeaponComponents[rawComponent]
@@ -17,12 +17,14 @@ end
 local ITEM_COST = {
 	FineSteelPipe = 1500, -- lv>3
 	OpticalLens = 2000, -- lv>4
-	Microchip = 3500,  -- lv>7
+	Microchip = 3500, -- lv>7
 	-- deafult 2000 in case someone add new crafing item
 }
 local function getComponentRarity(componentId)
 	local component = WeaponComponents[componentId]
-	if not component then return 0 end
+	if not component then
+		return 0
+	end
 	local difficulty = component.ModificationDifficulty or 0
 	local partsCost = component.Cost or 0
 	local itemsCost = 0
@@ -110,9 +112,7 @@ function Cuae_AddRandomComponents(weapon, adjustedUnitLevel)
 			startIdx = endIdx + 1
 			endIdx = Min(endIdx + remaningComponentsCount, #availableComponentsSlots)
 			-- add component to slots
-			handledSlots, remaningComponentsCount = addComponentsInSlots(adjustedUnitLevel, weapon,
-				availableComponentsSlots,
-				remaningComponentsCount, startIdx, endIdx)
+			handledSlots, remaningComponentsCount = addComponentsInSlots(adjustedUnitLevel, weapon, availableComponentsSlots, remaningComponentsCount, startIdx, endIdx)
 			-- remove used slots from list and adjust endIdx to new length
 			temp = #availableComponentsSlots
 			availableComponentsSlots = table.ifilter(availableComponentsSlots, function(_, component)

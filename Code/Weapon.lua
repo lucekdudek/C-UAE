@@ -45,7 +45,9 @@ local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type
 		newWeapon.Condition = newCondition
 		Cuae_AddRandomComponents(newWeapon, adjustedUnitLevel)
 		-- load weapon
-		itemAdded = unit:TryEquip({ newWeapon }, slot, "BaseWeapon")
+		itemAdded = unit:TryEquip({
+			newWeapon,
+		}, slot, "BaseWeapon")
 		Cuae_GenerateNewAmmo(unit, adjustedUnitLevel, newWeapon, slot)
 	end
 	return not not itemAdded, newWeapon:GetUIWidth(), newWeapon:IsWeapon()
@@ -218,7 +220,8 @@ function Cuae_GenerateNewWeapons(unit, avgLevel, orginalHandhelds)
 	end
 	-- extra Grenades
 	Cuae_Debug("- [6/6] extra Grenades (type/isEmpty)", "A:", _type1A, A1IsEmpty, _type2A, A2IsEmpty, "B:", _type1B, B1IsEmpty, _type2B, B2IsEmpty)
-	if InteractionRandRange(1, 100, "LDCUAE") <= Cuae_LoadedModOptions.ExtraGrenadesChance and Cuae_LoadedModOptions.ExtraGrenadesCount ~= 0 and _type1A ~= "Grenade" and _type2A ~= "Grenade" and _type1B ~= "Grenade" and _type2B ~= "Grenade" then
+	if InteractionRandRange(1, 100, "LDCUAE") <= Cuae_LoadedModOptions.ExtraGrenadesChance and Cuae_LoadedModOptions.ExtraGrenadesCount ~= 0 and _type1A ~= "Grenade" and _type2A
+					~= "Grenade" and _type1B ~= "Grenade" and _type2B ~= "Grenade" then
 		local handheld = nil
 		if A1IsEmpty or A2IsEmpty then
 			handheld = "Handheld A"

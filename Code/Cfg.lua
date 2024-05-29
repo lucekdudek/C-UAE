@@ -20,7 +20,7 @@ Cuae_ForcedOptions = {}
 Cuae_AffiliationExclusionTable = {}
 
 Cuae_ImmunityTable = {
-	--Quest and personal
+	-- Quest and personal
 	TheThing = true,
 	PierreMachete = true,
 	EndlessKnives = true,
@@ -42,7 +42,7 @@ Cuae_ImmunityTable = {
 	PostApoHelmet = true,
 	-- U-Bahn DLC
 	Gasmaskenhelm = true,
-	--Task-oriented head pieces
+	-- Task-oriented head pieces
 	GasMask = true,
 	NightVisionGoggles = true,
 }
@@ -58,48 +58,69 @@ Cuae_AffiliationWeight = {
 }
 
 -- Position in table coresponds with a adjusted unit level 1...20
-Cuae_UnitLevelToComponentChance = { 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90, 92, 94, 95, 96, 97, 98, 99 }
+Cuae_UnitLevelToComponentChance = {
+	18,
+	24,
+	30,
+	36,
+	42,
+	48,
+	54,
+	60,
+	66,
+	72,
+	78,
+	84,
+	90,
+	92,
+	94,
+	95,
+	96,
+	97,
+	98,
+	99,
+}
 
 Cuae_ExcludeWeapons = {
-	--ToG OP
-	'Katana_1',
-	--ToG outdated/broken
-	'MK23_1',
-	'Fn2000_1',
-	'B93R_1',
-	'G3_1',
-	--Grenade
-	'ConcussiveGrenade_Mine',
-	'ShapedCharge',
-	'Super_HE_Grenade',
-	'RemoteC4',
-	'RemotePETN',
-	'RemoteTNT',
-	--Task-oriented head pieces
-	'GasMask',
-	'NightVisionGoggles',
+	-- ToG OP
+	"Katana_1",
+	-- ToG outdated/broken
+	"MK23_1",
+	"Fn2000_1",
+	"B93R_1",
+	"G3_1",
+	-- Grenade
+	"ConcussiveGrenade_Mine",
+	"ShapedCharge",
+	"Super_HE_Grenade",
+	"RemoteC4",
+	"RemotePETN",
+	"RemoteTNT",
+	-- Task-oriented head pieces
+	"GasMask",
+	"NightVisionGoggles",
 }
 
 Cuae_Whitelist = {
-	--ToG
-	--Handgun
+	-- ToG
+	-- Handgun
 	"Mauser_C96_1",
 	"C96R_1",
-	--SMG
+	-- SMG
 	"PPSh41_1",
-	--AR
+	-- AR
 	"AR10_worn",
 	"AR10commando_worn",
 	"G3A3_1",
 	"M70D_1",
 	"STG44R_1",
-	--Sniper
+	-- Sniper
 	"Gewehr43_1",
 	"M1Garand_5",
 	"SKS_1",
 	"Type56C_1",
 	"Type56D_1",
-	--MachineGun
+	-- MachineGun
 	"BrenMKI_1",
 	"HK23ECamo_1",
 	"M1918A2_1",
@@ -169,13 +190,30 @@ Cuae_AllWeapons = {
 	Legs = {},
 }
 
-Cuae_GrenadeTypes = { "Grenade", "GrenadeSmoke", "GrenadeTrap", "GrenadeNight", "GrenadeHe", "GrenadeUtil" }
-Cuae_GrenadeSubTypes = { "GrenadeSmoke", "GrenadeTrap", "GrenadeHe", "GrenadeUtil" }
+Cuae_GrenadeTypes = {
+	"Grenade",
+	"GrenadeSmoke",
+	"GrenadeTrap",
+	"GrenadeNight",
+	"GrenadeHe",
+	"GrenadeUtil",
+}
+Cuae_GrenadeSubTypes = {
+	"GrenadeSmoke",
+	"GrenadeTrap",
+	"GrenadeHe",
+	"GrenadeUtil",
+}
 Cuae_GrenadeNightSubType = "GrenadeNight"
 
 Cuae_AllGrenade = {}
 
-Cuae_CQBTypes = { "MeleeWeapon", "Handgun", "SMG", "Shotgun" }
+Cuae_CQBTypes = {
+	"MeleeWeapon",
+	"Handgun",
+	"SMG",
+	"Shotgun",
+}
 
 Cuae_DefaultSmallWeapons = {
 	Handgun = "HiPower",
