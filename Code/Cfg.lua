@@ -189,6 +189,29 @@ Cuae_AllWeapons = {
 	Torso = {},
 	Legs = {},
 }
+Cuae_HeadTypes = {
+	"LHead",
+	"MHead",
+	"HHead",
+}
+Cuae_TorsoTypes = {
+	"LVest",
+	"MVest",
+	"HVest",
+	"LPlate",
+	"MPlate",
+	"HPlate",
+}
+Cuae_LegsTypes = {
+	"LLegs",
+	"MLegs",
+	"HLegs",
+}
+Cuae_AllArmor = {
+	Head = {},
+	Torso = {},
+	Legs = {},
+}
 
 Cuae_GrenadeTypes = {
 	"Grenade",

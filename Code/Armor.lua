@@ -4,7 +4,7 @@ local function keepOrginalArmor(orginalArmor, slot)
 	end
 end
 
-local function replaceArmorPiece(unit, avgAllyLevel, orginalArmor, slot)
+local function replaceArmorPiece(unit, avgAllyLevel, orginalArmor, mainSlot, slot)
 	if not Cuae_LoadedModOptions.ReplaceArmor or orginalArmor and Cuae_ImmunityTable[orginalArmor.class] then
 		keepOrginalArmor(orginalArmor, slot)
 		return
@@ -30,7 +30,7 @@ local function replaceArmorPiece(unit, avgAllyLevel, orginalArmor, slot)
 
 	-- remove orginal armor
 	if orginalArmor then
-		Cuae_Removeitem(unit, slot, orginalArmor)
+		Cuae_Removeitem(unit, mainSlot, orginalArmor)
 	end
 
 	local newCondition = orginalArmor and orginalArmor.Condition or InteractionRandRange(45, 95, "LDCUAE")
@@ -41,13 +41,20 @@ local function replaceArmorPiece(unit, avgAllyLevel, orginalArmor, slot)
 	newArmor.drop_chance = newArmor.base_drop_chance
 	newArmor.Condition = newCondition
 
-	unit:AddItem(slot, newArmor)
+	unit:AddItem(mainSlot, newArmor)
 	Cuae_Debug("- picked:", slot, newArmorPreset.id, Cuae_Cost(newArmorPreset), "Condition:", newArmor.Condition)
 end
 
+
 function Cuae_GeneratNewArmor(unit, avgAllyLevel, orginalHead, orginalTorso, orginalLegs)
 	Cuae_Debug("C-UAE Adding new armor items", Cuae_UnitAffiliation(unit))
-	replaceArmorPiece(unit, avgAllyLevel, orginalHead, "Head")
-	replaceArmorPiece(unit, avgAllyLevel, orginalTorso, "Torso")
-	replaceArmorPiece(unit, avgAllyLevel, orginalLegs, "Legs")
+	if orginalHead then
+		replaceArmorPiece(unit, avgAllyLevel, orginalHead, "Head", Cuae_GetHeadSubType(orginalHead))
+	end
+	if orginalTorso then
+		replaceArmorPiece(unit, avgAllyLevel, orginalTorso, "Torso", Cuae_GetTorsoSubType(orginalTorso))
+	end
+	if orginalLegs then
+		replaceArmorPiece(unit, avgAllyLevel, orginalLegs, "Legs", Cuae_GetLegsSubType(orginalLegs))
+	end
 end

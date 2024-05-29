@@ -21,6 +21,117 @@ function Cuae_UnitAffiliation(unit)
 	return Cuae_LoadedModOptions.AffectMilitia and unit.militia and "Militia" or unit.Affiliation
 end
 
+function Cuae_GetHeadSubType(ogHead)
+	if ogHead.CategoryPair == "Heavy" then
+		return "HHead"
+	elseif ogHead.CategoryPair == "Medium" then
+		return "MHead"
+	else
+		return "LHead"
+	end
+end
+
+function Cuae_GetTorsoSubType(ogTorso)
+	if ogTorso.CategoryPair == "Heavy" and ogTorso.ProtectedBodyParts and ogTorso.ProtectedBodyParts["Arms"] then
+		return "HPlate"
+	elseif ogTorso.CategoryPair == "Heavy" then
+		return "HVest"
+	elseif ogTorso.CategoryPair == "Medium" and ogTorso.ProtectedBodyParts and ogTorso.ProtectedBodyParts["Arms"] then
+		return "MPlate"
+	elseif ogTorso.CategoryPair == "Medium" then
+		return "MVest"
+	elseif ogTorso.CategoryPair == "Light" and ogTorso.ProtectedBodyParts and ogTorso.ProtectedBodyParts["Arms"] then
+		return "LPlate"
+	else
+		return "LVest"
+	end
+end
+
+function Cuae_GetLegsSubType(ogLegs)
+	if ogLegs.CategoryPair == "Heavy" then
+		return "HLegs"
+	elseif ogLegs.CategoryPair == "Medium" then
+		return "MLegs"
+	else
+		return "LLegs"
+	end
+end
+
+local function getHeadArmorOfSubtype(allArmor, subType)
+	if next(Cuae_AllArmor.Head) == nil then
+		Cuae_Debug("C-UAE Building Head sub tables...")
+
+		Cuae_AllArmor.Head.LHead = {}
+		Cuae_AllArmor.Head.MHead = {}
+		Cuae_AllArmor.Head.HHead = {}
+
+		for _, a in ipairs(allArmor) do
+			table.insert(Cuae_AllArmor.Head[Cuae_GetHeadSubType(g_Classes[a.id])], a)
+		end
+
+		for _, t in pairs(Cuae_AllArmor.Head) do
+			table.sort(t, function(a, b)
+				return Cuae_CoparePresets(a, b)
+			end)
+		end
+
+		Cuae_Debug("C-UAE Building Head sub tables DONE")
+	end
+
+	return Cuae_AllArmor.Head[subType]
+end
+
+local function getTorsoArmorOfSubtype(allArmor, subType)
+	if next(Cuae_AllArmor.Torso) == nil then
+		Cuae_Debug("C-UAE Building Torso sub tables...")
+
+		Cuae_AllArmor.Torso.LVest = {}
+		Cuae_AllArmor.Torso.MVest = {}
+		Cuae_AllArmor.Torso.HVest = {}
+		Cuae_AllArmor.Torso.LPlate = {}
+		Cuae_AllArmor.Torso.MPlate = {}
+		Cuae_AllArmor.Torso.HPlate = {}
+
+		for _, a in ipairs(allArmor) do
+			table.insert(Cuae_AllArmor.Torso[Cuae_GetTorsoSubType(g_Classes[a.id])], a)
+		end
+
+		for _, t in pairs(Cuae_AllArmor.Torso) do
+			table.sort(t, function(a, b)
+				return Cuae_CoparePresets(a, b)
+			end)
+		end
+
+		Cuae_Debug("C-UAE Building Torso sub tables DONE")
+	end
+
+	return Cuae_AllArmor.Torso[subType]
+end
+
+local function getLegsArmorOfSubtype(allArmor, subType)
+	if next(Cuae_AllArmor.Legs) == nil then
+		Cuae_Debug("C-UAE Building Legs sub tables...")
+
+		Cuae_AllArmor.Legs.LLegs = {}
+		Cuae_AllArmor.Legs.MLegs = {}
+		Cuae_AllArmor.Legs.HLegs = {}
+
+		for _, a in ipairs(allArmor) do
+			table.insert(Cuae_AllArmor.Legs[Cuae_GetLegsSubType(g_Classes[a.id])], a)
+		end
+
+		for _, t in pairs(Cuae_AllArmor.Legs) do
+			table.sort(t, function(a, b)
+				return Cuae_CoparePresets(a, b)
+			end)
+		end
+
+		Cuae_Debug("C-UAE Building Legs sub tables DONE")
+	end
+
+	return Cuae_AllArmor.Legs[subType]
+end
+
 local function getGrenadesOfSubtype(allGrenades, subType)
 	if next(Cuae_AllGrenade) == nil then
 		Cuae_Debug("C-UAE Building Grenade sub tables...")
@@ -89,7 +200,8 @@ end
 
 function Cuae_GetAllWeaponsOfType(_type, affiliation, maxSize)
 	maxSize = maxSize or 2
-	local tempType = table.find(Cuae_GrenadeTypes, _type) and "Grenade" or _type
+	local tempType = table.find(Cuae_GrenadeTypes, _type) and "Grenade" or table.find(Cuae_HeadTypes, _type) and "Head" or table.find(Cuae_TorsoTypes, _type) and "Torso"
+					                 or table.find(Cuae_LegsTypes, _type) and "Legs" or _type
 
 	local allWeapons = Cuae_AllWeapons[tempType] or {}
 	local exclusionTable = Cuae_AffiliationExclusionTable[affiliation] or {}
@@ -99,6 +211,12 @@ function Cuae_GetAllWeaponsOfType(_type, affiliation, maxSize)
 
 	if table.find(Cuae_GrenadeTypes, _type) then
 		weapons = getGrenadesOfSubtype(weapons, _type)
+	elseif table.find(Cuae_HeadTypes, _type) then
+		weapons = getHeadArmorOfSubtype(weapons, _type)
+	elseif table.find(Cuae_TorsoTypes, _type) then
+		weapons = getTorsoArmorOfSubtype(weapons, _type)
+	elseif table.find(Cuae_LegsTypes, _type) then
+		weapons = getLegsArmorOfSubtype(weapons, _type)
 	end
 	return weapons
 end
