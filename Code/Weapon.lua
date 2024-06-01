@@ -37,8 +37,7 @@ local function replaceWeapon(unit, adjustedUnitLevel, orginalWeapon, slot, _type
 		-- separated stack of grenades that can be dropped (so the enemy can have a stack of 10 to throw but won't drop that big of a stick to the player)
 		local greadnesToDrop = PlaceInventoryItem(newWeaponPreset.id)
 		greadnesToDrop.Amount = Min(InteractionRandRange(1, 3, "LDCUAE"), newWeapon.MaxStacks)
-		-- base_chance // (100% + ExtraGrenadesChance%*2) e.g. 5 // 100% + 40%*2 => 5 // 180% => 2.777(7) => 3
-		greadnesToDrop.drop_chance = DivRound(dropChance, DivRound(100 + 2 * Cuae_LoadedModOptions.ExtraGrenadesChance, 100))
+		greadnesToDrop.drop_chance = dropChance
 		unit:AddItem("Inventory", greadnesToDrop)
 	elseif IsKindOf(newWeapon, "BaseWeapon") then
 		newWeapon.drop_chance = dropChance
