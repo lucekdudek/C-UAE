@@ -99,7 +99,7 @@ function OnMsg.ConflictStart(sector_id)
 	local avgAllyLevel = count > 0 and sum // count or 1
 	Cuae_Debug("C-UAE Calcualted avg Ally level", sum, "//", count, "=", avgAllyLevel)
 
-	for _, unit_data in pairs(allyUnits) do
+	for _, unit_data in ipairs(allyUnits) do
 		if unit_data.species == "Human" and (Cuae_AffiliationWeight[Cuae_UnitAffiliation(unit_data)]) and not unit_data:IsDead() then
 			Cuae_Debug("C-UAE Chaning Arnament of an ally on ConflictStart... unit.CUAE", unit_data.CUAE, unit_data.session_id)
 			if not unit_data.CUAE then
@@ -111,7 +111,7 @@ function OnMsg.ConflictStart(sector_id)
 	end
 
 	local enemyUnits = GetUnitsFromSquads(enemySquads, "getUnitData")
-	for _, unit_data in pairs(enemyUnits) do
+	for _, unit_data in ipairs(enemyUnits) do
 		if unit_data.species == "Human" and (Cuae_AffiliationWeight[Cuae_UnitAffiliation(unit_data)]) and not unit_data:IsDead() then
 			Cuae_Debug("C-UAE Chaning Arnament of an enemy on ConflictStart... unit.CUAE", unit_data.CUAE, unit_data.session_id)
 			if not unit_data.CUAE then

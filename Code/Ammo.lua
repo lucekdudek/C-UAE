@@ -25,7 +25,7 @@ local function getAllAmmunitionOfCaliber(weaponCaliber, affiliation)
 	if not Cuae_AllAmmunition[weaponCaliber] then
 		Cuae_Debug("C-UAE Building", weaponCaliber, "ammunition table...")
 		Cuae_AllAmmunition[weaponCaliber] = GetAmmosWithCaliber(weaponCaliber, "sort")
-		for _, a in pairs(Cuae_AllAmmunition[weaponCaliber]) do
+		for _, a in ipairs(Cuae_AllAmmunition[weaponCaliber]) do
 			Cuae_Debug(">>", a.id, "Color:", a.colorStyle, "Rarity", ammoRarity(a))
 		end
 		Cuae_Debug("C-UAE Building", weaponCaliber, "ammunition table DONE")
