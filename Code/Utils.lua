@@ -241,7 +241,7 @@ local function getCostIdx(cost, weapons)
 	end
 	return #weapons
 end
-function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, maxSize)
+function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, useOrginalCost, maxSize)
 	local allWeaponsOfTyp = Cuae_GetAllWeaponsOfType(_type, affiliation, maxSize)
 	if #allWeaponsOfTyp <= 1 then
 		return allWeaponsOfTyp, nil
@@ -253,8 +253,8 @@ function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, maxSi
 	local maxIdx = Max(1, Min(#allWeaponsOfTyp, DivRound(#allWeaponsOfTyp * costRangeTo, 100)))
 
 	local orginalCostIdx = nil
-	if orginalCost then
-		local orginalCostIdx = getCostIdx(orginalCost, allWeaponsOfTyp)
+	if useOrginalCost and orginalCost then
+		orginalCostIdx = getCostIdx(orginalCost, allWeaponsOfTyp)
 		minIdx = Min(orginalCostIdx, minIdx)
 		maxIdx = Max(orginalCostIdx, maxIdx)
 	end
@@ -304,8 +304,8 @@ function Cuae_GetDefaultArnament(affiliation, _type, maxSize)
 	}
 end
 
-function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, maxSize)
-	local suitableArnaments, orginalCostIdx = Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, maxSize)
+function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, useOrginalCost, maxSize)
+	local suitableArnaments, orginalCostIdx = Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, useOrginalCost, maxSize)
 	if #suitableArnaments < 1 then
 		return nil
 	end
@@ -313,7 +313,7 @@ function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, maxSiz
 					suitableArnaments[#suitableArnaments].id, Cuae_Cost(suitableArnaments[#suitableArnaments]))
 
 	orginalCostIdx = orginalCostIdx or Max(1, Min(#suitableArnaments, DivRound(#suitableArnaments, 2)))
-	orginalCost = orginalCost or Cuae_Cost(suitableArnaments[orginalCostIdx])
+	orginalCost = useOrginalCost and orginalCost or Cuae_Cost(suitableArnaments[orginalCostIdx])
 
 	local distance = {}
 	local max = 0
