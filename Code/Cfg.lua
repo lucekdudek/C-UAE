@@ -13,6 +13,10 @@ Cuae_LoadedModOptions = {
 	ExtraGrenadesCount = 3,
 	AlternativeWeaponTypeTables = nil,
 	ApplyChangesInSateliteView = true,
+	-- top secret options
+	DropGrenades = true,
+	AlwaysAddArmor = false,
+	UseRandomGrenadeAsCqb = false
 }
 
 Cuae_ForcedOptions = {}

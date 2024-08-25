@@ -17,8 +17,8 @@ function Cuae_CoparePresets(presetA, presetB)
 	end
 end
 
-function Cuae_UnitAffiliation(unit)
-	return Cuae_LoadedModOptions.AffectMilitia and unit.militia and "Militia" or unit.Affiliation
+function Cuae_UnitAffiliation(settings, unit)
+	return settings.AffectMilitia and unit.militia and "Militia" or unit.Affiliation
 end
 
 function Cuae_GetHeadSubType(ogHead)
@@ -221,9 +221,9 @@ function Cuae_GetAllWeaponsOfType(_type, affiliation, maxSize)
 	return weapons
 end
 
-function Cuae_CalculateAdjustedUnitLevel(level, avgAllyLevel, affiliation)
-	local minimum = Max(1, avgAllyLevel + Cuae_LoadedModOptions.ArmamentStrengthFactor)
-	local adjusted = level + Cuae_AffiliationWeight[affiliation] + Cuae_LoadedModOptions.ArmamentStrengthFactor
+function Cuae_CalculateAdjustedUnitLevel(settings, level, avgAllyLevel, affiliation)
+	local minimum = Max(1, avgAllyLevel + settings.ArmamentStrengthFactor)
+	local adjusted = level + (Cuae_AffiliationWeight[affiliation] or 0) + settings.ArmamentStrengthFactor
 	return Min(20, Max(minimum, adjusted))
 end
 

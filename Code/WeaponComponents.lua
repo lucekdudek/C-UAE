@@ -1,5 +1,6 @@
 local function isBlocked(slotType, components)
 	-- check if slot is blocked by any curently attached comp.
+	-- TODO: consider table.find_value(campaign.Sectors, "Id", campaign.InitialSector)
 	for _, rawComponent in pairs(components) do
 		if rawComponent ~= "" then
 			local component = WeaponComponents[rawComponent]
@@ -90,8 +91,8 @@ local function addComponentsInSlots(level, weapon, weaponComponentSlots, remanin
 	return handledSlots, remaningComponentsCount
 end
 
-function Cuae_AddRandomComponents(weapon, adjustedUnitLevel)
-	if not Cuae_LoadedModOptions.AddWeaponComponents then
+function Cuae_AddRandomComponents(settings, weapon, adjustedUnitLevel)
+	if not settings.AddWeaponComponents then
 		return
 	end
 

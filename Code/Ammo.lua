@@ -1,5 +1,5 @@
-function Cuae_RemoveAmmo(unit)
-	Cuae_Debug("C-UAE Removing orginal ammo from", Cuae_UnitAffiliation(unit))
+function Cuae_RemoveAmmo(settings, unit)
+	Cuae_Debug("C-UAE Removing orginal ammo from", Cuae_UnitAffiliation(settings, unit))
 	unit:ForEachItem(function(item, slot_name)
 		-- Ordnance is Ammo for heavy weapons
 		if slot_name == "Inventory" and (IsKindOf(item, "Ammo") or IsKindOf(item, "Ordnance")) then
@@ -71,13 +71,13 @@ local function addAmmo(unit, ammo, magazineSize)
 	return newAmmo
 end
 
-function Cuae_GenerateNewAmmo(unit, adjustedUnitLevel, weapon, slot)
-	local ammo = generateAmmo(weapon.Caliber, Cuae_UnitAffiliation(unit), adjustedUnitLevel)
+function Cuae_GenerateNewAmmo(settings, unit, adjustedUnitLevel, weapon, slot)
+	local ammo = generateAmmo(weapon.Caliber, Cuae_UnitAffiliation(settings, unit), adjustedUnitLevel)
 	unit:TryLoadAmmo(slot, "BaseWeapon", ammo.id)
 	addAmmo(unit, ammo, weapon.MagazineSize)
 	for _, subWeapon in pairs(weapon.subweapons) do
 		if IsKindOf(subWeapon, "Firearm") then
-			local subAmmo = generateAmmo(subWeapon.Caliber, Cuae_UnitAffiliation(unit), adjustedUnitLevel)
+			local subAmmo = generateAmmo(subWeapon.Caliber, Cuae_UnitAffiliation(settings, unit), adjustedUnitLevel)
 			local inventorySubAmmo = addAmmo(unit, subAmmo, subWeapon.MagazineSize)
 			subWeapon:Reload(inventorySubAmmo, "suspend_fx")
 		end
