@@ -16,12 +16,24 @@ return {
 		'CodeFileName', "Code/Cfg.lua",
 	}),
 	PlaceObj('ModItemCode', {
+		'name', "Loadout",
+		'CodeFileName', "Code/Loadout.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "Logger",
+		'CodeFileName', "Code/Logger.lua",
+	}),
+	PlaceObj('ModItemCode', {
 		'name', "Main",
 		'CodeFileName', "Code/Main.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "Settings",
 		'CodeFileName', "Code/Settings.lua",
+	}),
+	PlaceObj('ModItemCode', {
+		'name', "Test",
+		'CodeFileName', "Code/Test.lua",
 	}),
 	PlaceObj('ModItemCode', {
 		'name', "Utils",
@@ -38,7 +50,7 @@ return {
 	PlaceObj('ModItemOptionToggle', {
 		'name', "ReplaceWeapons",
 		'DisplayName', "Replace Weapons",
-		'Help', "When enabled, replaces orginal enemy weapons with new ones",
+		'Help', "When enabled, replaces original enemy weapons with new ones",
 		'DefaultValue', true,
 	}),
 	PlaceObj('ModItemOptionToggle', {
@@ -50,7 +62,7 @@ return {
 	PlaceObj('ModItemOptionToggle', {
 		'name', "ReplaceArmor",
 		'DisplayName', "Replace Armor",
-		'Help', "When enabled, replaces orginal enemy armor with new ones",
+		'Help', "When enabled, replaces original enemy armor with new ones",
 		'DefaultValue', true,
 	}),
 	PlaceObj('ModItemOptionToggle', {
@@ -58,25 +70,6 @@ return {
 		'DisplayName', "Affect Militia",
 		'Help', "When enabled, mod affects Militia squads",
 		'DefaultValue', true,
-	}),
-	PlaceObj('ModItemOptionChoice', {
-		'name', "ExtraGrenadesChance",
-		'DisplayName', "Extra Grenades Chance",
-		'Help', "Percentage chance to give enemies extra granades",
-		'DefaultValue', "50",
-		'ChoiceList', {
-			"0",
-			"10",
-			"20",
-			"30",
-			"40",
-			"50",
-			"60",
-			"70",
-			"80",
-			"90",
-			"100",
-		},
 	}),
 	PlaceObj('ModItemOptionChoice', {
 		'name', "ArmamentStrengthFactor",
@@ -93,10 +86,5 @@ return {
 			"6",
 			"8",
 		},
-	}),
-	PlaceObj('ModItemOptionToggle', {
-		'name', "Debug",
-		'DisplayName', "Enable debug messages",
-		'Help', "When enabled, debug messages will appeare in logs and in debugging mode",
 	}),
 }

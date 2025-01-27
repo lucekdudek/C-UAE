@@ -1,39 +1,39 @@
-local function keepOrginalArmor(orginalArmor, slot)
-	if orginalArmor then
-		Cuae_Debug("- keeping(immunity):", slot, orginalArmor.class, orginalArmor.Cost, "Condition:", orginalArmor.Condition)
+local function keepOriginalArmor(originalArmor, slot)
+	if originalArmor then
+		Cuae_L("D", "- keeping(immunity):", slot, originalArmor.class, originalArmor.Cost, "Condition:", originalArmor.Condition)
 	end
 end
 
-local function replaceArmorPiece(settings, unit, avgAllyLevel, orginalArmor, mainSlot, slot)
-	if not settings.ReplaceArmor or orginalArmor and Cuae_ImmunityTable[orginalArmor.class] then
-		keepOrginalArmor(orginalArmor, slot)
+local function replaceArmorPiece(settings, unit, avgAllyLevel, originalArmor, mainSlot, slot)
+	if not settings.ReplaceArmor or originalArmor and Cuae_ImmunityTable[originalArmor.class] then
+		keepOriginalArmor(originalArmor, slot)
 		return
 	end
 
 	local unitLevel = Min(10, unit:GetLevel())
 	local adjustedUnitLevel = Cuae_CalculateAdjustedUnitLevel(settings, unitLevel, avgAllyLevel, Cuae_UnitAffiliation(settings, unit))
-	local orginalCost = orginalArmor and orginalArmor.Cost or 0
+	local originalCost = originalArmor and originalArmor.Cost or 0
 
-	if not settings.AlwaysAddArmor and orginalCost == 0 and InteractionRandRange(1, 100, "LDCUAE") >= Cuae_UnitLevelToComponentChance[adjustedUnitLevel] then
+	if not settings.AlwaysAddArmor and originalCost == 0 and InteractionRandRange(1, 100, "LDCUAE") >= Cuae_UnitLevelToComponentChance[adjustedUnitLevel] then
 		return
 	end
 
-	local newArmorPreset = Cuae_GetSuitableArnament(Cuae_UnitAffiliation(settings, unit), adjustedUnitLevel, slot, orginalCost)
+	local newArmorPreset = Cuae_GetSuitableArmament(Cuae_UnitAffiliation(settings, unit), adjustedUnitLevel, slot, originalCost)
 
 	if newArmorPreset == nil then
-		Cuae_Debug("- skipping as no siutable armors were found", slot, "for", Cuae_UnitAffiliation(settings, unit))
-		if orginalArmor then
-			keepOrginalArmor(orginalArmor, slot)
+		Cuae_L("D", "- skipping as no siutable armors were found", slot, "for", Cuae_UnitAffiliation(settings, unit))
+		if originalArmor then
+			keepOriginalArmor(originalArmor, slot)
 		end
 		return
 	end
 
-	-- remove orginal armor
-	if orginalArmor then
-		Cuae_Removeitem(unit, mainSlot, orginalArmor)
+	-- remove original armor
+	if originalArmor then
+		Cuae_RemoveItem(unit, mainSlot, originalArmor)
 	end
 
-	local newCondition = orginalArmor and orginalArmor.Condition or InteractionRandRange(45, 95, "LDCUAE")
+	local newCondition = originalArmor and originalArmor.Condition or InteractionRandRange(45, 95, "LDCUAE")
 
 	-- get and init final armor from preset
 	local newArmor = nil
@@ -42,7 +42,7 @@ local function replaceArmorPiece(settings, unit, avgAllyLevel, orginalArmor, mai
 	newArmor.Condition = newCondition
 
 	unit:AddItem(mainSlot, newArmor)
-	Cuae_Debug("- picked:", slot, newArmorPreset.id, Cuae_Cost(newArmorPreset), "Condition:", newArmor.Condition)
+	Cuae_L("D", "- picked:", slot, newArmorPreset.id, Cuae_Cost(newArmorPreset), "Condition:", newArmor.Condition)
 end
 
 local typesHelpTable = {
@@ -64,19 +64,19 @@ local function getRandomArmorTypeSet(settings)
 	end
 end
 
-function Cuae_GeneratNewArmor(settings, unit, avgAllyLevel, orginalHead, orginalTorso, orginalLegs)
-	Cuae_Debug("C-UAE Adding new armor items", Cuae_UnitAffiliation(settings, unit))
+function Cuae_GenerateNewArmor(settings, unit, avgAllyLevel, originalHead, originalTorso, originalLegs)
+	Cuae_L("D", "Adding new armor items", Cuae_UnitAffiliation(settings, unit))
 
 	local forcedHeadSlot, forcedTorsoSlot, forcedLegsSlot = getRandomArmorTypeSet(settings)
 
-	if orginalHead or settings.AlwaysAddArmor then
-		replaceArmorPiece(settings, unit, avgAllyLevel, orginalHead, "Head", forcedHeadSlot or Cuae_GetHeadSubType(orginalHead))
+	if originalHead or settings.AlwaysAddArmor then
+		replaceArmorPiece(settings, unit, avgAllyLevel, originalHead, "Head", forcedHeadSlot or Cuae_GetHeadSubType(originalHead))
 	end
-	if orginalTorso or settings.AlwaysAddArmor then
-		replaceArmorPiece(settings, unit, avgAllyLevel, orginalTorso, "Torso", forcedTorsoSlot or Cuae_GetTorsoSubType(orginalTorso))
+	if originalTorso or settings.AlwaysAddArmor then
+		replaceArmorPiece(settings, unit, avgAllyLevel, originalTorso, "Torso", forcedTorsoSlot or Cuae_GetTorsoSubType(originalTorso))
 	end
-	if orginalLegs or settings.AlwaysAddArmor then
-		replaceArmorPiece(settings, unit, avgAllyLevel, orginalLegs, "Legs", forcedLegsSlot or Cuae_GetLegsSubType(orginalLegs))
+	if originalLegs or settings.AlwaysAddArmor then
+		replaceArmorPiece(settings, unit, avgAllyLevel, originalLegs, "Legs", forcedLegsSlot or Cuae_GetLegsSubType(originalLegs))
 	end
 end
 

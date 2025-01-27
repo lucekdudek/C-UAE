@@ -1,14 +1,8 @@
-function Cuae_Debug(...)
-	if Cuae_LoadedModOptions.Debug then
-		print(...)
-	end
-end
-
 function Cuae_Cost(preset)
 	return preset.id and g_Classes[preset.id] and g_Classes[preset.id].Cost or 0
 end
 
-function Cuae_CoparePresets(presetA, presetB)
+function Cuae_ComparePresets(presetA, presetB)
 	local costA, CostB = Cuae_Cost(presetA), Cuae_Cost(presetB)
 	if costA == CostB then
 		return presetA.id < presetB.id
@@ -59,7 +53,7 @@ end
 
 local function getHeadArmorOfSubtype(allArmor, subType)
 	if next(Cuae_AllArmor.Head) == nil then
-		Cuae_Debug("C-UAE Building Head sub tables...")
+		Cuae_L("D", "Building Head sub tables...")
 
 		Cuae_AllArmor.Head.LHead = {}
 		Cuae_AllArmor.Head.MHead = {}
@@ -71,11 +65,11 @@ local function getHeadArmorOfSubtype(allArmor, subType)
 
 		for _, t in pairs(Cuae_AllArmor.Head) do
 			table.sort(t, function(a, b)
-				return Cuae_CoparePresets(a, b)
+				return Cuae_ComparePresets(a, b)
 			end)
 		end
 
-		Cuae_Debug("C-UAE Building Head sub tables DONE")
+		Cuae_L("D", "Building Head sub tables DONE")
 	end
 
 	return Cuae_AllArmor.Head[subType]
@@ -83,7 +77,7 @@ end
 
 local function getTorsoArmorOfSubtype(allArmor, subType)
 	if next(Cuae_AllArmor.Torso) == nil then
-		Cuae_Debug("C-UAE Building Torso sub tables...")
+		Cuae_L("D", "Building Torso sub tables...")
 
 		Cuae_AllArmor.Torso.LVest = {}
 		Cuae_AllArmor.Torso.MVest = {}
@@ -98,11 +92,11 @@ local function getTorsoArmorOfSubtype(allArmor, subType)
 
 		for _, t in pairs(Cuae_AllArmor.Torso) do
 			table.sort(t, function(a, b)
-				return Cuae_CoparePresets(a, b)
+				return Cuae_ComparePresets(a, b)
 			end)
 		end
 
-		Cuae_Debug("C-UAE Building Torso sub tables DONE")
+		Cuae_L("D", "Building Torso sub tables DONE")
 	end
 
 	return Cuae_AllArmor.Torso[subType]
@@ -110,7 +104,7 @@ end
 
 local function getLegsArmorOfSubtype(allArmor, subType)
 	if next(Cuae_AllArmor.Legs) == nil then
-		Cuae_Debug("C-UAE Building Legs sub tables...")
+		Cuae_L("D", "Building Legs sub tables...")
 
 		Cuae_AllArmor.Legs.LLegs = {}
 		Cuae_AllArmor.Legs.MLegs = {}
@@ -122,96 +116,27 @@ local function getLegsArmorOfSubtype(allArmor, subType)
 
 		for _, t in pairs(Cuae_AllArmor.Legs) do
 			table.sort(t, function(a, b)
-				return Cuae_CoparePresets(a, b)
+				return Cuae_ComparePresets(a, b)
 			end)
 		end
 
-		Cuae_Debug("C-UAE Building Legs sub tables DONE")
+		Cuae_L("D", "Building Legs sub tables DONE")
 	end
 
 	return Cuae_AllArmor.Legs[subType]
 end
 
-local function getGrenadesOfSubtype(allGrenades, subType)
-	if next(Cuae_AllGrenade) == nil then
-		Cuae_Debug("C-UAE Building Grenade sub tables...")
-
-		Cuae_AllGrenade.GrenadeSmoke = {}
-		Cuae_AllGrenade.GrenadeTrap = {}
-		Cuae_AllGrenade.GrenadeNight = {}
-		Cuae_AllGrenade.GrenadeHe = {}
-		Cuae_AllGrenade.GrenadeUtil = {}
-
-		for _, g in ipairs(allGrenades) do
-			local gCls = g_Classes[g.id]
-			if IsKindOf(gCls, "ThrowableTrapItem") then
-				table.insert(Cuae_AllGrenade.GrenadeTrap, g)
-				print("- ThrowableTrapItem", g.id)
-			elseif IsKindOf(gCls, "Flare") then
-				table.insert(Cuae_AllGrenade.GrenadeNight, g)
-				print("- GrenadeNight", g.id)
-			elseif gCls.aoeType == "smoke" or gCls.aoeType == "teargas" or gCls.aoeType == "toxicgas" then
-				table.insert(Cuae_AllGrenade.GrenadeSmoke, g)
-				print("- GrenadeSmoke", g.id)
-			elseif gCls.DeathType == "BlowUp" then
-				table.insert(Cuae_AllGrenade.GrenadeHe, g)
-				print("- GrenadeHe", g.id)
-			else
-				table.insert(Cuae_AllGrenade.GrenadeUtil, g)
-				print("- GrenadeUtil", g.id)
-			end
-		end
-
-		for _, t in pairs(Cuae_AllGrenade) do
-			table.sort(t, function(a, b)
-				return Cuae_CoparePresets(a, b)
-			end)
-		end
-
-		Cuae_Debug("C-UAE Building Grenade sub tables DONE")
-	end
-
-	Cuae_Debug("-- picking Grenade subType", subType)
-	if subType == "Grenade" then
-		local subTypes = table.copy(Cuae_GrenadeSubTypes)
-		if (GameState.Night or GameState.Underground) then
-			table.insert(subTypes, Cuae_GrenadeNightSubType)
-		end
-
-		table.sort(subTypes, function(a, b)
-			return a < b
-		end)
-
-		for i, t in ipairs(subTypes) do
-			Cuae_Debug("--- sorted subTypes:", i, t)
-		end
-
-		subType = subTypes[InteractionRandRange(1, #subTypes, "LDCUAE")]
-	end
-	Cuae_Debug("-- picked Grenade subType:", subType)
-
-	if #Cuae_AllGrenade[subType] >= 1 then
-		return Cuae_AllGrenade[subType]
-	else
-		Cuae_Debug("--- picked Grenade subType:", subType, "is empty. Using all grenades instead")
-		return allGrenades
-	end
-end
-
-function Cuae_GetAllWeaponsOfType(_type, affiliation, maxSize)
+local function getAllWeaponsOfType(_type, affiliation, maxSize)
 	maxSize = maxSize or 2
-	local tempType = table.find(Cuae_GrenadeTypes, _type) and "Grenade" or table.find(Cuae_HeadTypes, _type) and "Head" or table.find(Cuae_TorsoTypes, _type) and "Torso"
-					                 or table.find(Cuae_LegsTypes, _type) and "Legs" or _type
+	local tempType = table.find(Cuae_HeadTypes, _type) and "Head" or table.find(Cuae_TorsoTypes, _type) and "Torso" or table.find(Cuae_LegsTypes, _type) and "Legs" or _type
 
-	local allWeapons = Cuae_AllWeapons[tempType] or {}
+	local allWeapons = Cuae_AllArmaments[tempType] or {}
 	local exclusionTable = Cuae_AffiliationExclusionTable[affiliation] or {}
 	local weapons = table.ifilter(allWeapons, function(_, w)
 		return not exclusionTable[w.id] and g_Classes[w.id].LargeItem + 1 <= maxSize
 	end)
 
-	if table.find(Cuae_GrenadeTypes, _type) then
-		weapons = getGrenadesOfSubtype(weapons, _type)
-	elseif table.find(Cuae_HeadTypes, _type) then
+	if table.find(Cuae_HeadTypes, _type) then
 		weapons = getHeadArmorOfSubtype(weapons, _type)
 	elseif table.find(Cuae_TorsoTypes, _type) then
 		weapons = getTorsoArmorOfSubtype(weapons, _type)
@@ -241,8 +166,9 @@ local function getCostIdx(cost, weapons)
 	end
 	return #weapons
 end
-function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, useOrginalCost, maxSize)
-	local allWeaponsOfTyp = Cuae_GetAllWeaponsOfType(_type, affiliation, maxSize)
+
+function Cuae_GetSuitableArmaments(affiliation, level, _type, originalCost, useOriginalCost, maxSize)
+	local allWeaponsOfTyp = getAllWeaponsOfType(_type, affiliation, maxSize)
 	if #allWeaponsOfTyp <= 1 then
 		return allWeaponsOfTyp, nil
 	end
@@ -252,20 +178,20 @@ function Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, useOr
 	local minIdx = Min(#allWeaponsOfTyp, Max(1, DivRound(#allWeaponsOfTyp * costRangeFrom, 100)))
 	local maxIdx = Max(1, Min(#allWeaponsOfTyp, DivRound(#allWeaponsOfTyp * costRangeTo, 100)))
 
-	local orginalCostIdx = nil
-	if useOrginalCost and orginalCost then
-		orginalCostIdx = getCostIdx(orginalCost, allWeaponsOfTyp)
-		minIdx = Min(orginalCostIdx, minIdx)
-		maxIdx = Max(orginalCostIdx, maxIdx)
+	local originalCostIdx = nil
+	if useOriginalCost and originalCost then
+		originalCostIdx = getCostIdx(originalCost, allWeaponsOfTyp)
+		minIdx = Min(originalCostIdx, minIdx)
+		maxIdx = Max(originalCostIdx, maxIdx)
 	end
 
 	local minCost = Cuae_Cost(allWeaponsOfTyp[minIdx])
 	local maxCost = Cuae_Cost(allWeaponsOfTyp[maxIdx])
-	local suitableArnament = table.ifilter(allWeaponsOfTyp, function(i, a)
+	local suitableArmament = table.ifilter(allWeaponsOfTyp, function(i, a)
 		return Cuae_Cost(a) >= minCost and Cuae_Cost(a) <= maxCost
 	end)
 
-	return suitableArnament, orginalCostIdx
+	return suitableArmament, originalCostIdx
 end
 
 function DiceInteractionRandRange(_from, _to, _mid, dice_count, interaction)
@@ -285,8 +211,9 @@ function DiceInteractionRandRange(_from, _to, _mid, dice_count, interaction)
 	return _mid
 end
 
-function Cuae_GetDefaultArnament(affiliation, _type, maxSize)
-	local _id = Cuae_DefaultWeapons[affiliation][_type]
+function Cuae_GetDefaultArmament(affiliation, _type, maxSize)
+	local defaultWeapons = Cuae_DefaultWeapons[affiliation] or Cuae_DefaultWeapons.Militia
+	local _id = defaultWeapons[_type]
 	if _id == nil then
 		return nil
 	end
@@ -298,27 +225,27 @@ function Cuae_GetDefaultArnament(affiliation, _type, maxSize)
 		end
 	end
 
-	Cuae_Debug("- suitable default arnament", _type, _id)
+	Cuae_L("D", "- suitable default armament", _type, _id)
 	return {
 		id = _id,
 	}
 end
 
-function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, useOrginalCost, maxSize)
-	local suitableArnaments, orginalCostIdx = Cuae_GetSuitableArnaments(affiliation, level, _type, orginalCost, useOrginalCost, maxSize)
-	if #suitableArnaments < 1 then
+function Cuae_GetSuitableArmament(affiliation, level, _type, originalCost, useOriginalCost, maxSize)
+	local suitableArmaments, originalCostIdx = Cuae_GetSuitableArmaments(affiliation, level, _type, originalCost, useOriginalCost, maxSize)
+	if #suitableArmaments < 1 then
 		return nil
 	end
-	Cuae_Debug("- suitable arnaments for AdjustedLvl:", level, _type, "Orginal Cost", orginalCost, "min:", suitableArnaments[1].id, Cuae_Cost(suitableArnaments[1]), "max:",
-					suitableArnaments[#suitableArnaments].id, Cuae_Cost(suitableArnaments[#suitableArnaments]))
+	Cuae_L("D", "- suitable armaments for AdjustedLvl:", level, _type, "Original Cost", originalCost, "min:", suitableArmaments[1].id, Cuae_Cost(suitableArmaments[1]), "max:",
+	       suitableArmaments[#suitableArmaments].id, Cuae_Cost(suitableArmaments[#suitableArmaments]))
 
-	orginalCostIdx = orginalCostIdx or Max(1, Min(#suitableArnaments, DivRound(#suitableArnaments, 2)))
-	orginalCost = useOrginalCost and orginalCost or Cuae_Cost(suitableArnaments[orginalCostIdx])
+	originalCostIdx = originalCostIdx or Max(1, Min(#suitableArmaments, DivRound(#suitableArmaments, 2)))
+	originalCost = useOriginalCost and originalCost or Cuae_Cost(suitableArmaments[originalCostIdx])
 
 	local distance = {}
 	local max = 0
-	for _, a in ipairs(suitableArnaments) do
-		distance[#distance + 1] = abs(orginalCost - Cuae_Cost(a))
+	for _, a in ipairs(suitableArmaments) do
+		distance[#distance + 1] = abs(originalCost - Cuae_Cost(a))
 		if distance[#distance] > max then
 			max = distance[#distance]
 		end
@@ -347,30 +274,100 @@ function Cuae_GetSuitableArnament(affiliation, level, _type, orginalCost, useOrg
 	local random = InteractionRandRange(1, 1000, "LDCUAE")
 	for idx, odds in ipairs(culOdds) do
 		if random <= odds then
-			return suitableArnaments[idx]
+			return suitableArmaments[idx]
 		end
 	end
 
-	return suitableArnaments[InteractionRandRange(1, #suitableArnaments, "LDCUAE")]
+	return suitableArmaments[InteractionRandRange(1, #suitableArmaments, "LDCUAE")]
 end
 
-function Cuae_Removeitem(unit, slot, item)
-	Cuae_Debug("- Removing orginal item", "Type:", item.ItemType or item.WeaponType or "", item.class, "Cost:", item.Cost)
+function Cuae_RemoveItem(unit, slot, item)
+	Cuae_L("D", "- Removing original item", "Type:", item.ItemType or item.WeaponType or "", item.class, "Cost:", item.Cost)
 	unit:RemoveItem(slot, item)
 	DoneObject(item)
 end
 
-function Cuae_GetOrginalEq(unit)
-	local orginalHandhelds = {
-		A1 = unit:GetItemAtPos("Handheld A", 1, 1),
-		A2 = unit:GetItemAtPos("Handheld A", 2, 1),
-		B1 = unit:GetItemAtPos("Handheld B", 1, 1),
-		B2 = unit:GetItemAtPos("Handheld B", 2, 1),
+local aoeTypes = {
+	fire = "Fire",
+	smoke = "Smoke",
+	teargas = "Tear",
+	toxicgas = "Toxic",
+}
+
+local function getUtilityType(item)
+	if IsKindOf(item, "ThrowableTrapItem") then
+		return item.TriggerType
+	elseif IsKindOf(item, "Flare") then
+		return "Flare"
+	elseif item.aoeType and aoeTypes[item.aoeType] then
+		return aoeTypes[item.aoeType]
+	elseif item.ItemType == "Grenade" and item.DeathType == "BlowUp" then
+		return "Explosive"
+	elseif IsKindOfClasses(item, "ConcussiveGrenade", "ConcussiveGrenade_IED") then
+		return "Flash"
+	else
+		Cuae_L("E", "Unknown utility type", item.class)
+		return nil
+	end
+end
+
+local function handheldToWeaponProfile(handheld, hPos)
+	local w = {
+		ogInstance = handheld,
+		isWeapon = true,
+		slot = CUAE_SLOT[hPos],
+		ogPresetId = handheld.class,
+		ogDropChance = handheld.guarantee_drop and 100 or handheld.drop_chance,
+		ogCaliber = handheld.Caliber,
+		ogCondition = handheld.Condition,
+		ogSize = handheld.LargeItem + 1,
+		ogCost = handheld.Cost,
+		ogType = handheld.WeaponType,
 	}
-	local orginalHead = unit:GetItemAtPos("Head", 1, 1)
-	local orginalTorso = unit:GetItemAtPos("Torso", 1, 1)
-	local orginalLegs = unit:GetItemAtPos("Legs", 1, 1)
-	return orginalHandhelds, orginalHead, orginalTorso, orginalLegs
+	Cuae_L("D", "created weapon profile", w.ogPresetId, w.ogType, w.ogCaliber, "size:", w.ogSize, "Cost:", w.ogCost, "Drop chance:", w.ogDropChance)
+	return w
+end
+
+local function handheldToUtilityProfile(handheld, hPos)
+	local u = {
+		ogInstance = handheld,
+		slot = CUAE_SLOT[hPos],
+		ogPresetId = handheld.class,
+		ogCost = handheld.Cost,
+		ogDropChance = handheld.guarantee_drop and 100 or handheld.drop_chance,
+		ogType = getUtilityType(handheld),
+		amount = handheld.Amount,
+	}
+	Cuae_L("D", "created utility profile", u.ogPresetId, u.ogType, "Amount:", u.amount, "Cost:", u.ogCost, "Drop chance:", u.ogDropChance)
+	return u
+end
+
+function Cuae_GetOriginalEq(unit)
+	local originalWeapons = {}
+	local originalUtility = {}
+	local handhelds = {
+		unit:GetItemAtPos("Handheld A", 1, 1) or false,
+		unit:GetItemAtPos("Handheld A", 2, 1) or false,
+		unit:GetItemAtPos("Handheld B", 1, 1) or false,
+		unit:GetItemAtPos("Handheld B", 2, 1) or false,
+	}
+	for hPos, handheld in ipairs(handhelds) do
+		if handheld then
+			if handheld:IsWeapon() then
+				table.insert(originalWeapons, handheldToWeaponProfile(handheld, hPos))
+			else
+				table.insert(originalUtility, handheldToUtilityProfile(handheld, hPos))
+			end
+		end
+	end
+
+	local originalHead = unit:GetItemAtPos("Head", 1, 1)
+	local originalTorso = unit:GetItemAtPos("Torso", 1, 1)
+	local originalLegs = unit:GetItemAtPos("Legs", 1, 1)
+	return {
+		W = originalWeapons,
+		U = originalUtility,
+	}, originalHead, originalTorso, originalLegs
 end
 
 function Cuae_TableSlice(tbl, first, last)

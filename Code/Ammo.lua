@@ -1,9 +1,9 @@
 function Cuae_RemoveAmmo(settings, unit)
-	Cuae_Debug("C-UAE Removing orginal ammo from", Cuae_UnitAffiliation(settings, unit))
+	Cuae_L("D", "Removing original ammo from", Cuae_UnitAffiliation(settings, unit))
 	unit:ForEachItem(function(item, slot_name)
 		-- Ordnance is Ammo for heavy weapons
 		if slot_name == "Inventory" and (IsKindOf(item, "Ammo") or IsKindOf(item, "Ordnance")) then
-			Cuae_Debug("-", "Caliber:", item.Caliber, item.class, "Cost:", item.Cost, "Amount", item.Amount)
+			Cuae_L("D", "-", "Caliber:", item.Caliber, item.class, "Cost:", item.Cost, "Amount", item.Amount)
 			unit:RemoveItem(slot_name, item)
 			DoneObject(item)
 		end
@@ -21,25 +21,34 @@ local function ammoRarity(preset)
 	return preset and preset.colorStyle and AMMO_RARITY[preset.colorStyle] or 100
 end
 
-local function getAllAmmunitionOfCaliber(weaponCaliber, affiliation)
+local function getAllAmmunitionOfCaliber(weaponCaliber, affiliation, excludeAmmoRarity)
 	if not Cuae_AllAmmunition[weaponCaliber] then
-		Cuae_Debug("C-UAE Building", weaponCaliber, "ammunition table...")
+		Cuae_L("D", "Building", weaponCaliber, "ammunition table...")
 		Cuae_AllAmmunition[weaponCaliber] = GetAmmosWithCaliber(weaponCaliber, "sort")
 		for _, a in ipairs(Cuae_AllAmmunition[weaponCaliber]) do
-			Cuae_Debug(">>", a.id, "Color:", a.colorStyle, "Rarity", ammoRarity(a))
+			Cuae_L("D", ">>", a.id, "Color:", a.colorStyle, "Rarity", ammoRarity(a))
 		end
-		Cuae_Debug("C-UAE Building", weaponCaliber, "ammunition table DONE")
+		Cuae_L("D", "Building", weaponCaliber, "ammunition table DONE")
 	end
 	local allAmmunition = Cuae_AllAmmunition[weaponCaliber] or {}
 	local exclusionTable = Cuae_AffiliationExclusionTable[affiliation]
 	local ammunition = exclusionTable and table.ifilter(allAmmunition, function(_, w)
 		return not exclusionTable[w.id]
 	end) or allAmmunition
+
+	local filteredAmmunition = table.ifilter(ammunition, function(_, a)
+		return not excludeAmmoRarity[a.colorStyle]
+	end)
+
+	if next(filteredAmmunition) ~= nil then
+		return filteredAmmunition
+	end
+
 	return ammunition
 end
 
-local function generateAmmo(weaponCaliber, affiliation, adjustedUnitLevel)
-	local allAmmunitionOfCaliber = getAllAmmunitionOfCaliber(weaponCaliber, affiliation)
+local function generateAmmo(weaponCaliber, affiliation, adjustedUnitLevel, excludeAmmoRarity)
+	local allAmmunitionOfCaliber = getAllAmmunitionOfCaliber(weaponCaliber, affiliation, excludeAmmoRarity)
 
 	local costRangeFrom, costRangeTo = Cuae_CalculateCostRange(adjustedUnitLevel, 1, 8)
 
@@ -53,7 +62,7 @@ local function generateAmmo(weaponCaliber, affiliation, adjustedUnitLevel)
 	end)
 
 	local ammo = suitableAmmos[InteractionRandRange(1, #suitableAmmos, "LDCUAE")]
-	Cuae_Debug("-- picked suitable ammo:", weaponCaliber, ammo.id, "Color:", ammo.colorStyle, "Rarity", ammoRarity(ammo))
+	Cuae_L("D", "-- picked suitable ammo:", weaponCaliber, ammo.id, "Color:", ammo.colorStyle, "Rarity", ammoRarity(ammo))
 	return ammo
 end
 
@@ -71,13 +80,13 @@ local function addAmmo(unit, ammo, magazineSize)
 	return newAmmo
 end
 
-function Cuae_GenerateNewAmmo(settings, unit, adjustedUnitLevel, weapon, slot)
-	local ammo = generateAmmo(weapon.Caliber, Cuae_UnitAffiliation(settings, unit), adjustedUnitLevel)
+function Cuae_GenerateNewAmmo(settings, unit, adjustedUnitLevel, weapon, slot, excludeAmmoRarity)
+	local ammo = generateAmmo(weapon.Caliber, Cuae_UnitAffiliation(settings, unit), adjustedUnitLevel, excludeAmmoRarity)
 	unit:TryLoadAmmo(slot, "BaseWeapon", ammo.id)
 	addAmmo(unit, ammo, weapon.MagazineSize)
 	for _, subWeapon in pairs(weapon.subweapons) do
 		if IsKindOf(subWeapon, "Firearm") then
-			local subAmmo = generateAmmo(subWeapon.Caliber, Cuae_UnitAffiliation(settings, unit), adjustedUnitLevel)
+			local subAmmo = generateAmmo(subWeapon.Caliber, Cuae_UnitAffiliation(settings, unit), adjustedUnitLevel, excludeAmmoRarity)
 			local inventorySubAmmo = addAmmo(unit, subAmmo, subWeapon.MagazineSize)
 			subWeapon:Reload(inventorySubAmmo, "suspend_fx")
 		end

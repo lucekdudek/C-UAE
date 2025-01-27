@@ -4,19 +4,19 @@ Cuae_LoadedModOptions = {
 	AddWeaponComponents = true,
 	ReplaceArmor = true,
 	AffectMilitia = true,
-	ExtraGrenadesChance = 50,
 	ArmamentStrengthFactor = 0,
-	Debug = false,
 	-- hidden options
 	DisallowSilencers = true,
-	ExtraHandgun = false,
-	ExtraGrenadesCount = 3,
-	AlternativeWeaponTypeTables = nil,
 	ApplyChangesInSateliteView = true,
-	-- top secret options
-	DropGrenades = true,
+	LoadoutTables = nil,
+	-- legacy options for Tactical AI Project
+	LegacyLoadoutTable = nil,
+	ExtraGrenadesChance = 50,
+	ExtraGrenadesCount = 0,
+	ExtraHandgun = false,
+	AlternativeWeaponTypeTables = nil,
+	-- top secret options - only accessible when passed directly to Cuae_ChangeArmament
 	AlwaysAddArmor = false,
-	UseRandomGrenadeAsCqb = false
 }
 
 Cuae_ForcedOptions = {}
@@ -61,7 +61,7 @@ Cuae_AffiliationWeight = {
 	Militia = 1,
 }
 
--- Position in table coresponds with a adjusted unit level 1...20
+-- Position in table corresponds with a adjusted unit level 1...20
 Cuae_UnitLevelToComponentChance = {
 	18,
 	24,
@@ -97,9 +97,6 @@ Cuae_ExcludeWeapons = {
 	"ConcussiveGrenade_Mine",
 	"ShapedCharge",
 	"Super_HE_Grenade",
-	"RemoteC4",
-	"RemotePETN",
-	"RemoteTNT",
 	-- Task-oriented head pieces
 	"GasMask",
 	"NightVisionGoggles",
@@ -258,7 +255,8 @@ end
 Cuae_ExcludeComponents_DisallowSilencers()
 
 -- Build on OnMsg.ModsReloaded
-Cuae_AllWeapons = {
+Cuae_AllArmaments = {
+	-- weapons
 	Handgun = {},
 	SMG = {},
 	AssaultRifle = {},
@@ -267,11 +265,21 @@ Cuae_AllWeapons = {
 	MachineGun = {},
 	FlareGun = {},
 	MeleeWeapon = {},
-	HeavyWeapon40mmGrenade = {},
-	HeavyWeaponWarhead = {},
-	HeavyWeaponMortarShell = {},
+	GrenadeLauncher = {},
+	Mortar = {},
 	MissileLauncher = {},
-	Grenade = {},
+	-- utility
+	Flare = {},
+	Explosive = {},
+	Flash = {},
+	Fire = {},
+	Smoke = {},
+	Tear = {},
+	Toxic = {},
+	Timed = {},
+	Proximity = {},
+	Remote = {},
+	-- armor
 	Head = {},
 	Torso = {},
 	Legs = {},
@@ -300,44 +308,13 @@ Cuae_AllArmor = {
 	Legs = {},
 }
 
-Cuae_GrenadeTypes = {
-	"Grenade",
-	"GrenadeSmoke",
-	"GrenadeTrap",
-	"GrenadeNight",
-	"GrenadeHe",
-	"GrenadeUtil",
-}
-Cuae_GrenadeSubTypes = {
-	"GrenadeSmoke",
-	"GrenadeTrap",
-	"GrenadeHe",
-	"GrenadeUtil",
-}
-Cuae_GrenadeNightSubType = "GrenadeNight"
-
 Cuae_AllGrenade = {}
-
-Cuae_CQBTypes = {
-	"MeleeWeapon",
-	"Handgun",
-	"SMG",
-	"Shotgun",
-}
 
 Cuae_DefaultSmallWeapons = {
 	Handgun = "HiPower",
 	SMG = "UZI",
-	AssaultRifle = "UZI",
-	Sniper = "UZI",
-	Shotgun = "UZI",
-	MachineGun = "UZI",
 	FlareGun = "FlareHandgun",
 	MeleeWeapon = "Knife",
-	HeavyWeapon40mmGrenade = "UZI",
-	HeavyWeaponWarhead = "UZI",
-	HeavyWeaponMortarShell = "UZI",
-	MissileLauncher = "UZI",
 }
 
 Cuae_DefaultWeapons = {
@@ -350,52 +327,88 @@ Cuae_DefaultWeapons = {
 		MachineGun = "RPK74",
 		FlareGun = "FlareHandgun",
 		MeleeWeapon = "Knife",
-		HeavyWeapon40mmGrenade = "MGL",
-		HeavyWeaponWarhead = "RPG7",
-		HeavyWeaponMortarShell = "MortarInventoryItem",
+		GrenadeLauncher = "MGL",
+		Mortar = "MortarInventoryItem",
 		MissileLauncher = "RPG7",
+		Flare = "FlareStick",
+		Explosive = "FragGrenade",
+		Flash = "ConcussiveGrenade",
+		Fire = "Molotov",
+		Smoke = "SmokeGrenade",
+		Tear = "TearGasGrenade",
+		Toxic = "ToxicGasGrenade",
+		Timed = "PipeBomb",
+		Proximity = "ProximityTNT",
+		Remote = "RemoteTNT",
 	},
 	Legion = {
-		Handgun = "HiPower",
-		SMG = "MP40",
+		Handgun = "Bereta92",
+		SMG = "MP5",
 		AssaultRifle = "AK47",
 		Sniper = "Gewehr98",
-		Shotgun = "DoubleBarrelShotgun",
+		Shotgun = "Auto5",
 		MachineGun = "MG42",
 		FlareGun = "FlareHandgun",
 		MeleeWeapon = "Knife",
-		HeavyWeapon40mmGrenade = "MGL",
-		HeavyWeaponWarhead = "RPG7",
-		HeavyWeaponMortarShell = "MortarInventoryItem",
+		GrenadeLauncher = "MGL",
+		Mortar = "MortarInventoryItem",
 		MissileLauncher = "RPG7",
+		Flare = "FlareStick",
+		Explosive = "FragGrenade",
+		Flash = "ConcussiveGrenade",
+		Fire = "Molotov",
+		Smoke = "SmokeGrenade",
+		Tear = "TearGasGrenade",
+		Toxic = "ToxicGasGrenade",
+		Timed = "PipeBomb",
+		Proximity = "ProximityTNT",
+		Remote = "RemoteTNT",
 	},
 	Thugs = {
 		Handgun = "HiPower",
 		SMG = "UZI",
 		AssaultRifle = "AK47",
-		Sniper = "Gewehr98",
+		Sniper = "DragunovSVD",
 		Shotgun = "DoubleBarrelShotgun",
 		MachineGun = "RPK74",
 		FlareGun = "FlareHandgun",
 		MeleeWeapon = "Knife",
-		HeavyWeapon40mmGrenade = "MGL",
-		HeavyWeaponWarhead = "RPG7",
-		HeavyWeaponMortarShell = "MortarInventoryItem",
+		GrenadeLauncher = "MGL",
+		Mortar = "MortarInventoryItem",
 		MissileLauncher = "RPG7",
+		Flare = "FlareStick",
+		Explosive = "FragGrenade",
+		Flash = "ConcussiveGrenade",
+		Fire = "Molotov",
+		Smoke = "SmokeGrenade",
+		Tear = "TearGasGrenade",
+		Toxic = "ToxicGasGrenade",
+		Timed = "PipeBomb",
+		Proximity = "ProximityTNT",
+		Remote = "RemoteTNT",
 	},
 	Army = {
 		Handgun = "Glock18",
-		SMG = "UZI",
+		SMG = "MP5",
 		AssaultRifle = "FNFAL",
 		Sniper = "M24Sniper",
 		Shotgun = "M41Shotgun",
 		MachineGun = "FNMinimi",
 		FlareGun = "FlareHandgun",
-		MeleeWeapon = "Knife_Sharpened",
-		HeavyWeapon40mmGrenade = "MGL",
-		HeavyWeaponWarhead = "RPG7",
-		HeavyWeaponMortarShell = "MortarInventoryItem",
+		MeleeWeapon = "Machete",
+		GrenadeLauncher = "MGL",
+		Mortar = "MortarInventoryItem",
 		MissileLauncher = "RPG7",
+		Flare = "FlareStick",
+		Explosive = "FragGrenade",
+		Flash = "ConcussiveGrenade",
+		Fire = "Molotov",
+		Smoke = "SmokeGrenade",
+		Tear = "TearGasGrenade",
+		Toxic = "ToxicGasGrenade",
+		Timed = "TimedC4",
+		Proximity = "ProximityC4",
+		Remote = "RemoteC4",
 	},
 	Adonis = {
 		Handgun = "ColtAnaconda",
@@ -406,10 +419,19 @@ Cuae_DefaultWeapons = {
 		MachineGun = "HK21",
 		FlareGun = "FlareHandgun",
 		MeleeWeapon = "Knife_Sharpened",
-		HeavyWeapon40mmGrenade = "MGL",
-		HeavyWeaponWarhead = "RPG7",
-		HeavyWeaponMortarShell = "MortarInventoryItem",
+		GrenadeLauncher = "MGL",
+		Mortar = "MortarInventoryItem",
 		MissileLauncher = "RPG7",
+		Flare = "FlareStick",
+		Explosive = "HE_Grenade",
+		Flash = "ConcussiveGrenade",
+		Fire = "Molotov",
+		Smoke = "SmokeGrenade",
+		Tear = "TearGasGrenade",
+		Toxic = "ToxicGasGrenade",
+		Timed = "TimedPETN",
+		Proximity = "ProximityPETN",
+		Remote = "RemotePETN",
 	},
 	SuperSoldiers = {
 		Handgun = "Bereta92",
@@ -419,11 +441,20 @@ Cuae_DefaultWeapons = {
 		Shotgun = "M41Shotgun",
 		MachineGun = "HK21",
 		FlareGun = "FlareHandgun",
-		MeleeWeapon = "Knife_Sharpened",
-		HeavyWeapon40mmGrenade = "MGL",
-		HeavyWeaponWarhead = "RPG7",
-		HeavyWeaponMortarShell = "MortarInventoryItem",
+		MeleeWeapon = "Machete_Sharpened",
+		GrenadeLauncher = "MGL",
+		Mortar = "MortarInventoryItem",
 		MissileLauncher = "RPG7",
+		Flare = "FlareStick",
+		Explosive = "HE_Grenade",
+		Flash = "ConcussiveGrenade",
+		Fire = "Molotov",
+		Smoke = "SmokeGrenade",
+		Tear = "TearGasGrenade",
+		Toxic = "ToxicGasGrenade",
+		Timed = "TimedC4",
+		Proximity = "ProximityC4",
+		Remote = "RemoteC4",
 	},
 	Militia = {
 		Handgun = "HiPower",
@@ -434,17 +465,27 @@ Cuae_DefaultWeapons = {
 		MachineGun = "RPK74",
 		FlareGun = "FlareHandgun",
 		MeleeWeapon = "Knife",
-		HeavyWeapon40mmGrenade = "MGL",
-		HeavyWeaponWarhead = "RPG7",
-		HeavyWeaponMortarShell = "MortarInventoryItem",
+		GrenadeLauncher = "MGL",
+		Mortar = "MortarInventoryItem",
 		MissileLauncher = "RPG7",
+		Flare = "FlareStick",
+		Explosive = "FragGrenade",
+		Flash = "ConcussiveGrenade",
+		Fire = "Molotov",
+		Smoke = "SmokeGrenade",
+		Tear = "TearGasGrenade",
+		Toxic = "ToxicGasGrenade",
+		Timed = "TimedTNT",
+		Proximity = "ProximityTNT",
+		Remote = "RemoteTNT",
 	},
 }
 
-Cuae_HeavyWeaponTypeToCaliber = {
-	HeavyWeapon40mmGrenade = "40mmGrenade",
-	HeavyWeaponWarhead = "Warhead",
-	HeavyWeaponMortarShell = "MortarShell",
+CUAE_SLOT = {
+	"Handheld A", -- 1
+	"Handheld A", -- 2
+	"Handheld B", -- 3
+	"Handheld B", -- 4
 }
 
 -- Build when selecting ammunition of a caliber for a first time
