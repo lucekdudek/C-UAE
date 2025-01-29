@@ -11,28 +11,85 @@ end
 addCuaePorperty()
 
 function CUAEBuildWeaponTables()
-	Cuae_Debug("C-UAE Building tables...")
-	for _type, _ in pairs(Cuae_AllWeapons) do
+	Cuae_L("I", "Building tables...")
+	-- todo optimize
+	for _type, _ in pairs(Cuae_AllArmaments) do
 		local suitableWeapons = {}
-		if _type == "Grenade" then
-			local allGrenades = table.ifilter(GetWeaponsByType("Grenade"), function(i, g)
-				return (g.ItemType == "Grenade" or g.ItemType == "Throwables" or g.ItemType == "GrenadeGas" or g.ItemType == "GrenadeFire") and not table.find(Cuae_ExcludeWeapons, g.id)
+		if _type == "Flare" then
+			local allUtility = table.ifilter(GetWeaponsByType("Grenade"), function(i, g)
+				return IsKindOf(g_Classes[g.id], "Flare") and not table.find(Cuae_ExcludeWeapons, g.id)
 			end)
-			for _, w in pairs(allGrenades) do
-				table.insert(suitableWeapons, w)
+			for _, u in pairs(allUtility) do
+				table.insert(suitableWeapons, u)
+			end
+		elseif _type == "Proximity" then
+			local allUtility = table.ifilter(GetWeaponsByType("Grenade"), function(i, g)
+				return IsKindOf(g_Classes[g.id], "ThrowableTrapItem") and g_Classes[g.id].TriggerType == "Proximity" and not table.find(Cuae_ExcludeWeapons, g.id)
+			end)
+			for _, u in pairs(allUtility) do
+				table.insert(suitableWeapons, u)
+			end
+		elseif _type == "Timed" then
+			local allUtility = table.ifilter(GetWeaponsByType("Grenade"), function(i, g)
+				return IsKindOf(g_Classes[g.id], "ThrowableTrapItem") and g_Classes[g.id].TriggerType == "Timed" and not table.find(Cuae_ExcludeWeapons, g.id)
+			end)
+			for _, u in pairs(allUtility) do
+				table.insert(suitableWeapons, u)
+			end
+		elseif _type == "Remote" then
+			local allUtility = table.ifilter(GetWeaponsByType("Grenade"), function(i, g)
+				return IsKindOf(g_Classes[g.id], "ThrowableTrapItem") and g_Classes[g.id].TriggerType == "Remote" and not table.find(Cuae_ExcludeWeapons, g.id)
+			end)
+			for _, u in pairs(allUtility) do
+				table.insert(suitableWeapons, u)
+			end
+		elseif _type == "Smoke" then
+			local allUtility = table.ifilter(GetWeaponsByType("Grenade"), function(i, g)
+				return g_Classes[g.id].aoeType == "smoke" and not table.find(Cuae_ExcludeWeapons, g.id)
+			end)
+			for _, u in pairs(allUtility) do
+				table.insert(suitableWeapons, u)
+			end
+		elseif _type == "Explosive" then
+			local allUtility = table.ifilter(GetWeaponsByType("Grenade"), function(i, g)
+				return g_Classes[g.id].ItemType == "Grenade" and g_Classes[g.id].DeathType == "BlowUp" and not table.find(Cuae_ExcludeWeapons, g.id)
+			end)
+			for _, u in pairs(allUtility) do
+				table.insert(suitableWeapons, u)
+			end
+		elseif _type == "Flash" then
+			local allUtility = table.ifilter(GetWeaponsByType("Grenade"), function(i, g)
+				return IsKindOfClasses(g_Classes[g.id], "ConcussiveGrenade", "ConcussiveGrenade_IED") and not table.find(Cuae_ExcludeWeapons, g.id)
+			end)
+			for _, u in pairs(allUtility) do
+				table.insert(suitableWeapons, u)
+			end
+		elseif _type == "Fire" then
+			local allUtility = table.ifilter(GetWeaponsByType("Grenade"), function(i, g)
+				return g_Classes[g.id].aoeType == "fire" and not table.find(Cuae_ExcludeWeapons, g.id)
+			end)
+			for _, u in pairs(allUtility) do
+				table.insert(suitableWeapons, u)
+			end
+		elseif _type == "Tear" then
+			local allUtility = table.ifilter(GetWeaponsByType("Grenade"), function(i, g)
+				return g_Classes[g.id].aoeType == "teargas" and not table.find(Cuae_ExcludeWeapons, g.id)
+			end)
+			for _, u in pairs(allUtility) do
+				table.insert(suitableWeapons, u)
+			end
+		elseif _type == "Toxic" then
+			local allUtility = table.ifilter(GetWeaponsByType("Grenade"), function(i, g)
+				return g_Classes[g.id].aoeType == "toxicgas" and not table.find(Cuae_ExcludeWeapons, g.id)
+			end)
+			for _, u in pairs(allUtility) do
+				table.insert(suitableWeapons, u)
 			end
 		elseif _type == "MeleeWeapon" then
 			local allMelee = table.ifilter(GetWeaponsByType(_type), function(i, w)
 				return not table.find(Cuae_ExcludeWeapons, w.id) and g_Classes[w.id].CanAppearInShop
 			end)
 			for _, w in pairs(allMelee) do
-				table.insert(suitableWeapons, w)
-			end
-		elseif _type == "HeavyWeapon40mmGrenade" or _type == "HeavyWeaponWarhead" or _type == "HeavyWeaponMortarShell" then
-			local allWeapons = table.ifilter(GetWeaponsByType("HeavyWeapon"), function(i, w)
-				return (Cuae_HeavyWeaponTypeToCaliber[_type] or "Unsuppoerted") == g_Classes[w.id].Caliber and not table.find(Cuae_ExcludeWeapons, w.id) and g_Classes[w.id].CanAppearInShop
-			end)
-			for _, w in pairs(allWeapons) do
 				table.insert(suitableWeapons, w)
 			end
 		elseif _type == "Head" or _type == "Torso" or _type == "Legs" then
@@ -52,12 +109,12 @@ function CUAEBuildWeaponTables()
 		end
 		-- sort by Cost
 		table.sort(suitableWeapons, function(a, b)
-			return Cuae_CoparePresets(a, b)
+			return Cuae_ComparePresets(a, b)
 		end)
 
-		Cuae_AllWeapons[_type] = suitableWeapons
+		Cuae_AllArmaments[_type] = suitableWeapons
 	end
-	Cuae_Debug("C-UAE Building tables DONE")
+	Cuae_L("I", "Building tables DONE")
 end
 
 -- build tables
@@ -65,19 +122,38 @@ OnMsg.NewGame = CUAEBuildWeaponTables
 OnMsg.LoadSessionData = CUAEBuildWeaponTables
 OnMsg.ModsReloaded = CUAEBuildWeaponTables
 
+
 -- alter armament
-function Cuae_ChangeArnament(settings, unit, avgAllyLevel)
-	local orginalHandhelds, orginalHead, orginalTorso, orginalLegs = Cuae_GetOrginalEq(unit)
-	if orginalHandhelds.A1 == nil and orginalHandhelds.A2 == nil then
-		Cuae_Debug("C-UAE Chaning Arnament SKIP du to empty orginalHandheldsA", Cuae_UnitAffiliation(settings, unit))
+function Cuae_ChangeArmament(settings, unit, avgAllyLevel)
+	local originalWeaponsAndUtil, originalHead, originalTorso, originalLegs = Cuae_GetOriginalEq(unit)
+	if next(originalWeaponsAndUtil.W) == nil then
+		Cuae_L("W", "Changing Armament SKIP due to no weapons", Cuae_UnitAffiliation(settings, unit))
 		return
 	end
+
+	local loadoutTable = Cuae_GetLoadoutTable(settings, Cuae_UnitAffiliation(settings, unit), unit.role)
+	local changePolicy = Cuae_GetChangePolicy(loadoutTable, settings.ReplaceWeapons, originalWeaponsAndUtil)
+
+	-- TODO get ammo profile
 	Cuae_RemoveAmmo(settings, unit)
-	Cuae_GenerateNewWeapons(settings, unit, avgAllyLevel, orginalHandhelds)
-	Cuae_GeneratNewArmor(settings, unit, avgAllyLevel, orginalHead, orginalTorso, orginalLegs)
+
+	Cuae_ApplyChangePolicy(settings, unit, avgAllyLevel, changePolicy)
+
+	Cuae_GenerateNewArmor(settings, unit, avgAllyLevel, originalHead, originalTorso, originalLegs)
 	if IsKindOf(unit, "Unit") then
 		unit:UpdateOutfit()
 	end
+end
+
+local function getAvgLevel(units)
+	local count, sum = 0, 0
+	for _, u in ipairs(units) do
+		count = count + 1
+		sum = sum + u:GetLevel()
+	end
+	local avgLevel = count > 0 and sum // count or 1
+	Cuae_L("D", "Calculated avg level", sum, "//", count, "=", avgLevel)
+	return avgLevel
 end
 
 -- main entrypoint
@@ -91,45 +167,38 @@ function OnMsg.ConflictStart(sector_id)
 
 	local allyUnits = GetUnitsFromSquads(allySquads, "getUnitData")
 
-	local count, sum = 0, 0
-	for _, u in ipairs(allyUnits) do
-		count = count + 1
-		sum = sum + u:GetLevel()
-	end
-	local avgAllyLevel = count > 0 and sum // count or 1
-	Cuae_Debug("C-UAE Calcualted avg Ally level", sum, "//", count, "=", avgAllyLevel)
-
+	local avgAllyLevel = getAvgLevel(allyUnits)
 	for _, unit_data in ipairs(allyUnits) do
 		if unit_data.species == "Human" and (Cuae_AffiliationWeight[Cuae_UnitAffiliation(Cuae_LoadedModOptions, unit_data)]) and not unit_data:IsDead() then
-			Cuae_Debug("C-UAE Chaning Arnament of an ally on ConflictStart... unit.CUAE", unit_data.CUAE, unit_data.session_id)
+			Cuae_L("I", "Changing Armament of an ally on ConflictStart... unit.CUAE", unit_data.CUAE, unit_data.session_id, unit_data.role)
 			if not unit_data.CUAE then
-				Cuae_ChangeArnament(Cuae_LoadedModOptions, unit_data, avgAllyLevel)
+				Cuae_ChangeArmament(Cuae_LoadedModOptions, unit_data, avgAllyLevel)
 				unit_data.CUAE = true
 			end
-			Cuae_Debug("C-UAE Chaning Arnament of an ally on ConflictStart DONE")
+			Cuae_L("I", "Changing Armament of an ally on ConflictStart DONE")
 		end
 	end
 
 	local enemyUnits = GetUnitsFromSquads(enemySquads, "getUnitData")
 	for _, unit_data in ipairs(enemyUnits) do
 		if unit_data.species == "Human" and (Cuae_AffiliationWeight[Cuae_UnitAffiliation(Cuae_LoadedModOptions, unit_data)]) and not unit_data:IsDead() then
-			Cuae_Debug("C-UAE Chaning Arnament of an enemy on ConflictStart... unit.CUAE", unit_data.CUAE, unit_data.session_id)
+			Cuae_L("I", "Changing Armament of an enemy on ConflictStart... unit.CUAE", unit_data.CUAE, unit_data.session_id, unit_data.role)
 			if not unit_data.CUAE then
-				Cuae_ChangeArnament(Cuae_LoadedModOptions, unit_data, 1)
+				Cuae_ChangeArmament(Cuae_LoadedModOptions, unit_data, 1)
 				unit_data.CUAE = true
 			end
-			Cuae_Debug("C-UAE Chaning Arnament of an enemy on ConflictStart DONE")
+			Cuae_L("I", "Changing Armament of an enemy on ConflictStart DONE")
 		end
 	end
 end
 
 function OnMsg.UnitCreated(unit)
 	if unit.species == "Human" and (Cuae_AffiliationWeight[Cuae_UnitAffiliation(Cuae_LoadedModOptions, unit)]) and not unit:IsDead() then
-		Cuae_Debug("C-UAE Chaning Arnament on UnitCreated... unit.CUAE", unit.CUAE, unit.session_id)
+		Cuae_L("I", "Changing Armament on UnitCreated... unit.CUAE", unit.CUAE, unit.session_id, unit.role)
 		if not unit.CUAE then
-			Cuae_ChangeArnament(Cuae_LoadedModOptions, unit, 1)
+			Cuae_ChangeArmament(Cuae_LoadedModOptions, unit, 1)
 			unit.CUAE = true
 		end
-		Cuae_Debug("C-UAE Chaning Arnament on UnitCreated DONE")
+		Cuae_L("I", "Changing Armament on UnitCreated DONE")
 	end
 end
