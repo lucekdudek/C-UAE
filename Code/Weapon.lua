@@ -1,7 +1,6 @@
 local function tryAddComponentsAndAmmo(settings, unit, adjustedUnitLevel, replacementPolicy, policySettings)
 	if replacementPolicy.ogInstance and replacementPolicy.isWeapon and not replacementPolicy.ogType == "MeleeWeapon" then
 		replacementPolicy.ogInstance.ammo = nil
-		-- TODO weaponComponentsCurve and excludeAmmoRarity
 		Cuae_AddRandomComponents(settings, replacementPolicy.ogInstance, adjustedUnitLevel, policySettings.weaponComponentsCurve)
 		Cuae_GenerateNewAmmo(settings, unit, adjustedUnitLevel, replacementPolicy.ogInstance, replacementPolicy.slot, policySettings.excludeAmmoRarity)
 	end
