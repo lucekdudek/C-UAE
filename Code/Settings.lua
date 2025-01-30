@@ -20,7 +20,6 @@ function CUAE_ApplyModOptions()
 	Cuae_LoadedModOptions.DisallowSilencers = Cuae_ForcedOptionsOrCurrentModOptions("DisallowSilencers", "HIDDEN")
 	Cuae_LoadedModOptions.LoadoutTables = Cuae_ForcedOptionsOrCurrentModOptions("LoadoutTables", "HIDDEN")
 	-- legacy options for Tactical AI Project
-	Cuae_LoadedModOptions.ExtraGrenadesChance = tonumber(Cuae_ForcedOptionsOrCurrentModOptions("ExtraGrenadesChance", "HIDDEN"))
 	Cuae_LoadedModOptions.ExtraGrenadesCount = tonumber(Cuae_ForcedOptionsOrCurrentModOptions("ExtraGrenadesCount", "HIDDEN"))
 	Cuae_LoadedModOptions.ExtraHandgun = Cuae_ForcedOptionsOrCurrentModOptions("ExtraHandgun", "HIDDEN")
 	Cuae_LoadedModOptions.AlternativeWeaponTypeTables = Cuae_ForcedOptionsOrCurrentModOptions("AlternativeWeaponTypeTables", "HIDDEN")
@@ -37,8 +36,7 @@ function CUAE_ApplyModOptions()
 	end
 	if Cuae_LoadedModOptions.ExtraHandgun then 
 		default.extraWeapons = {
-			{type={{"Handgun",40}, {"MeleeWeapon",70}, {"SMG",85}, {"Shotgun",100}}},
-			{type={{"Handgun",60}, {"MeleeWeapon",100}}, size=1}
+			{type={{"Handgun",100}}, size=1}
 		}
 	else
 		default.extraWeapons = {}
@@ -46,9 +44,9 @@ function CUAE_ApplyModOptions()
 	if Cuae_LoadedModOptions.ExtraGrenadesCount and Cuae_LoadedModOptions.ExtraGrenadesCount > 0 then
 		local amount = Min(4, Cuae_LoadedModOptions.ExtraGrenadesCount)
 		default.extraUtility = {
-			{type={{"Flare", Cuae_LoadedModOptions.ExtraGrenadesChance}}, nightOnly=true, amount=amount},
-			{type={{"Smoke", Cuae_LoadedModOptions.ExtraGrenadesChance}}, amount=amount},
-			{type={{"Explosive", 25},{"Fire", 45},{"Tear", 75},{"Timed", 100}}, amount=amount},
+			{type={{"Flare", 30}}, nightOnly=true, amount=amount},
+			{type={{"Explosive", 12},{"Timed", 24},{"Fire", 40},{"Smoke", 70},{"Tear", 100}}, amount=amount},
+			{type={{"Explosive", 12},{"Timed", 24},{"Fire", 40},{"Smoke", 70},{"Tear", 100}}, amount=Min(2, amount)},
 		}
 	else
 		default.extraUtility = {}

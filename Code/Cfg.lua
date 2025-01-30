@@ -11,7 +11,6 @@ Cuae_LoadedModOptions = {
 	LoadoutTables = nil,
 	-- legacy options for Tactical AI Project
 	LegacyLoadoutTable = nil,
-	ExtraGrenadesChance = 50,
 	ExtraGrenadesCount = 0,
 	ExtraHandgun = false,
 	AlternativeWeaponTypeTables = nil,

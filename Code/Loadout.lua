@@ -88,9 +88,13 @@ local function getExtraWeaponsPolicy(loadoutTable, replacementTypes)
 			Cuae_L("W", "ExtraWeaponsPolicy: No type defined")
 		else
 			ew.newType = rollType(extraCfg.type)
-			if replacementTypes[ew.newType] then
+			if not ew.newType then
+				Cuae_L("D", "ExtraWeaponsPolicy: Skipping new weapon as it roll nil type")
+			elseif replacementTypes[ew.newType] then
 				Cuae_L("D", "ExtraWeaponsPolicy: Skipping new weapon of type", ew.newType, "as already in replacements")
 			else
+				Cuae_L("D", "ExtraWeaponsPolicy: Adding new weapon of type", ew.newType)
+				replacementTypes[ew.newType] = true
 				ew.isWeapon = true
 				ew.newSize = extraCfg.size or 2
 				table.insert(extraWeapons, ew)
@@ -110,9 +114,13 @@ local function getExtraUtilityPolicy(loadoutTable, replacementTypes)
 			Cuae_L("W", "extraUtilityPolicy: No type defined")
 		else
 			eu.newType = rollType(extraCfg.type)
-			if replacementTypes[eu.newType] then
+			if not eu.newType then
+				Cuae_L("D", "ExtraUtilityPolicy: Skipping new utility as it roll nil type")
+			elseif replacementTypes[eu.newType] then
 				Cuae_L("D", "ExtraUtilityPolicy: Skipping new utility of type", eu.newType, "as already in replacements")
 			else
+				Cuae_L("D", "ExtraUtilityPolicy: Adding new utility of type", eu.newType)
+				replacementTypes[eu.newType] = true
 				eu.amount = extraCfg.amount or 2
 				table.insert(extraUtility, eu)
 			end

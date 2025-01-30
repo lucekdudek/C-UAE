@@ -271,6 +271,13 @@ function Cuae_GetSuitableArmament(affiliation, level, _type, originalCost, useOr
 		culOdds[#culOdds + 1] = (culOdds[#culOdds] or 0) + singularOdds
 	end
 
+	if CUAE_LOG_LEVEL <= CUAE_DEBUG then
+		Cuae_L("D", "Build odds table for", affiliation, "lvl", level, _type, "Size", maxSize)
+		for idx, odds in ipairs(culOdds) do
+			print("           | Odds:", odds, "Weapon:", suitableArmaments[idx].id, "Cost:", Cuae_Cost(suitableArmaments[idx]))
+		end
+	end
+
 	local random = InteractionRandRange(1, 1000, "LDCUAE")
 	for idx, odds in ipairs(culOdds) do
 		if random <= odds then
