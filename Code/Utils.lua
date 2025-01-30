@@ -53,7 +53,7 @@ end
 
 local function getHeadArmorOfSubtype(allArmor, subType)
 	if next(Cuae_AllArmor.Head) == nil then
-		Cuae_L("D", "Building Head sub tables...")
+		Cuae_L("D", ">Building Head sub tables...")
 
 		Cuae_AllArmor.Head.LHead = {}
 		Cuae_AllArmor.Head.MHead = {}
@@ -69,7 +69,7 @@ local function getHeadArmorOfSubtype(allArmor, subType)
 			end)
 		end
 
-		Cuae_L("D", "Building Head sub tables DONE")
+		Cuae_L("D", ">Building Head sub tables DONE")
 	end
 
 	return Cuae_AllArmor.Head[subType]
@@ -77,7 +77,7 @@ end
 
 local function getTorsoArmorOfSubtype(allArmor, subType)
 	if next(Cuae_AllArmor.Torso) == nil then
-		Cuae_L("D", "Building Torso sub tables...")
+		Cuae_L("D", ">Building Torso sub tables...")
 
 		Cuae_AllArmor.Torso.LVest = {}
 		Cuae_AllArmor.Torso.MVest = {}
@@ -96,7 +96,7 @@ local function getTorsoArmorOfSubtype(allArmor, subType)
 			end)
 		end
 
-		Cuae_L("D", "Building Torso sub tables DONE")
+		Cuae_L("D", ">Building Torso sub tables DONE")
 	end
 
 	return Cuae_AllArmor.Torso[subType]
@@ -104,7 +104,7 @@ end
 
 local function getLegsArmorOfSubtype(allArmor, subType)
 	if next(Cuae_AllArmor.Legs) == nil then
-		Cuae_L("D", "Building Legs sub tables...")
+		Cuae_L("D", ">Building Legs sub tables...")
 
 		Cuae_AllArmor.Legs.LLegs = {}
 		Cuae_AllArmor.Legs.MLegs = {}
@@ -120,7 +120,7 @@ local function getLegsArmorOfSubtype(allArmor, subType)
 			end)
 		end
 
-		Cuae_L("D", "Building Legs sub tables DONE")
+		Cuae_L("D", ">Building Legs sub tables DONE")
 	end
 
 	return Cuae_AllArmor.Legs[subType]
@@ -225,7 +225,7 @@ function Cuae_GetDefaultArmament(affiliation, _type, maxSize)
 		end
 	end
 
-	Cuae_L("D", "- suitable default armament", _type, _id)
+	Cuae_L("D", "  suitable default", _type, "for", affiliation, _id)
 	return {
 		id = _id,
 	}
@@ -236,8 +236,6 @@ function Cuae_GetSuitableArmament(affiliation, level, _type, originalCost, useOr
 	if #suitableArmaments < 1 then
 		return nil
 	end
-	Cuae_L("D", "- suitable armaments for AdjustedLvl:", level, _type, "Original Cost", originalCost, "min:", suitableArmaments[1].id, Cuae_Cost(suitableArmaments[1]), "max:",
-	       suitableArmaments[#suitableArmaments].id, Cuae_Cost(suitableArmaments[#suitableArmaments]))
 
 	originalCostIdx = originalCostIdx or Max(1, Min(#suitableArmaments, DivRound(#suitableArmaments, 2)))
 	originalCost = useOriginalCost and originalCost or Cuae_Cost(suitableArmaments[originalCostIdx])
@@ -272,9 +270,9 @@ function Cuae_GetSuitableArmament(affiliation, level, _type, originalCost, useOr
 	end
 
 	if CUAE_LOG_LEVEL <= CUAE_DEBUG then
-		Cuae_L("D", "Build odds table for", affiliation, "lvl", level, _type, "Size", maxSize)
+		Cuae_L("D", "  built odds table for suitable", _type, "armaments for", affiliation, "lvl:", level, "Original Cost:", originalCost)
 		for idx, odds in ipairs(culOdds) do
-			print("           | Odds:", odds, "Weapon:", suitableArmaments[idx].id, "Cost:", Cuae_Cost(suitableArmaments[idx]))
+			print("           |    Odds:", odds, "Weapon:", suitableArmaments[idx].id, "Cost:", Cuae_Cost(suitableArmaments[idx]))
 		end
 	end
 
@@ -289,7 +287,7 @@ function Cuae_GetSuitableArmament(affiliation, level, _type, originalCost, useOr
 end
 
 function Cuae_RemoveItem(unit, slot, item)
-	Cuae_L("D", "- Removing original item", "Type:", item.ItemType or item.WeaponType or "", item.class, "Cost:", item.Cost)
+	Cuae_L("D", "  removing original item Type:", item.ItemType or item.WeaponType or "", item.class, "Cost:", item.Cost)
 	unit:RemoveItem(slot, item)
 	DoneObject(item)
 end
@@ -331,7 +329,7 @@ local function handheldToWeaponProfile(handheld, hPos)
 		ogCost = handheld.Cost,
 		ogType = handheld.WeaponType,
 	}
-	Cuae_L("D", "created weapon profile", w.ogPresetId, w.ogType, w.ogCaliber, "size:", w.ogSize, "Cost:", w.ogCost, "Drop chance:", w.ogDropChance)
+	Cuae_L("D", " Created weapon profile", w.ogPresetId, w.ogType, w.ogCaliber, "size:", w.ogSize, "Cost:", w.ogCost, "Drop chance:", w.ogDropChance)
 	return w
 end
 
@@ -345,7 +343,7 @@ local function handheldToUtilityProfile(handheld, hPos)
 		ogType = getUtilityType(handheld),
 		amount = handheld.Amount,
 	}
-	Cuae_L("D", "created utility profile", u.ogPresetId, u.ogType, "Amount:", u.amount, "Cost:", u.ogCost, "Drop chance:", u.ogDropChance)
+	Cuae_L("D", " Created utility profile", u.ogPresetId, u.ogType, "Amount:", u.amount, "Cost:", u.ogCost, "Drop chance:", u.ogDropChance)
 	return u
 end
 
@@ -358,6 +356,7 @@ function Cuae_GetOriginalEq(unit)
 		unit:GetItemAtPos("Handheld B", 1, 1) or false,
 		unit:GetItemAtPos("Handheld B", 2, 1) or false,
 	}
+	Cuae_L("D", "Creating weapons and utility profiles:")
 	for hPos, handheld in ipairs(handhelds) do
 		if handheld then
 			if handheld:IsWeapon() then
@@ -368,6 +367,7 @@ function Cuae_GetOriginalEq(unit)
 		end
 	end
 
+	Cuae_L("D", "Creating armor profiles.")
 	local originalHead = unit:GetItemAtPos("Head", 1, 1)
 	local originalTorso = unit:GetItemAtPos("Torso", 1, 1)
 	local originalLegs = unit:GetItemAtPos("Legs", 1, 1)

@@ -1,6 +1,6 @@
 local function keepOriginalArmor(originalArmor, slot)
 	if originalArmor then
-		Cuae_L("D", "- keeping(immunity):", slot, originalArmor.class, originalArmor.Cost, "Condition:", originalArmor.Condition)
+		Cuae_L("D", " keeping:", slot, originalArmor.class, originalArmor.Cost, "Condition:", originalArmor.Condition)
 	end
 end
 
@@ -21,7 +21,7 @@ local function replaceArmorPiece(settings, unit, avgAllyLevel, originalArmor, ma
 	local newArmorPreset = Cuae_GetSuitableArmament(Cuae_UnitAffiliation(settings, unit), adjustedUnitLevel, slot, originalCost)
 
 	if newArmorPreset == nil then
-		Cuae_L("D", "- skipping as no siutable armors were found", slot, "for", Cuae_UnitAffiliation(settings, unit))
+		Cuae_L("D", " skipping as no suitable armors were found", slot, "for", Cuae_UnitAffiliation(settings, unit))
 		if originalArmor then
 			keepOriginalArmor(originalArmor, slot)
 		end
@@ -42,7 +42,7 @@ local function replaceArmorPiece(settings, unit, avgAllyLevel, originalArmor, ma
 	newArmor.Condition = newCondition
 
 	unit:AddItem(mainSlot, newArmor)
-	Cuae_L("D", "- picked:", slot, newArmorPreset.id, Cuae_Cost(newArmorPreset), "Condition:", newArmor.Condition)
+	Cuae_L("D", " picked:", slot, newArmorPreset.id, Cuae_Cost(newArmorPreset), "Condition:", newArmor.Condition)
 end
 
 local typesHelpTable = {
@@ -65,7 +65,7 @@ local function getRandomArmorTypeSet(settings)
 end
 
 function Cuae_GenerateNewArmor(settings, unit, avgAllyLevel, originalHead, originalTorso, originalLegs)
-	Cuae_L("D", "Adding new armor items", Cuae_UnitAffiliation(settings, unit))
+	Cuae_L("D", "Adding new armor items for", Cuae_UnitAffiliation(settings, unit), "lvl", avgAllyLevel)
 
 	local forcedHeadSlot, forcedTorsoSlot, forcedLegsSlot = getRandomArmorTypeSet(settings)
 

@@ -62,7 +62,7 @@ local function placeArmament(settings, unit, adjustedUnitLevel, policy, policySe
 	-- get and init final armament from preset
 	local dropChance = policy.ogDropChance or g_Classes[newArmamentPreset.id].base_drop_chance
 	local newArmament = PlaceInventoryItem(newArmamentPreset.id)
-	Cuae_L("D", "- picked:", policy.newType, newArmamentPreset.id, Cuae_Cost(newArmamentPreset), "Condition:", newCondition, "Drop Chnace:", dropChance)
+	Cuae_L("D", "  picked:", policy.newType, newArmamentPreset.id, "Condition:", newCondition, "Drop Chance:", dropChance)
 
 	if IsKindOf(newArmament, "MeleeWeapon") then
 		newArmament.drop_chance = dropChance
@@ -88,8 +88,7 @@ local function placeArmament(settings, unit, adjustedUnitLevel, policy, policySe
 		DoneObject(newArmament)
 	end
 
-	Cuae_L("D", "-- itemAdded:", not not itemAdded, "in slot", slot)
-	return not not itemAdded, slot
+	return not not itemAdded
 end
 
 local function canBeReplaced(affiliation, adjustedUnitLevel, policy)
@@ -100,29 +99,40 @@ function Cuae_ApplyChangePolicy(settings, unit, avgLevel, changePolicy)
 	local affiliation = Cuae_UnitAffiliation(settings, unit)
 	local level = Min(10, unit:GetLevel())
 	local adjLevel = Cuae_CalculateAdjustedUnitLevel(settings, level, avgLevel, affiliation)
-	Cuae_L("D", "Applying change policy", affiliation, adjLevel)
+	Cuae_L("D", "Applying change policy")
+	local itemAdded = nil
 	for _, replacementPolicy in ipairs(changePolicy.replacements) do
 		if replacementPolicy.keep then
-			Cuae_L("D", "ApplyChangePolicy", "Keeping", replacementPolicy.ogPresetId)
+			Cuae_L("D", " Keeping", replacementPolicy.ogPresetId)
 			tryAddComponentsAndAmmo(settings, unit, adjLevel, replacementPolicy, changePolicy)
 		elseif replacementPolicy.discard then
-			Cuae_L("D", "ApplyChangePolicy", "Discarding", replacementPolicy.ogPresetId)
+			Cuae_L("D", " Discarding", replacementPolicy.ogPresetId)
 			Cuae_RemoveItem(unit, replacementPolicy.slot, replacementPolicy.ogInstance)
 		elseif canBeReplaced(affiliation, adjLevel, replacementPolicy) then
-			Cuae_L("D", "ApplyChangePolicy", "Replacing", replacementPolicy.ogPresetId)
+			Cuae_L("D", " Replacing", replacementPolicy.ogPresetId)
 			Cuae_RemoveItem(unit, replacementPolicy.slot, replacementPolicy.ogInstance)
-			placeArmament(settings, unit, adjLevel, replacementPolicy, changePolicy)
+			itemAdded = placeArmament(settings, unit, adjLevel, replacementPolicy, changePolicy)
+			if not itemAdded then
+				Cuae_L("E", "  Replacing", replacementPolicy.ogPresetId, "failed, og item is now gone")
+			end
 		else
-			Cuae_L("D", "ApplyChangePolicy", "Keeping due to no suitable replacement", replacementPolicy.ogPresetId)
+			Cuae_L("D", " Keeping due to no suitable replacement", replacementPolicy.ogPresetId)
 			tryAddComponentsAndAmmo(settings, unit, adjLevel, replacementPolicy, changePolicy)
 		end
 	end
 	for _, extraWeaponPolicy in ipairs(changePolicy.extraWeapons) do
-		Cuae_L("D", "ApplyChangePolicy", "Placing extra weapon", extraWeaponPolicy.newType)
-		placeArmament(settings, unit, adjLevel, extraWeaponPolicy, changePolicy)
+		Cuae_L("D", " Placing extra weapon", extraWeaponPolicy.newType)
+		itemAdded = placeArmament(settings, unit, adjLevel, extraWeaponPolicy, changePolicy)
+		if not itemAdded then
+			Cuae_L("D", "  unable to place extra", extraWeaponPolicy.newType, "due to no space left")
+		end
 	end
 	for _, extraUtilityPolicy in ipairs(changePolicy.extraUtility) do
-		Cuae_L("D", "ApplyChangePolicy", "Placing extra utility", extraUtilityPolicy.newType)
-		placeArmament(settings, unit, adjLevel, extraUtilityPolicy, changePolicy)
+		Cuae_L("D", " Placing extra utility", extraUtilityPolicy.newType)
+		itemAdded = placeArmament(settings, unit, adjLevel, extraUtilityPolicy, changePolicy)
+		if not itemAdded then
+			Cuae_L("D", "  unable to place extra", extraUtilityPolicy.newType, "due to no space left")
+			return
+		end
 	end
 end

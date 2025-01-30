@@ -6,7 +6,7 @@ local function isBlocked(slotType, components)
 			local component = WeaponComponents[rawComponent]
 			if component and component.BlockSlots and next(component.BlockSlots) then
 				if table.find(component.BlockSlots, slotType) then
-					Cuae_L("D", "--> Skipping", slotType, "is blocked by", rawComponent)
+					Cuae_L("D", "    Skipping", slotType, "is blocked by", rawComponent)
 					return true
 				end
 			end
@@ -42,7 +42,7 @@ local function addComponentInSlot(adjustedUnitLevel, slotType, slotDefault, weap
 		return c ~= slotDefault and WeaponComponents[c] and not Cuae_ExcludeComponents[c] and getComponentRarity(c) < maxRarity
 	end)
 	if #availableComponents == 0 then
-		Cuae_L("D", "--> Skipping", slotDefault, "from", slotType, "as it is the only one available")
+		Cuae_L("D", "    Skipping", slotDefault, "from", slotType, "as it is the only one available")
 		return false
 	end
 	table.sort(availableComponents, function(a, b)
@@ -57,11 +57,11 @@ local function addComponentInSlot(adjustedUnitLevel, slotType, slotDefault, weap
 
 	local blocksAny, blocked = GetComponentBlocksAnyOfAttachedSlots(weapon, WeaponComponents[randComponent])
 	if blocksAny then
-		Cuae_L("D", "--> Skipping", randComponent, "from", slotType, "it would block", blocked)
+		Cuae_L("D", "    Skipping", randComponent, "from", slotType, "it would block", blocked)
 		return false
 	else
 		weapon:SetWeaponComponent(slotType, randComponent)
-		Cuae_L("D", "--> Added", slotType, randComponent, "Rarity", getComponentRarity(randComponent), "/", maxRarity)
+		Cuae_L("D", "    Added", slotType, randComponent, "Rarity", getComponentRarity(randComponent), "/", maxRarity)
 		return true
 	end
 end
@@ -104,7 +104,7 @@ function Cuae_AddRandomComponents(settings, weapon, adjustedUnitLevel, weaponCom
 	table.shuffle(availableComponentsSlots, InteractionRand(nil, "LDCUAE"))
 
 	local remaningComponentsCount = Min(#availableComponentsSlots, Max(1, DivRound(#availableComponentsSlots * chance, 100)))
-	Cuae_L("D", "-- adding components", remaningComponentsCount, "/", #availableComponentsSlots, "AdjustedLvl:", adjustedUnitLevel)
+	Cuae_L("D", "   adding components", remaningComponentsCount, "/", #availableComponentsSlots)
 
 	local handledSlots = {}
 	for _ = 1, 2 do

@@ -152,7 +152,7 @@ local function getAvgLevel(units)
 		sum = sum + u:GetLevel()
 	end
 	local avgLevel = count > 0 and sum // count or 1
-	Cuae_L("D", "Calculated avg level", sum, "//", count, "=", avgLevel)
+	Cuae_L("D", "Calculated units avg level", sum, "//", count, "=", avgLevel)
 	return avgLevel
 end
 
@@ -182,7 +182,7 @@ function OnMsg.ConflictStart(sector_id)
 	local enemyUnits = GetUnitsFromSquads(enemySquads, "getUnitData")
 	for _, unit_data in ipairs(enemyUnits) do
 		if unit_data.species == "Human" and (Cuae_AffiliationWeight[Cuae_UnitAffiliation(Cuae_LoadedModOptions, unit_data)]) and not unit_data:IsDead() then
-			Cuae_L("I", "Changing Armament of an enemy on ConflictStart... unit.CUAE", unit_data.CUAE, unit_data.session_id, unit_data.role)
+			Cuae_L("I", "Changing Armament of an enemy on ConflictStart unit.CUAE:", unit_data.CUAE, unit_data.session_id, unit_data.role)
 			if not unit_data.CUAE then
 				Cuae_ChangeArmament(Cuae_LoadedModOptions, unit_data, 1)
 				unit_data.CUAE = true

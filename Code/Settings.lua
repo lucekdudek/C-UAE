@@ -83,7 +83,7 @@ end
 
 function Cuae_GetLoadoutTable(settings, unitAffiliation, unitRole)
 	if not settings.LoadoutTables or next(settings.LoadoutTables) == nil then
-		Cuae_L("D", "Using LegacyLoadoutTable:", settings.LegacyLoadoutTable)
+		Cuae_L("D", "LoadoutTables not found using LegacyLoadoutTable instead")
 		-- return {
 		-- 	weaponComponentsCurve = Cuae_UnitLevelToComponentChance,
 		-- 	excludeAmmoRarity = {},

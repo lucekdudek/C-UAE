@@ -1,9 +1,9 @@
 function Cuae_RemoveAmmo(settings, unit)
-	Cuae_L("D", "Removing original ammo from", Cuae_UnitAffiliation(settings, unit))
+	Cuae_L("D", "Removing original ammo")
 	unit:ForEachItem(function(item, slot_name)
 		-- Ordnance is Ammo for heavy weapons
 		if slot_name == "Inventory" and (IsKindOf(item, "Ammo") or IsKindOf(item, "Ordnance")) then
-			Cuae_L("D", "-", "Caliber:", item.Caliber, item.class, "Cost:", item.Cost, "Amount", item.Amount)
+			Cuae_L("D", " Caliber:", item.Caliber, item.class, "Cost:", item.Cost, "Amount", item.Amount)
 			unit:RemoveItem(slot_name, item)
 			DoneObject(item)
 		end
@@ -23,12 +23,12 @@ end
 
 local function getAllAmmunitionOfCaliber(weaponCaliber, affiliation, excludeAmmoRarity)
 	if not Cuae_AllAmmunition[weaponCaliber] then
-		Cuae_L("D", "Building", weaponCaliber, "ammunition table...")
+		Cuae_L("D", ">Building", weaponCaliber, "ammunition table...")
 		Cuae_AllAmmunition[weaponCaliber] = GetAmmosWithCaliber(weaponCaliber, "sort")
 		for _, a in ipairs(Cuae_AllAmmunition[weaponCaliber]) do
-			Cuae_L("D", ">>", a.id, "Color:", a.colorStyle, "Rarity", ammoRarity(a))
+			Cuae_L("D", ">", a.id, "Color:", a.colorStyle, "Rarity", ammoRarity(a))
 		end
-		Cuae_L("D", "Building", weaponCaliber, "ammunition table DONE")
+		Cuae_L("D", ">Building", weaponCaliber, "ammunition table DONE")
 	end
 	local allAmmunition = Cuae_AllAmmunition[weaponCaliber] or {}
 	local exclusionTable = Cuae_AffiliationExclusionTable[affiliation]
@@ -62,7 +62,7 @@ local function generateAmmo(weaponCaliber, affiliation, adjustedUnitLevel, exclu
 	end)
 
 	local ammo = suitableAmmos[InteractionRandRange(1, #suitableAmmos, "LDCUAE")]
-	Cuae_L("D", "-- picked suitable ammo:", weaponCaliber, ammo.id, "Color:", ammo.colorStyle, "Rarity", ammoRarity(ammo))
+	Cuae_L("D", "   picked suitable ammo:", weaponCaliber, ammo.id, "Color:", ammo.colorStyle, "Rarity:", ammoRarity(ammo))
 	return ammo
 end
 
