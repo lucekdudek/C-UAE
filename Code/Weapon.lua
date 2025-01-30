@@ -100,7 +100,8 @@ function Cuae_ApplyChangePolicy(settings, unit, avgLevel, changePolicy)
 	local level = Min(10, unit:GetLevel())
 	local adjLevel = Cuae_CalculateAdjustedUnitLevel(settings, level, avgLevel, affiliation)
 	Cuae_L("D", "Applying change policy")
-	local itemAdded = nil
+	-- 1. Remove all that can be removed
+	local replacementsToPlace = {}
 	for _, replacementPolicy in ipairs(changePolicy.replacements) do
 		if replacementPolicy.keep then
 			Cuae_L("D", " Keeping", replacementPolicy.ogPresetId)
@@ -109,17 +110,24 @@ function Cuae_ApplyChangePolicy(settings, unit, avgLevel, changePolicy)
 			Cuae_L("D", " Discarding", replacementPolicy.ogPresetId)
 			Cuae_RemoveItem(unit, replacementPolicy.slot, replacementPolicy.ogInstance)
 		elseif canBeReplaced(affiliation, adjLevel, replacementPolicy) then
-			Cuae_L("D", " Replacing", replacementPolicy.ogPresetId)
+			Cuae_L("D", " Removing for replacement", replacementPolicy.ogPresetId)
 			Cuae_RemoveItem(unit, replacementPolicy.slot, replacementPolicy.ogInstance)
-			itemAdded = placeArmament(settings, unit, adjLevel, replacementPolicy, changePolicy)
-			if not itemAdded then
-				Cuae_L("E", "  Replacing", replacementPolicy.ogPresetId, "failed, og item is now gone")
-			end
+			table.insert(replacementsToPlace, replacementPolicy)
 		else
 			Cuae_L("D", " Keeping due to no suitable replacement", replacementPolicy.ogPresetId)
 			tryAddComponentsAndAmmo(settings, unit, adjLevel, replacementPolicy, changePolicy)
 		end
 	end
+	-- 2. Place replacement items
+	local itemAdded = nil
+	for _, replacementPolicy in ipairs(replacementsToPlace) do
+		Cuae_L("D", " Placing replacement for", replacementPolicy.ogPresetId)
+		itemAdded = placeArmament(settings, unit, adjLevel, replacementPolicy, changePolicy)
+		if not itemAdded then
+			Cuae_L("E", "  Placing replacement for", replacementPolicy.ogPresetId, "failed, og item is now gone")
+		end
+	end
+	-- 3. Place extra items
 	for _, extraWeaponPolicy in ipairs(changePolicy.extraWeapons) do
 		Cuae_L("D", " Placing extra weapon", extraWeaponPolicy.newType)
 		itemAdded = placeArmament(settings, unit, adjLevel, extraWeaponPolicy, changePolicy)

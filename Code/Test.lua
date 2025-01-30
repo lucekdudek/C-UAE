@@ -114,6 +114,14 @@ TestCuea_SimpleGBOLoadoutTable = {
   }
 }
 
+TestCuea_ReplaceSizeDiffConflictLoadoutTable = {
+  _default = {
+    replacements = {
+      Handgun = {type={{"AssaultRifle",100}}},
+    }
+  }
+}
+
 function TestCuea_GetSettings(weapons, components, armor, loadoutTable)
 	return {
 		ReplaceWeapons = not not weapons,
@@ -138,6 +146,8 @@ end
 
 -- Run in mod editor on a selected unit
 
+-- CUAE_LOG_LEVEL = CUAE_DEBUG
+
 -- Cuae_ChangeArmament(TestCuea_GetSettings(true, true, false, TestCuea_DiscardAllLoadoutTable), SelectedObj, 0)
 
 -- Cuae_ChangeArmament(TestCuea_GetSettings(true, true, false, TestCuea_ExtraSetupLoadoutTable), SelectedObj, 0)
@@ -153,3 +163,6 @@ end
 -- Cuae_ChangeArmament(TestCuea_GetSettings(true, true, false, TestCuea_100ComponentsLoadoutTable), SelectedObj, 0)
 
 -- Cuae_ChangeArmament(TestCuea_GetSettings(true, true, false, TestCuea_SimpleGBOLoadoutTable), SelectedObj, 2)
+
+-- Cuae_ChangeArmament(TestCuea_GetSettings(true, false, false, TestCuea_ReplaceSizeDiffConflictLoadoutTable), SelectedObj, 0)
+-- Cuae_ChangeArmament(TestCuea_GetSettings(false, false, false, TestCuea_ReplaceSizeDiffConflictLoadoutTable), SelectedObj, 0)
