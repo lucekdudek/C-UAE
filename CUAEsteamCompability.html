@@ -1,3 +1,26 @@
+[h1] Logging [/h1]
+
+Be default C-UEA logs on INFO level. In order to change that adjust mod global variable CUAE_LOG_LEVEL in [b]console[/b]
+
+[code]
+CUAE_LOG_LEVEL = CUAE_DEBUG
+[/code]
+
+Or add a script
+
+[code]
+function OnMsg.ModsReloaded()
+	CUAE_LOG_LEVEL = CUAE_DEBUG
+end
+[/code]
+
+[code]
+CUAE_DEBUG
+CUAE_INFO
+CUAE_WARN
+CUAE_ERROR
+[/code]
+
 [h1] Exclusion Table [/h1]
 Calling the function [b]CUAEAddExclusionTable[/b] allows you to implement custom exclusion logic. This prevents the mod
 from distributing specified armaments to units of specific affiliations.
@@ -8,8 +31,8 @@ from equipping AK47s.
 Table format:
 [code]
 cuaeExclusionTable = {
-Affiliation1 = {"ArmamentId1", "ArmamentId2"},
-Affiliation2 = {"ArmamentId3", "ArmamentId4"},
+	Affiliation1 = {"ArmamentId1", "ArmamentId2"},
+	Affiliation2 = {"ArmamentId3", "ArmamentId4"},
 }
 [/code]
 
