@@ -126,7 +126,7 @@ local function getLegsArmorOfSubtype(allArmor, subType)
 	return Cuae_AllArmor.Legs[subType]
 end
 
-local function getAllWeaponsOfType(_type, affiliation, maxSize)
+function Cuae_GetAllWeaponsOfType(_type, affiliation, maxSize)
 	maxSize = maxSize or 2
 	local tempType = table.find(Cuae_HeadTypes, _type) and "Head" or table.find(Cuae_TorsoTypes, _type) and "Torso" or table.find(Cuae_LegsTypes, _type) and "Legs" or _type
 
@@ -168,7 +168,7 @@ local function getCostIdx(cost, weapons)
 end
 
 function Cuae_GetSuitableArmaments(affiliation, level, _type, originalCost, useOriginalCost, maxSize)
-	local allWeaponsOfTyp = getAllWeaponsOfType(_type, affiliation, maxSize)
+	local allWeaponsOfTyp = Cuae_GetAllWeaponsOfType(_type, affiliation, maxSize)
 	if #allWeaponsOfTyp <= 1 then
 		return allWeaponsOfTyp, nil
 	end
