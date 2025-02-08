@@ -170,7 +170,14 @@ end
 function Cuae_GetSuitableArmaments(affiliation, level, _type, originalCost, useOriginalCost, maxSize)
 	local allWeaponsOfTyp = Cuae_GetAllWeaponsOfType(_type, affiliation, maxSize)
 	if #allWeaponsOfTyp <= 1 then
-		return allWeaponsOfTyp, nil
+		return allWeaponsOfTyp, Cuae_Cost(allWeaponsOfTyp[1])
+	end
+	
+	if #allWeaponsOfTyp == 2 then
+		local lvlFactor = Max(0, Min(level, 10))
+		local lowCost = Cuae_Cost(allWeaponsOfTyp[1])
+		local highCost = Cuae_Cost(allWeaponsOfTyp[2])
+		return allWeaponsOfTyp, lowCost + DivRound((highCost - lowCost) * lvlFactor, 10)
 	end
 
 	local costRangeFrom, costRangeTo = Cuae_CalculateCostRange(level, 3, 10)
@@ -191,7 +198,7 @@ function Cuae_GetSuitableArmaments(affiliation, level, _type, originalCost, useO
 		return Cuae_Cost(a) >= minCost and Cuae_Cost(a) <= maxCost
 	end)
 
-	return suitableArmament, originalCostIdx
+	return suitableArmament, Cuae_Cost(suitableArmament[originalCostIdx or Max(1, Min(#suitableArmament, DivRound(#suitableArmament, 2)))])
 end
 
 function DiceInteractionRandRange(_from, _to, _mid, dice_count, interaction)
@@ -232,18 +239,17 @@ function Cuae_GetDefaultArmament(affiliation, _type, maxSize)
 end
 
 function Cuae_GetSuitableArmament(affiliation, level, _type, originalCost, useOriginalCost, maxSize)
-	local suitableArmaments, originalCostIdx = Cuae_GetSuitableArmaments(affiliation, level, _type, originalCost, useOriginalCost, maxSize)
+	local suitableArmaments, newCost = Cuae_GetSuitableArmaments(affiliation, level, _type, originalCost, useOriginalCost, maxSize)
 	if #suitableArmaments < 1 then
 		return nil
 	end
 
-	originalCostIdx = originalCostIdx or Max(1, Min(#suitableArmaments, DivRound(#suitableArmaments, 2)))
-	originalCost = useOriginalCost and originalCost or Cuae_Cost(suitableArmaments[originalCostIdx])
+	local calculatedCost = useOriginalCost and originalCost or newCost
 
 	local distance = {}
 	local max = 0
 	for _, a in ipairs(suitableArmaments) do
-		distance[#distance + 1] = abs(originalCost - Cuae_Cost(a))
+		distance[#distance + 1] = abs(calculatedCost - Cuae_Cost(a))
 		if distance[#distance] > max then
 			max = distance[#distance]
 		end
@@ -270,7 +276,7 @@ function Cuae_GetSuitableArmament(affiliation, level, _type, originalCost, useOr
 	end
 
 	if CUAE_LOG_LEVEL <= CUAE_DEBUG then
-		Cuae_L("D", "  built odds table for suitable", _type, "armaments for", affiliation, "lvl:", level, "Original Cost:", originalCost)
+		Cuae_L("D", "  built odds table for suitable", _type, "armaments for", affiliation, "lvl:", level, "Calculated Cost Med:", calculatedCost, "Original Cost:", originalCost)
 		for idx, odds in ipairs(culOdds) do
 			print("           |    Odds:", odds, "Weapon:", suitableArmaments[idx].id, "Cost:", Cuae_Cost(suitableArmaments[idx]))
 		end
