@@ -166,3 +166,6 @@ end
 
 -- Cuae_ChangeArmament(TestCuea_GetSettings(true, false, false, TestCuea_ReplaceSizeDiffConflictLoadoutTable), SelectedObj, 0)
 -- Cuae_ChangeArmament(TestCuea_GetSettings(false, false, false, TestCuea_ReplaceSizeDiffConflictLoadoutTable), SelectedObj, 0)
+
+-- Cuae_AddRandomComponents(settings, weapon, adjustedUnitLevel, weaponComponentsCurve, weaponComponentsPriority)
+-- Cuae_AddRandomComponents({AddWeaponComponents=true}, SelectedObj:GetItemAtPos("Handheld A", 1, 1), 10, {100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100}, {tag="Precision", prioritySlots={"Scope"}})
