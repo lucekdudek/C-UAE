@@ -11,6 +11,7 @@ Core Concepts:
 • Affiliations:    Military factions (Rebel, Legion, Thugs, Army, Adonis, SuperSoldiers, Militia)
 • Roles:           Combat specialties (Soldier, Heavy, Artillery, Recon, Medic, Marksman, Commander, Stormer, Demolitions, Beast)
 • Component Curve: Progressive attachment unlocks based on adjusted unit level (1-20)
+• Component Tags:  Tags (Intimate CloseQuarters Tactical Precision Strategic)
 • Ammo Hierarchy:  Rarity tiers (AmmoBasicColor < AmmoAPColor < AmmoHPColor < AmmoMatchColor < AmmoTracerColor)
 • Weapons:         Firearms and melee weapons types (Handgun SMG AssaultRifle Sniper Shotgun MachineGun FlareGun MeleeWeapon GrenadeLauncher Mortar MissileLauncher)
 • Utility:         Grenades and others types (Flare Explosive Flash Fire Smoke Tear Toxic Timed Proximity Remote)
@@ -38,6 +39,20 @@ LoadoutTables = {
       - Example: Level 5 unit with 6-slot weapon → 42% of 6 = 2.52 → 3 components active
       --]]
       weaponComponentsCurve = {18,24,30,36,42,48,54,60,66,72,78,84,90,92,94,95,96,97,98,99},
+
+      --[[ WEAPON COMPONENT PRIORITIES SYSTEM -----------------------------------------------
+      Configuration Options:
+      • tag:str              - Limits available components to only containing given tag
+      • prioritySlots:{...}  - Which slots to fill first
+      --]]
+      weaponComponentsPriorities = {
+        Handgun = {tag="CloseQuarters", prioritySlots={"Magazine", "Side"}},
+        SMG = {tag="CloseQuarters", prioritySlots={"Stock", "Muzzle"}},
+        AssaultRifle = {tag="Tactical", prioritySlots={"Handguard", "Under"}},
+        Sniper = {tag="Precision", prioritySlots={"Mount", "Scope"}},
+        Shotgun = {tag="Intimate", prioritySlots={"Barrel"}},
+        MachineGun = {tag="Precision", prioritySlots={"Bipod"}},
+      },
 
       --[[ AMMO TYPE BLACKLIST ---------------------------------------------------------------
       Restrict specific ammunition types from appearing in loadouts

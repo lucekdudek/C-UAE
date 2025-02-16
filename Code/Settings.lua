@@ -62,6 +62,14 @@ function OnMsg.ApplyModOptions(id)
 	end
 end
 
+local function combineTags(role, default)
+	local t = {}
+	for _type, _ in pairs(Cuae_AllArmaments) do
+		t[_type] = role[_type] or default[_type] or nil
+	end
+	return t
+end
+
 local function combineReplacements(role, default)
 	local t = {}
 	for _type, _ in pairs(Cuae_AllArmaments) do
@@ -100,6 +108,7 @@ function Cuae_GetLoadoutTable(settings, unitAffiliation, unitRole)
 	local defaultT = settingsT["_default"] or {}
 	local loadoutTable = {
 		weaponComponentsCurve = roleT.weaponComponentsCurve or defaultT.weaponComponentsCurve or Cuae_UnitLevelToComponentChance,
+		weaponComponentsPriorities = combineTags(roleT.weaponComponentsPriorities or {}, defaultT.weaponComponentsPriorities or {}),
 		excludeAmmoRarity = roleT.excludeAmmoRarity or defaultT.excludeAmmoRarity or {},
 		replacements = combineReplacements(roleT.replacements or {}, defaultT.replacements or {}),
 		extraWeapons = combineExtras(roleT.extraWeapons or {}, defaultT.extraWeapons or {}),

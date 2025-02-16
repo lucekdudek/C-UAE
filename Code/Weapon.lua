@@ -1,7 +1,7 @@
 local function tryAddComponentsAndAmmo(settings, unit, adjustedUnitLevel, replacementPolicy, policySettings)
 	if replacementPolicy.ogInstance and replacementPolicy.isWeapon and not replacementPolicy.ogType == "MeleeWeapon" then
 		replacementPolicy.ogInstance.ammo = nil
-		Cuae_AddRandomComponents(settings, replacementPolicy.ogInstance, adjustedUnitLevel, policySettings.weaponComponentsCurve)
+		Cuae_AddRandomComponents(settings, replacementPolicy.ogInstance, adjustedUnitLevel, policySettings.weaponComponentsCurve, replacementPolicy.weaponComponentsPriority)
 		Cuae_GenerateNewAmmo(settings, unit, adjustedUnitLevel, replacementPolicy.ogInstance, replacementPolicy.slot, policySettings.excludeAmmoRarity)
 	end
 end
@@ -76,7 +76,7 @@ local function placeArmament(settings, unit, adjustedUnitLevel, policy, policySe
 	elseif IsKindOf(newArmament, "BaseWeapon") then
 		newArmament.drop_chance = dropChance
 		newArmament.Condition = newCondition
-		Cuae_AddRandomComponents(settings, newArmament, adjustedUnitLevel, policySettings.weaponComponentsCurve)
+		Cuae_AddRandomComponents(settings, newArmament, adjustedUnitLevel, policySettings.weaponComponentsCurve, policy.weaponComponentsPriority)
 		itemAdded, slot = addItemInFirstSlot(unit, newArmament, policy.newType == "Handgun" and handheldTypes.Handgun or policy.newType == "SMG" and handheldTypes.SMG or handheldTypes.Weapon)
 		-- load weapon
 		if itemAdded then

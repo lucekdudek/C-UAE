@@ -32,6 +32,10 @@ local function getNewSize(loadoutTable, profile)
 	return loadoutTable.replacements[profile.ogType] and loadoutTable.replacements[profile.ogType].size or 2
 end
 
+local function getWeaponComponentsPriority(loadoutTable, _type)
+	return loadoutTable.weaponComponentsPriorities and loadoutTable.weaponComponentsPriorities[_type] or nil
+end
+
 local function getReplacementPolicy(loadoutTable, replaceWeaponsSetting, originalWeaponsAndUtil)
 	local replacements = {}
 	for _, w in ipairs(originalWeaponsAndUtil.W) do
@@ -41,6 +45,7 @@ local function getReplacementPolicy(loadoutTable, replaceWeaponsSetting, origina
 			Cuae_L("D", " Og weapon will be kept", w.ogPresetId)
 			w.keep = true
 			w.newType = w.ogType
+			w.weaponComponentsPriority = getWeaponComponentsPriority(loadoutTable, w.newType)
 			table.insert(replacements, w)
 		elseif not newType then
 			Cuae_L("D", " Og weapon will be discarded", w.ogPresetId)
@@ -50,10 +55,12 @@ local function getReplacementPolicy(loadoutTable, replaceWeaponsSetting, origina
 			Cuae_L("D", " Og weapon will be replaced", w.ogPresetId, "with default", newType, "for affiliation")
 			w.newType = newType
 			w.useDefault = true
+			w.weaponComponentsPriority = getWeaponComponentsPriority(loadoutTable, w.newType)
 			table.insert(replacements, w)
 		else
 			Cuae_L("D", " Og weapon will be replaced", w.ogPresetId, "with", newType)
 			w.newType = newType
+			w.weaponComponentsPriority = getWeaponComponentsPriority(loadoutTable, w.newType)
 			table.insert(replacements, w)
 		end
 	end
@@ -104,6 +111,7 @@ local function getExtraWeaponsPolicy(loadoutTable, replacementTypes)
 				replacementTypes[ew.newType] = true
 				ew.isWeapon = true
 				ew.newSize = extraCfg.size or 2
+				ew.weaponComponentsPriority = getWeaponComponentsPriority(loadoutTable, ew.newType)
 				table.insert(extraWeapons, ew)
 			end
 		end
