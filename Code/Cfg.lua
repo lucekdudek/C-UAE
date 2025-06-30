@@ -1204,6 +1204,7 @@ Cuae_ExcludeComponents = {
 	Spas12_Barrel_ext_1 = true,
 	CondorN_Barrel_ext_1 = true,
 	Condor_Barrel_ext_1 = true,
+	hk33_lower_classic_1 = true,
 }
 
 function Cuae_ExcludeComponents_DisallowSilencers()

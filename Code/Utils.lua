@@ -198,6 +198,11 @@ function Cuae_GetSuitableArmaments(affiliation, level, _type, originalCost, useO
 		return Cuae_Cost(a) >= minCost and Cuae_Cost(a) <= maxCost
 	end)
 
+	-- Recalculate originalCostIdx for suitableArmament possible different length
+	if useOriginalCost and originalCost then
+		originalCostIdx = getCostIdx(originalCost, suitableArmament)
+	end
+
 	return suitableArmament, Cuae_Cost(suitableArmament[originalCostIdx or Max(1, Min(#suitableArmament, DivRound(#suitableArmament, 2)))])
 end
 
